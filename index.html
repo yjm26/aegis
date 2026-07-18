@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blobbed — Your files. Truly yours.</title>
-  <link rel="stylesheet" href="/style.css?v=8">
+  <link rel="stylesheet" href="/style.css?v=9">
 </head>
 <body class="landing-page">
 
@@ -15,6 +15,10 @@
 
   <!-- HERO -->
   <section class="landing-hero">
+    <div class="hero-ambient">
+      <div class="ambient-blob ambient-blob-1"></div>
+      <div class="ambient-blob ambient-blob-2"></div>
+    </div>
     <div class="hero-content">
       <h1 class="hero-title">
         <span class="line">Your files.</span>
@@ -26,23 +30,12 @@
       </p>
       <div class="hero-cta">
         <a href="/pages/drive.html" class="cta-primary">Enter the App</a>
-        <a href="#manifesto" class="cta-secondary">Learn more</a>
+        <a href="#stance" class="cta-secondary">Learn more</a>
       </div>
     </div>
   </section>
 
-  <!-- MANIFESTO — Full width narrative -->
-  <section class="manifesto-section" id="manifesto">
-    <div class="manifesto-inner">
-      <p class="manifesto-lead">You upload a file to Google Drive. Who owns it?</p>
-      <p class="manifesto-body">Not you. They do. They can read it, sell it, delete it, or hand it over. The terms of service change overnight. Your vacation photos, your work documents, your backups — all sitting on someone else's computer, protected by someone else's rules.</p>
-      <p class="manifesto-body">Blobbed doesn't have servers. We don't store your files. We can't read them. We can't delete them. We can't even see what you uploaded. The encryption happens in your browser. The key stays in your pocket. The data lives on a decentralized network that doesn't know your name.</p>
-      <p class="manifesto-body">If we disappear tomorrow, your files stay. If Shelby Protocol shuts down, your files stay. If the government asks — there's nothing to hand over. Zero knowledge. Zero trust. Zero bullshit.</p>
-      <p class="manifesto-closing">This is what ownership actually means.</p>
-    </div>
-  </section>
-
-  <!-- STANCE — Sticky sidebar, Topology style but different -->
+  <!-- STANCE — Sticky sidebar -->
   <section class="sticky-section" id="stance">
     <div class="sticky-sidebar">
       <div class="section-label">01.</div>
@@ -51,23 +44,23 @@
     <div class="sticky-content">
       <article class="sticky-item">
         <h3>Encrypt First</h3>
-        <p>Before your file touches the network, it's locked with AES-256-GCM using a key generated in your browser. The ciphertext travels. The key does not. We cannot decrypt what we cannot see.</p>
+        <p>Files are locked with AES-256-GCM in your browser before touching the network. The ciphertext travels. The key does not.</p>
         <blockquote>"The lock and the key should never meet outside your device."</blockquote>
       </article>
       <article class="sticky-item">
         <h3>Own Your Keys</h3>
-        <p>No password resets. No account recovery. No central database of secrets. Your key is embedded in the share link you create. Lose the link, lose the file. That's the trade-off for true control.</p>
+        <p>No password resets. No account recovery. Your key is embedded in the share link you create. Lose the link, lose the file. That's the trade-off for true control.</p>
         <blockquote>"With great privacy comes great responsibility."</blockquote>
       </article>
       <article class="sticky-item">
         <h3>Outlive the Platform</h3>
-        <p>The blob registry lives on Aptos blockchain. The actual data lives on Shelby storage nodes across the globe. This website is just a window. Smash the window, the house still stands.</p>
+        <p>The blob registry lives on Aptos blockchain. The data lives on Shelby storage nodes across the globe. This website is just a window.</p>
         <blockquote>"Build for the network, not the company."</blockquote>
       </article>
     </div>
   </section>
 
-  <!-- FLOW — Horizontal steps, numbered -->
+  <!-- FLOW — Horizontal steps -->
   <section class="flow-section alt-bg" id="flow">
     <div class="flow-header">
       <div class="section-label">02.</div>
@@ -83,18 +76,18 @@
       <div class="flow-step">
         <span class="flow-num">02</span>
         <h3>Store</h3>
-        <p>The encrypted blob is registered on-chain and distributed across Shelby nodes. No central server. No single point of failure.</p>
+        <p>The encrypted blob is registered on-chain and distributed across Shelby nodes. No central server.</p>
       </div>
       <div class="flow-connector"></div>
       <div class="flow-step">
         <span class="flow-num">03</span>
         <h3>Share</h3>
-        <p>Copy the link. It contains everything needed: blob hash + decryption key in the URL fragment. Send anywhere.</p>
+        <p>Copy the link. Blob hash + decryption key in the URL fragment. Send anywhere.</p>
       </div>
     </div>
   </section>
 
-  <!-- DETAILS — Minimal accordion -->
+  <!-- DETAILS — Accordion -->
   <section class="details-section" id="details">
     <div class="details-header">
       <div class="section-label">03.</div>
@@ -103,11 +96,11 @@
     <div class="details-list">
       <details class="faq-block">
         <summary>Can you read my files?</summary>
-        <p>No. Encryption happens client-side before upload. We never see the key or the plaintext. Physically impossible.</p>
+        <p>No. Encryption happens client-side before upload. We never see the key or the plaintext.</p>
       </details>
       <details class="faq-block">
         <summary>What if this site goes down?</summary>
-        <p>Your files live on Shelby Protocol nodes and the Aptos blockchain. This website is just an interface. Anyone with the link can still retrieve the file.</p>
+        <p>Your files live on Shelby Protocol nodes and the Aptos blockchain. Anyone with the link can still retrieve the file.</p>
       </details>
       <details class="faq-block">
         <summary>Why do I need a wallet to upload?</summary>

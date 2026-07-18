@@ -101,6 +101,55 @@ body::before {
   background: var(--bg);
 }
 
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Ambient morphing blobs — subtle, no gimmick */
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.25;
+  animation: blob-morph 20s ease-in-out infinite alternate;
+}
+
+.ambient-blob-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #1a1a2e 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-delay: 0s;
+}
+
+.ambient-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #16213e 0%, transparent 70%);
+  bottom: -10%;
+  right: -5%;
+  animation-delay: -10s;
+}
+
+@keyframes blob-morph {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  100% {
+    transform: translate(10px, -10px) scale(1.05);
+  }
+}
+
 .hero-content {
   position: relative;
   z-index: 10;
@@ -372,46 +421,92 @@ body::before {
   max-width: 600px;
 }
 
-/* ===== MANIFESTO ===== */
+/* ===== STICKY SECTION ===== */
 
-.manifesto-section {
-  padding: 12rem 3rem;
-  max-width: 900px;
+.sticky-section {
+  display: flex;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 10rem 3rem;
+  min-height: 100vh;
+  gap: 4rem;
 }
 
-.manifesto-inner {
+.sticky-section.alt-bg {
+  background-color: var(--bg-alt);
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sticky-section.alt-bg .sticky-sidebar {
+  padding-left: 3rem;
+}
+
+.sticky-section.alt-bg .sticky-content {
+  padding-right: 3rem;
+}
+
+.sticky-sidebar {
+  width: 40%;
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+  height: auto;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.sticky-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 200;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.sticky-content {
+  width: 60%;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 6rem;
 }
 
-.manifesto-lead {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+.sticky-item {
+  position: relative;
+}
+
+.sticky-item h3 {
+  font-size: 1.75rem;
   font-weight: 300;
   color: var(--text-primary);
-  line-height: 1.5;
+  margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
 }
 
-.manifesto-body {
-  font-size: 1.0625rem;
-  font-weight: 300;
+.sticky-item p {
+  font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.9;
+  line-height: 1.8;
+  margin-bottom: 2rem;
 }
 
-.manifesto-closing {
-  font-size: 1.25rem;
-  font-weight: 300;
-  color: var(--text-primary);
-  line-height: 1.6;
-  margin-top: 1rem;
-  padding-top: 2rem;
+.sticky-item blockquote {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.7;
   border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
 }
 
-/* ===== FLOW SECTION ===== */
+/* ===== FLOW ===== */
 
 .flow-section {
   padding: 10rem 3rem;
