@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { connectWallet, getConnectedWallet, hasAppSession } from '../../scripts/aptos-client';
+import BrandLoader from '../components/BrandLoader';
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 export default function GatePage() {
   const nav = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sub, setSub] = useState('Connect a wallet to enter');
-  const [hintHtml, setHintHtml] = useState(
-    'Petra or any Aptos wallet (testnet)'
-  );
+  const [hintHtml, setHintHtml] = useState('Petra or any Aptos wallet (testnet)');
   const [checking, setChecking] = useState(true);
+  const [entering, setEntering] = useState(false);
+  const [enterLabel, setEnterLabel] = useState('Entering Blobbed');
 
   React.useEffect(() => {
     let cancelled = false;
@@ -22,8 +27,10 @@ export default function GatePage() {
       try {
         const existing = await getConnectedWallet();
         if (existing?.address && !cancelled) {
-          setSub('Wallet connected');
-          nav('/drive', { replace: true });
+          setEnterLabel('Welcome back');
+          setEntering(true);
+          await sleep(520);
+          if (!cancelled) nav('/drive', { replace: true });
           return;
         }
       } catch {
@@ -46,12 +53,17 @@ export default function GatePage() {
       const wallet = await connectWallet();
       if (!wallet?.address) throw new Error('No address returned');
       setSub('Connected');
+      setEnterLabel('Entering Blobbed');
+      setEntering(true);
+      // Beat for the handoff animation — feels intentional, not abrupt
+      await sleep(680);
       nav('/drive', { replace: true });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Connect failed';
       setError(msg);
       setSub('Connect a wallet to enter');
       setBusy(false);
+      setEntering(false);
       if (/not installed/i.test(msg)) {
         setHintHtml(
           'Install <a href="https://petra.app/" target="_blank" rel="noopener">Petra</a> (Wallet Standard) then retry'
@@ -61,7 +73,7 @@ export default function GatePage() {
   }
 
   return (
-    <div className="gate-page">
+    <div className={`gate-page ${entering ? 'gate-page--leaving' : ''}`}>
       <div className="gate-bg" aria-hidden="true">
         <div className="gate-orb gate-orb-a" />
         <div className="gate-orb gate-orb-b" />
@@ -78,18 +90,17 @@ export default function GatePage() {
         <p className="gate-sub">{checking ? 'Checking session…' : sub}</p>
         <button
           type="button"
-          className="gate-cta"
-          disabled={busy || checking}
+          className={`gate-cta ${busy ? 'gate-cta--pulse' : ''}`}
+          disabled={busy || checking || entering}
           onClick={() => void onConnect()}
         >
           {busy ? 'Connecting…' : checking ? '…' : 'Connect wallet'}
         </button>
-        <p
-          className="gate-hint"
-          dangerouslySetInnerHTML={{ __html: hintHtml }}
-        />
+        <p className="gate-hint" dangerouslySetInnerHTML={{ __html: hintHtml }} />
         {error ? <p className="gate-error">{error}</p> : null}
       </main>
+
+      {entering ? <BrandLoader overlay variant="enter" label={enterLabel} /> : null}
     </div>
   );
 }

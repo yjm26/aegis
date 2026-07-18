@@ -109,7 +109,7 @@ export default function ViewPage() {
 
   return (
     <div className="app-page view-page">
-      <header className="app-top">
+      <header className="app-top app-reveal app-reveal-1">
         <Link to="/" className="app-brand">
           BLOBBED
         </Link>
@@ -121,7 +121,7 @@ export default function ViewPage() {
         </div>
       </header>
 
-      <main className="view-main">
+      <main className="view-main app-reveal app-reveal-2">
         <header className="view-head">
           <h1 className="view-title">{title}</h1>
           <p className="view-sub">{sub}</p>

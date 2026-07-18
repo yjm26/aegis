@@ -28,6 +28,7 @@ import {
   isVideoMime,
 } from '../../scripts/preview';
 import type { FileMetadata, FolderMetadata } from '../../scripts/types';
+import BrandLoader from '../components/BrandLoader';
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
@@ -302,8 +303,8 @@ export default function DrivePage() {
 
   if (!ready || !wallet) {
     return (
-      <div className="app-page" style={{ display: 'grid', placeItems: 'center' }}>
-        <p className="app-stage-sub">Loading…</p>
+      <div className="app-page app-page--boot">
+        <BrandLoader label="Syncing your library" />
       </div>
     );
   }
@@ -312,8 +313,8 @@ export default function DrivePage() {
   const hasContent = files.length > 0 || (folderId === null && folders.length > 0);
 
   return (
-    <div className="app-page">
-      <header className="app-top">
+    <div className="app-page app-page--drive">
+      <header className="app-top app-reveal app-reveal-1">
         <Link to="/" className="app-brand">
           BLOBBED
         </Link>
@@ -335,7 +336,7 @@ export default function DrivePage() {
       </header>
 
       <main className="app-shell">
-        <aside className="app-rail">
+        <aside className="app-rail app-reveal app-reveal-2">
           <button type="button" className="app-btn-ghost app-btn-block" onClick={openNewFolder}>
             New folder
           </button>
@@ -376,7 +377,7 @@ export default function DrivePage() {
           </p>
         </aside>
 
-        <section className="app-stage">
+        <section className="app-stage app-reveal app-reveal-3">
           <div className="app-stage-head">
             <div>
               {folderId ? (

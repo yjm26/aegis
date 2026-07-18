@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Landing from './Landing';
+import PageTransition from './components/PageTransition';
+import BrandLoader from './components/BrandLoader';
 
-/** Lazy route chunks — landing stays light; app pages load on demand */
 const GatePage = lazy(() => import('./pages/GatePage'));
 const DrivePage = lazy(() => import('./pages/DrivePage'));
 const ViewPage = lazy(() => import('./pages/ViewPage'));
@@ -10,16 +11,16 @@ const DownloadPage = lazy(() => import('./pages/DownloadPage'));
 const LegacyPagesRedirect = lazy(() => import('./pages/LegacyPagesRedirect'));
 
 function RouteFallback() {
-  return (
-    <div
-      className="gate-page"
-      style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}
-    >
-      <p className="gate-sub" style={{ margin: 0 }}>
-        Loading…
-      </p>
-    </div>
-  );
+  const loc = useLocation();
+  const label =
+    loc.pathname.startsWith('/drive')
+      ? 'Opening library'
+      : loc.pathname.startsWith('/gate')
+        ? 'Opening gate'
+        : loc.pathname.startsWith('/view')
+          ? 'Opening share'
+          : 'Loading';
+  return <BrandLoader label={label} />;
 }
 
 class ErrorBoundary extends React.Component<
@@ -37,40 +38,14 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.err) {
       return (
-        <div
-          style={{
-            minHeight: '100vh',
-            background: '#0a0a0a',
-            color: '#fff',
-            display: 'grid',
-            placeItems: 'center',
-            padding: 24,
-            fontFamily: 'system-ui, sans-serif',
-          }}
-        >
-          <div style={{ maxWidth: 480 }}>
-            <h1 style={{ fontSize: 20, marginBottom: 12 }}>App failed to load</h1>
-            <pre
-              style={{
-                whiteSpace: 'pre-wrap',
-                color: '#f88',
-                fontSize: 13,
-                marginBottom: 16,
-              }}
-            >
-              {this.state.err}
-            </pre>
+        <div className="app-fatal">
+          <div className="app-fatal-card">
+            <h1 className="app-fatal-title">App failed to load</h1>
+            <pre className="app-fatal-pre">{this.state.err}</pre>
             <button
               type="button"
+              className="app-modal-btn app-modal-btn-primary"
               onClick={() => window.location.assign('/')}
-              style={{
-                padding: '10px 16px',
-                borderRadius: 8,
-                border: '1px solid #444',
-                background: '#111',
-                color: '#fff',
-                cursor: 'pointer',
-              }}
             >
               Reload home
             </button>
@@ -82,11 +57,12 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-export default function App() {
+function AppRoutes() {
+  const location = useLocation();
   return (
-    <ErrorBoundary>
+    <PageTransition>
       <Suspense fallback={<RouteFallback />}>
-        <Routes>
+        <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Landing />} />
           <Route path="/gate" element={<GatePage />} />
           <Route path="/drive" element={<DrivePage />} />
@@ -97,6 +73,14 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
+    </PageTransition>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppRoutes />
     </ErrorBoundary>
   );
 }
