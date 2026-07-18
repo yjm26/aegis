@@ -3,24 +3,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Navbar blur on scroll
   const nav = document.querySelector('.landing-nav');
-  let lastScroll = 0;
-
+  
   window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    
-    if (currentScroll > 50) {
+    if (window.scrollY > 50) {
       nav.classList.add('scrolled');
     } else {
       nav.classList.remove('scrolled');
     }
-    
-    lastScroll = currentScroll;
   });
 
-  // Scroll reveal animations
+  // Scroll reveal animations with Intersection Observer
   const observerOptions = {
     root: null,
-    rootMargin: '0px',
+    rootMargin: '-50px 0px',
     threshold: 0.1
   };
 
@@ -28,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        // Once visible, stop observing (animate in only once)
         observer.unobserve(entry.target);
       }
     });

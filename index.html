@@ -9,13 +9,14 @@
 <body class="landing-page">
 
   <!-- NAVBAR -->
-  <nav class="landing-nav">
+  <nav class="landing-nav" id="navbar">
     <div class="landing-logo">Blobbed</div>
     <a href="/pages/drive.html" class="landing-nav-link">Go To App</a>
   </nav>
 
   <!-- HERO -->
   <section class="landing-hero">
+    <div class="hero-bg"></div>
     <div class="hero-content">
       <h1 class="hero-title">
         <span class="line">Your files.</span>
@@ -31,28 +32,62 @@
         <a href="#how" class="cta-secondary">Learn more</a>
       </div>
     </div>
-    <div class="hero-blob" aria-hidden="true"></div>
+    <div class="parallax-blob">
+      <div class="parallax-blob-inner"></div>
+    </div>
+  </section>
+
+  <!-- PRINCIPLES (Topology Style) -->
+  <section class="principles-section scroll-reveal" id="principles">
+    <div class="section-label">Principles</div>
+    <h2 class="section-title">What we believe.</h2>
+    <div class="principles-grid">
+      <div class="principle-card scroll-reveal scroll-reveal-delay-1">
+        <div class="principle-number">01.</div>
+        <h3>Privacy by Design</h3>
+        <p>Encryption happens in your browser before any data touches the network. The key never leaves your device.</p>
+        <div class="principle-quote">
+          "Privacy is not an option, it's the default."
+        </div>
+      </div>
+      <div class="principle-card scroll-reveal scroll-reveal-delay-2">
+        <div class="principle-number">02.</div>
+        <h3>No Central Authority</h3>
+        <p>No single entity controls your files. Distributed across Shelby Protocol nodes worldwide.</p>
+        <div class="principle-quote">
+          "Decentralization is not a feature, it's the architecture."
+        </div>
+      </div>
+      <div class="principle-card scroll-reveal scroll-reveal-delay-3">
+        <div class="principle-number">03.</div>
+        <h3>Forever Accessible</h3>
+        <p>Once uploaded, your files persist on-chain. Even if this site disappears, your data lives on.</p>
+        <div class="principle-quote">
+          "The network remembers. Always."
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- PROBLEM -->
   <section class="landing-section scroll-reveal" id="problem">
-    <div class="section-label">The problem</div>
+    <div class="section-label">The Problem</div>
     <h2 class="section-title">You don't own your files anymore.</h2>
     <div class="problem-grid">
-      <div class="problem-item">
+      <div class="problem-item scroll-reveal scroll-reveal-delay-1">
         <div class="problem-number">01</div>
-        <h3>Centralized control</h3>
-        <p>Google, Dropbox, MEGA — they hold the keys. They can lock you out anytime.</p>
+        <h3>Centralized Control</h3>
+        <p>Google Drive, Dropbox, MEGA — they hold the keys. They can suspend your account, inspect your data, or disappear overnight.</p>
       </div>
-      <div class="problem-item">
+      <div class="problem-item scroll-reveal scroll-reveal-delay-2">
         <div class="problem-number">02</div>
-        <h3>Data inspection</h3>
-        <p>Your files are scanned, analyzed, and monetized without your consent.</p>
+        <h3>Data Inspection</h3>
+        <p>Your files are scanned, analyzed, and monetized. Content policies change without warning. What's allowed today may be banned tomorrow.</p>
       </div>
-      <div class="problem-item">
+      <div class="problem-item scroll-reveal scroll-reveal-delay-3">
         <div class="problem-number">03</div>
-        <h3>Single point of failure</h3>
-        <p>One hack. One policy change. One bankruptcy. Your data disappears.</p>
+        <h3>Single Point of Failure</h3>
+        <p>One hack. One policy change. One bankruptcy. Years of data — gone. You are not the customer, you are the product.</p>
       </div>
     </div>
   </section>
@@ -62,7 +97,7 @@
     <div class="section-label">Features</div>
     <h2 class="section-title">Built different.</h2>
     <div class="features-grid">
-      <div class="feature-card">
+      <div class="feature-card scroll-reveal scroll-reveal-delay-1">
         <div class="feature-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M12 2L2 7l10 5 10-5-10-5z"/>
@@ -70,20 +105,20 @@
             <path d="M2 12l10 5 10-5"/>
           </svg>
         </div>
-        <h3>Decentralized storage</h3>
-        <p>Files stored across Shelby Protocol nodes. No central server. No single point of failure.</p>
+        <h3>Decentralized Storage</h3>
+        <p>Files stored across Shelby Protocol nodes. No central server. No single point of failure. Always online.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card scroll-reveal scroll-reveal-delay-2">
         <div class="feature-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0110 0v4"/>
           </svg>
         </div>
-        <h3>Client-side encryption</h3>
+        <h3>Client-Side Encryption</h3>
         <p>AES-256-GCM encryption in your browser. The key never leaves your device. We can't read your files. No one can.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card scroll-reveal scroll-reveal-delay-3">
         <div class="feature-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
@@ -91,10 +126,10 @@
             <line x1="12" y1="2" x2="12" y2="15"/>
           </svg>
         </div>
-        <h3>Shareable links</h3>
-        <p>Share with a simple link. Recipients download directly from Shelby nodes. No servers in between.</p>
+        <h3>Shareable Links</h3>
+        <p>Share with a simple link. Recipients download directly from Shelby nodes. No servers in between. No trust required.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card scroll-reveal scroll-reveal-delay-4">
         <div class="feature-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="10"/>
@@ -102,34 +137,32 @@
             <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
           </svg>
         </div>
-        <h3>Censorship resistant</h3>
-        <p>No government or corporation can block your files. Distributed across the globe. Always online.</p>
+        <h3>Censorship Resistant</h3>
+        <p>No government or corporation can block your files. Distributed across the globe. Permanently accessible.</p>
       </div>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
   <section class="landing-section scroll-reveal" id="how">
-    <div class="section-label">How it works</div>
+    <div class="section-label">How It Works</div>
     <h2 class="section-title">Three steps. Total control.</h2>
     <div class="steps-container">
-      <div class="step">
+      <div class="step scroll-reveal scroll-reveal-delay-1">
         <div class="step-number">01</div>
         <div class="step-content">
           <h3>Encrypt</h3>
           <p>Drop a file. It's instantly encrypted with AES-256-GCM using a random key generated in your browser. The key never leaves your device.</p>
         </div>
       </div>
-      <div class="step-connector"></div>
-      <div class="step">
+      <div class="step scroll-reveal scroll-reveal-delay-2">
         <div class="step-number">02</div>
         <div class="step-content">
           <h3>Upload</h3>
           <p>The encrypted blob is registered on Aptos blockchain and stored across Shelby storage providers — decentralized, redundant, permanent.</p>
         </div>
       </div>
-      <div class="step-connector"></div>
-      <div class="step">
+      <div class="step scroll-reveal scroll-reveal-delay-3">
         <div class="step-number">03</div>
         <div class="step-content">
           <h3>Share</h3>
@@ -144,27 +177,27 @@
     <div class="section-label">Mechanism</div>
     <h2 class="section-title">Under the hood.</h2>
     <div class="mechanism-content">
-      <div class="mechanism-item">
-        <div class="mech-label">Storage layer</div>
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-1">
+        <div class="mech-label">Storage Layer</div>
         <p class="mech-value">Shelby Protocol blob storage</p>
       </div>
-      <div class="mechanism-item">
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-2">
         <div class="mech-label">Blockchain</div>
         <p class="mech-value">Aptos (Move language)</p>
       </div>
-      <div class="mechanism-item">
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-3">
         <div class="mech-label">Encryption</div>
         <p class="mech-value">AES-256-GCM + random 256-bit key</p>
       </div>
-      <div class="mechanism-item">
-        <div class="mech-label">Key storage</div>
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-4">
+        <div class="mech-label">Key Storage</div>
         <p class="mech-value">In the URL fragment (#hash:key) — never on servers</p>
       </div>
-      <div class="mechanism-item">
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-1">
         <div class="mech-label">Availability</div>
         <p class="mech-value">Erasure-coded, redundant across nodes</p>
       </div>
-      <div class="mechanism-item">
+      <div class="mechanism-item scroll-reveal scroll-reveal-delay-2">
         <div class="mech-label">Cost</div>
         <p class="mech-value">~0.001 APT per upload (~$0.0006)</p>
       </div>
@@ -176,23 +209,23 @@
     <div class="section-label">FAQ</div>
     <h2 class="section-title">Questions answered.</h2>
     <div class="faq-list">
-      <details class="faq-item">
+      <details class="faq-item scroll-reveal scroll-reveal-delay-1">
         <summary>Can Blobbed read my files?</summary>
         <p>No. Files are encrypted in your browser before upload. The decryption key never leaves your device. We physically cannot access your data.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item scroll-reveal scroll-reveal-delay-2">
         <summary>What if Blobbed shuts down?</summary>
         <p>Your files live on Shelby Protocol nodes, not our servers. Even if this website disappears, anyone with your link can still download the file directly from the decentralized network.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item scroll-reveal scroll-reveal-delay-3">
         <summary>Is there a file size limit?</summary>
         <p>Currently ~100MB per file for the MVP. Shelby Protocol supports much larger blobs — we'll raise limits as the network matures.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item scroll-reveal scroll-reveal-delay-4">
         <summary>Why does upload require a wallet?</summary>
         <p>Registering a blob on Shelby requires an on-chain transaction on Aptos. This ensures ownership and provenance. Downloading is completely free and anonymous — no wallet needed.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item scroll-reveal scroll-reveal-delay-1">
         <summary>How do I share a file?</summary>
         <p>After upload, click "Copy Link". The link contains the blob hash and encryption key in the URL fragment (after #). Send it via any channel — the recipient just opens the link and clicks download.</p>
       </details>
@@ -200,7 +233,7 @@
   </section>
 
   <!-- CTA -->
-  <section class="landing-section scroll-reveal cta-section">
+  <section class="cta-section scroll-reveal">
     <h2 class="cta-title">Ready to own your files?</h2>
     <a href="/pages/drive.html" class="cta-primary large">Enter the App</a>
   </section>
@@ -210,6 +243,6 @@
     <p>Built on Shelby Protocol — Encrypted — Decentralized — Censorship-Resistant</p>
   </footer>
 
-  <script src="/scripts/landing.js"></script>
+  <script src="/scripts/landing.js?v=2"></script>
 </body>
 </html>
