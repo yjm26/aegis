@@ -27,8 +27,14 @@ export function getServiceAccount(): Account {
   if (!raw) {
     throw new Error('APTOS_PRIVATE_KEY not set. Add a testnet private key to enable Shelby uploads.');
   }
-  // Accept 0x-prefixed or bare hex
-  const hex = raw.startsWith('0x') ? raw : `0x${raw}`;
+  // Accept:
+  // - AIP-80: ed25519-priv-0x…
+  // - 0x + 64 hex
+  // - bare 64 hex
+  let hex = raw;
+  const aip80 = raw.match(/ed25519-priv-(0x[0-9a-fA-F]+)/i);
+  if (aip80) hex = aip80[1];
+  else if (!raw.startsWith('0x')) hex = `0x${raw}`;
   const privateKey = new Ed25519PrivateKey(hex);
   return Account.fromPrivateKey({ privateKey });
 }
