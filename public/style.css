@@ -27,15 +27,15 @@ body {
   line-height: 1.6;
 }
 
-/* ===== MODERN MINIMAL NAVBAR ===== */
+/* ===== CLEAN MINIMAL NAVBAR ===== */
 .landing-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 200;
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(28px);
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -45,13 +45,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 3rem;
+  padding: 1.1rem 3rem;
 }
 
 .landing-logo {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--text-primary);
 }
@@ -59,20 +59,15 @@ body {
 .nav-cta {
   font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--text-primary);
+  color: var(--text-muted);
   text-decoration: none;
-  padding: 0.65rem 1.35rem;
-  border: 1px solid var(--border);
-  transition: all 0.2s cubic-bezier(0.23, 1.0, 0.32, 1);
-  background: transparent;
+  transition: color 0.2s ease;
 }
 
 .nav-cta:hover {
-  background: var(--text-primary);
-  color: var(--bg);
-  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 /* HERO + Shader */
