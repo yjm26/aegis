@@ -372,6 +372,131 @@ body::before {
   max-width: 600px;
 }
 
+/* ===== MANIFESTO ===== */
+
+.manifesto-section {
+  padding: 12rem 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.manifesto-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.manifesto-lead {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 300;
+  color: var(--text-primary);
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+.manifesto-body {
+  font-size: 1.0625rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+.manifesto-closing {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-top: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== FLOW SECTION ===== */
+
+.flow-section {
+  padding: 10rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.flow-header {
+  margin-bottom: 5rem;
+}
+
+.flow-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 200;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.flow-items {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.flow-step {
+  flex: 1;
+  position: relative;
+}
+
+.flow-num {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.flow-step h3 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.flow-step p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.flow-connector {
+  width: 60px;
+  height: 1px;
+  background: var(--border);
+  margin-top: 3rem;
+  flex-shrink: 0;
+}
+
+/* ===== DETAILS ===== */
+
+.details-section {
+  padding: 10rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.details-header {
+  margin-bottom: 5rem;
+}
+
+.details-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 200;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.details-list {
+  border-top: 1px solid var(--border);
+}
+
 /* ===== CTA ===== */
 
 .cta-section {
@@ -409,7 +534,11 @@ body::before {
 @media (max-width: 768px) {
   .landing-nav,
   .landing-hero,
-  .content-section {
+  .manifesto-section,
+  .sticky-section,
+  .flow-section,
+  .details-section,
+  .cta-section {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
@@ -418,15 +547,29 @@ body::before {
     font-size: 2.5rem;
   }
 
-  .problem-items,
-  .principle-items,
-  .how-items {
-    grid-template-columns: 1fr;
+  .sticky-section {
+    flex-direction: column;
     gap: 3rem;
   }
 
-  .feature-items {
-    grid-template-columns: 1fr;
+  .sticky-sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .sticky-content {
+    width: 100%;
+  }
+
+  .flow-items {
+    flex-direction: column;
+  }
+
+  .flow-connector {
+    width: 1px;
+    height: 40px;
+    margin-top: 0;
+    margin-left: 1rem;
   }
 
   .hero-cta {
@@ -434,22 +577,7 @@ body::before {
     align-items: flex-start;
     gap: 1.5rem;
   }
-
-  .mech-row {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .mech-val {
-    text-align: left;
-    max-width: 100%;
-  }
 }
-
-/* ============================================
-   APP PAGE
-   ============================================ */
-
 .app-page {
   min-height: 100vh;
   background-color: var(--bg);
