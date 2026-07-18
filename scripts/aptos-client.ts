@@ -9,7 +9,7 @@
  *
  * @see https://aptos.dev/build/sdks/wallet-adapter/wallet-standards
  */
-import { Network, Aptos } from '@aptos-labs/ts-sdk';
+import { Network, Aptos, AptosConfig } from '@aptos-labs/ts-sdk';
 import {
   getAptosWallets,
   UserResponseStatus,
@@ -17,7 +17,23 @@ import {
 } from '@aptos-labs/wallet-standard';
 import type { WalletAccount } from './types';
 
-export const aptos = new Aptos({ network: Network.TESTNET });
+let _aptos: Aptos | null = null;
+
+/** Lazy Aptos client — avoid crashing app boot if config/polyfill order is off */
+export function getAptos(): Aptos {
+  if (!_aptos) {
+    const config = new AptosConfig({ network: Network.TESTNET });
+    _aptos = new Aptos(config);
+  }
+  return _aptos;
+}
+
+/** @deprecated use getAptos() */
+export const aptos = {
+  get client() {
+    return getAptos();
+  },
+} as unknown as Aptos;
 
 const STORAGE_KEY = 'blobbed_wallet';
 const STORAGE_WALLET_NAME = 'blobbed_wallet_name';
