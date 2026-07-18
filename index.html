@@ -15,20 +15,7 @@
 
   <!-- HERO: Topology-style 3D topography -->
   <section class="landing-hero topology-hero">
-    <div class="topo-scene">
-      <div class="topo-layer" style="--i:0"></div>
-      <div class="topo-layer" style="--i:1"></div>
-      <div class="topo-layer" style="--i:2"></div>
-      <div class="topo-layer" style="--i:3"></div>
-      <div class="topo-layer" style="--i:4"></div>
-      <div class="topo-layer" style="--i:5"></div>
-      <div class="topo-layer" style="--i:6"></div>
-      <div class="topo-layer" style="--i:7"></div>
-      <div class="topo-layer" style="--i:8"></div>
-      <div class="topo-layer" style="--i:9"></div>
-      <div class="topo-layer" style="--i:10"></div>
-      <div class="topo-layer" style="--i:11"></div>
-    </div>
+    <div id="topo-canvas" class="topo-canvas"></div>
     <div class="hero-content topology-content">
       <h1 class="hero-title">
         <span class="line">Your files.</span>
@@ -133,5 +120,6 @@
     <p>Built on Shelby Protocol</p>
   </footer>
 
+  <script type="module" src="/scripts/topo.ts"></script>
 </body>
 </html>

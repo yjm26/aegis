@@ -12,11 +12,14 @@
   "dependencies": {
     "@aptos-labs/ts-sdk": "^5.0.0",
     "@aptos-labs/wallet-adapter-react": "^3.7.9",
-    "@shelby-protocol/sdk": "^0.2.0",
+    "@shelby-protocol/s3-gateway": "^1.0.2",
+    "@shelby-protocol/sdk": "^0.2.4",
     "@types/pg": "^8.20.0",
+    "@types/three": "^0.185.1",
     "@vercel/node": "^5.8.26",
     "pg": "^8.22.0",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.0.0",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
