@@ -4,10 +4,10 @@ import { MeshGradient } from '@paper-design/shaders-react';
 export default function Landing() {
   return (
     <div className="landing-page">
-      {/* Navbar - Modern Minimal */}
+      {/* Navbar - Clean Reference */}
       <nav className="landing-nav">
         <div className="nav-inner">
-          <div className="landing-logo">BLOBED</div>
+          <div className="landing-logo">BLOBBED</div>
           <a href="/pages/drive.html" className="nav-cta">GO TO APP</a>
         </div>
       </nav>
