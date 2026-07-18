@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blobbed — Your files. Truly yours.</title>
-  <link rel="stylesheet" href="/style.css?v=11">
+  <link rel="stylesheet" href="/style.css?v=12">
 </head>
 <body class="landing-page">
 
@@ -13,8 +13,9 @@
     <a href="/pages/drive.html" class="landing-nav-link">Go To App</a>
   </nav>
 
-  <!-- HERO: clean, minimal, no gimmicks -->
+  <!-- HERO: MeshGradient shader background -->
   <section class="landing-hero">
+    <div id="topo-canvas" class="topo-canvas"></div>
     <div class="hero-content">
       <h1 class="hero-title">
         <span class="line">Your files.</span>
@@ -120,5 +121,6 @@
   </footer>
 
   <script type="module" src="/scripts/landing.js"></script>
+  <script type="module" src="/scripts/hero-shader.ts"></script>
 </body>
 </html>
