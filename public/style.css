@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
 
-/* Blobbed Design System */
-/* Pure CSS - no Tailwind */
+/* ============================================
+   BLOBBED — Topology.vc Inspired Design System
+   ============================================ */
 
 :root {
   --bg: #0A0A0A;
@@ -32,210 +33,217 @@ body {
   min-height: 100vh;
 }
 
-/* ===== LAYOUT ===== */
-.flex {
-  display: flex;
-}
+/* ============================================
+   LANDING PAGE — Topology.vc Style
+   ============================================ */
 
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.flex-1 {
-  flex: 1 1 0%;
-}
-
-.min-h-screen {
+.landing-page {
   min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0A0A0A 50%, #000000 100%);
+  position: relative;
+  overflow: hidden;
 }
 
-.w-full {
+/* Film grain overlay */
+.landing-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.w-64 {
-  width: 16rem;
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 3rem;
+  position: relative;
+  z-index: 10;
 }
 
-.max-w-2xl {
-  max-width: 42rem;
-}
-
-.max-w-md {
-  max-width: 28rem;
-}
-
-.max-w-xl {
-  max-width: 36rem;
-}
-
-/* ===== SPACING ===== */
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-.p-4 {
-  padding: 1rem;
-}
-
-.p-6 {
-  padding: 1.5rem;
-}
-
-.p-8 {
-  padding: 2rem;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.mb-8 {
-  margin-bottom: 2rem;
-}
-
-.mb-12 {
-  margin-bottom: 3rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-/* ===== TYPOGRAPHY ===== */
-.text-center {
-  text-align: center;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
-}
-
-.text-7xl {
-  font-size: 4.5rem;
-  line-height: 1;
-}
-
-.font-extralight {
-  font-weight: 200;
-}
-
-.font-light {
+.landing-logo {
+  font-size: 1rem;
   font-weight: 300;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.tracking-tight {
-  letter-spacing: -0.025em;
-}
-
-.tracking-wide {
-  letter-spacing: 0.025em;
-}
-
-.tracking-wider {
-  letter-spacing: 0.05em;
-}
-
-/* ===== COLORS ===== */
-.text-text-primary {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   color: var(--text-primary);
 }
 
-.text-text-secondary {
+.landing-nav-link {
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
   color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.text-text-muted {
+.landing-nav-link:hover {
+  color: var(--text-primary);
+}
+
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: 0 3rem;
+  position: relative;
+  z-index: 10;
+}
+
+.landing-hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  max-width: 800px;
+}
+
+.landing-hero .line-1 {
+  color: var(--text-primary);
+  display: block;
+}
+
+.landing-hero .line-2 {
   color: var(--text-muted);
+  display: block;
+  opacity: 0.6;
 }
 
-.bg-bg {
+.landing-hero .line-3 {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.landing-tagline {
+  margin-top: 3rem;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 500px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.landing-cta {
+  margin-top: 4rem;
+}
+
+.landing-cta a {
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text-muted);
+  padding-bottom: 0.25rem;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.landing-cta a:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.landing-section {
+  padding: 8rem 3rem;
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+}
+
+.landing-section h2 {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+}
+
+.landing-section .section-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 200;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 700px;
+  margin-bottom: 2rem;
+}
+
+.landing-section p {
+  font-size: 1.125rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+.landing-footer {
+  padding: 3rem;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
+}
+
+.landing-footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ============================================
+   APP PAGE — Dark Utilitarian
+   ============================================ */
+
+.app-page {
+  min-height: 100vh;
   background-color: var(--bg);
 }
 
-.bg-surface {
-  background-color: var(--surface);
+.app-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.bg-surface-raised {
-  background-color: var(--surface-raised);
+.app-logo {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
 }
 
-.border-border {
-  border-color: var(--border);
+.app-main {
+  display: flex;
+  flex: 1;
 }
 
-/* ===== COMPONENTS ===== */
+.app-sidebar {
+  width: 16rem;
+  padding: 2rem;
+  border-right: 1px solid var(--border);
+}
+
+.app-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* ===== BUTTONS ===== */
+
 .btn-primary {
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
@@ -251,6 +259,25 @@ body {
 .btn-primary:hover {
   border-color: var(--accent-cyan);
 }
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* ===== DROP ZONE ===== */
 
 .drop-zone {
   display: flex;
@@ -268,55 +295,15 @@ body {
   background-color: var(--surface-raised);
 }
 
+/* ===== CARDS ===== */
+
 .card {
   padding: 1.5rem;
   background-color: var(--surface);
   border: 1px solid var(--border);
 }
 
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  font-size: 1.25rem;
-  font-weight: 300;
-  letter-spacing: 0.15em;
-}
-
-/* ===== UTILITIES ===== */
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.font-mono {
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, monospace;
-}
-
-.space-y-2 > * + * {
-  margin-top: 0.5rem;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.gap-4 {
-  gap: 1rem;
-}
-
 /* ===== GRADIENTS ===== */
-.accent-gradient {
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-gold));
-}
 
 .text-gradient {
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-gold));
@@ -325,10 +312,51 @@ body {
   background-clip: text;
 }
 
+.accent-gradient {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-gold));
+}
+
+/* ===== UTILITIES ===== */
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1 1 0%; }
+.min-h-screen { min-height: 100vh; }
+.w-full { width: 100%; }
+.text-center { text-align: center; }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.font-extralight { font-weight: 200; }
+.font-light { font-weight: 300; }
+.font-medium { font-weight: 500; }
+.tracking-tight { letter-spacing: -0.025em; }
+.tracking-wide { letter-spacing: 0.025em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.cursor-pointer { cursor: pointer; }
+.hidden { display: none !important; }
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, monospace;
+}
+
 /* ===== RESPONSIVE ===== */
-@media (min-width: 768px) {
-  .md\:text-7xl {
-    font-size: 4.5rem;
-    line-height: 1;
+@media (max-width: 768px) {
+  .landing-nav,
+  .landing-hero,
+  .landing-section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .landing-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .app-sidebar {
+    display: none;
   }
 }

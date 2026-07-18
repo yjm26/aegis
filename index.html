@@ -3,29 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blobbed — Decentralized File Storage</title>
-  <link rel="stylesheet" href="/style.css?v=3">
+  <title>Blobbed — Your files. Truly yours.</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body class="min-h-screen flex flex-col">
-  <nav class="nav-bar">
-    <div class="logo">Blobbed</div>
-    <button id="connect-wallet" class="btn-primary">Connect Wallet</button>
+<body class="landing-page">
+
+  <!-- NAVBAR -->
+  <nav class="landing-nav">
+    <div class="landing-logo">Blobbed</div>
+    <a href="/pages/drive.html" class="landing-nav-link">Go To App</a>
   </nav>
 
-  <main class="flex-1 flex flex-col items-center justify-center px-4">
-    <h1 class="text-5xl md:text-7xl font-extralight text-center mb-6 tracking-tight">
-      Your files.<br>
-      <span class="text-gradient">Truly yours.</span>
+  <!-- HERO -->
+  <section class="landing-hero">
+    <h1>
+      <span class="line-1">Your files.</span>
+      <span class="line-2">No one else's.</span>
+      <span class="line-3">Truly yours.</span>
     </h1>
-    <p class="text-text-secondary text-lg text-center max-w-xl mb-12 font-light">
-      Encrypted, decentralized, and censorship-resistant file storage on Shelby Protocol.
+    <p class="landing-tagline">
+      Decentralized, encrypted file storage on Shelby Protocol.
+      Censorship-resistant. Ownerless. Forever.
     </p>
-    <div class="drop-zone w-full max-w-2xl cursor-pointer" id="hero-drop-zone">
-      <p class="text-text-muted text-sm mb-2">Drag files here to upload</p>
-      <p class="text-text-muted text-xs">or click to browse</p>
+    <div class="landing-cta">
+      <a href="/pages/drive.html">Enter the App →</a>
     </div>
-  </main>
+  </section>
 
-  <script type="module" src="/scripts/landing.ts"></script>
+  <!-- WHAT IS BLOBBED -->
+  <section class="landing-section">
+    <h2>What is Blobbed</h2>
+    <div class="section-title">Storage without masters.</div>
+    <p>
+      Traditional cloud storage — Google Drive, Dropbox, MEGA — stores your files
+      on centralized servers. They can suspend your account. Inspect your data.
+      Or disappear overnight.
+    </p>
+    <p style="margin-top: 1.5rem;">
+      Blobbed is different. Your files are encrypted in your browser before upload,
+      then stored across a decentralized network of Shelby Protocol nodes.
+      No single entity controls your data. No backdoors. No compromises.
+    </p>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="landing-section">
+    <h2>How it works</h2>
+    <div class="section-title">Three steps. Total control.</div>
+    <p>
+      01. Drop a file. It is instantly encrypted with AES-256-GCM using a key
+      that never leaves your device.
+    </p>
+    <p style="margin-top: 1rem;">
+      02. The encrypted blob is registered on Aptos and stored across
+      Shelby storage providers — decentralized, redundant, always online.
+    </p>
+    <p style="margin-top: 1rem;">
+      03. Share with a link. The recipient downloads directly from Shelby nodes
+      and decrypts in their browser. No servers in between. No trust required.
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <p>Built on Shelby Protocol · Encrypted · Decentralized · Censorship-Resistant</p>
+  </footer>
+
 </body>
 </html>
