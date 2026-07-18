@@ -4,22 +4,46 @@ import Landing from './Landing';
 import PageTransition from './components/PageTransition';
 import BrandLoader from './components/BrandLoader';
 
-const GatePage = lazy(() => import('./pages/GatePage'));
-const DrivePage = lazy(() => import('./pages/DrivePage'));
-const ViewPage = lazy(() => import('./pages/ViewPage'));
-const DownloadPage = lazy(() => import('./pages/DownloadPage'));
-const LegacyPagesRedirect = lazy(() => import('./pages/LegacyPagesRedirect'));
+const lazyRetry = <T extends { default: React.ComponentType<unknown> }>(
+  factory: () => Promise<T>
+) =>
+  lazy(async () => {
+    try {
+      return await factory();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/Failed to fetch dynamically imported module|Loading chunk|Importing a module script failed/i.test(msg)) {
+        try {
+          if (sessionStorage.getItem('blobbed_chunk_reload') !== '1') {
+            sessionStorage.setItem('blobbed_chunk_reload', '1');
+            window.location.reload();
+            // hang until reload
+            return new Promise(() => {}) as Promise<T>;
+          }
+        } catch {
+          window.location.reload();
+          return new Promise(() => {}) as Promise<T>;
+        }
+      }
+      throw err;
+    }
+  });
+
+const GatePage = lazyRetry(() => import('./pages/GatePage'));
+const DrivePage = lazyRetry(() => import('./pages/DrivePage'));
+const ViewPage = lazyRetry(() => import('./pages/ViewPage'));
+const DownloadPage = lazyRetry(() => import('./pages/DownloadPage'));
+const LegacyPagesRedirect = lazyRetry(() => import('./pages/LegacyPagesRedirect'));
 
 function RouteFallback() {
   const loc = useLocation();
-  const label =
-    loc.pathname.startsWith('/drive')
-      ? 'Opening library'
-      : loc.pathname.startsWith('/gate')
-        ? 'Opening gate'
-        : loc.pathname.startsWith('/view')
-          ? 'Opening share'
-          : 'Loading';
+  const label = loc.pathname.startsWith('/drive')
+    ? 'Opening library'
+    : loc.pathname.startsWith('/gate')
+      ? 'Opening gate'
+      : loc.pathname.startsWith('/view')
+        ? 'Opening share'
+        : 'Loading';
   return <BrandLoader label={label} />;
 }
 
@@ -30,9 +54,18 @@ class ErrorBoundary extends React.Component<
   state = { err: null as string | null };
 
   static getDerivedStateFromError(error: unknown) {
-    return {
-      err: error instanceof Error ? error.message : String(error),
-    };
+    const msg = error instanceof Error ? error.message : String(error);
+    if (/Failed to fetch dynamically imported module|Loading chunk/i.test(msg)) {
+      try {
+        if (sessionStorage.getItem('blobbed_chunk_reload') !== '1') {
+          sessionStorage.setItem('blobbed_chunk_reload', '1');
+          window.location.reload();
+        }
+      } catch {
+        window.location.reload();
+      }
+    }
+    return { err: msg };
   }
 
   render() {
@@ -42,10 +75,20 @@ class ErrorBoundary extends React.Component<
           <div className="app-fatal-card">
             <h1 className="app-fatal-title">App failed to load</h1>
             <pre className="app-fatal-pre">{this.state.err}</pre>
+            <p className="app-fatal-hint">
+              Often a stale tab after deploy. Hard refresh (Ctrl+Shift+R) fixes it.
+            </p>
             <button
               type="button"
               className="app-modal-btn app-modal-btn-primary"
-              onClick={() => window.location.assign('/')}
+              onClick={() => {
+                try {
+                  sessionStorage.removeItem('blobbed_chunk_reload');
+                } catch {
+                  /* */
+                }
+                window.location.assign('/');
+              }}
             >
               Reload home
             </button>
