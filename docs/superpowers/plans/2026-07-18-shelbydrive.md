@@ -1,4 +1,4 @@
-# ShelbyDrive Implementation Plan
+# Blobbed Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -415,12 +415,12 @@ git commit -m "feat: add client-side AES-256-GCM encryption"
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShelbyDrive — Decentralized File Storage</title>
+  <title>Blobbed — Decentralized File Storage</title>
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body class="min-h-screen flex flex-col">
   <nav class="flex items-center justify-between px-8 py-6 border-b border-border">
-    <div class="text-xl font-light tracking-wider">ShelbyDrive</div>
+    <div class="text-xl font-light tracking-wider">Blobbed</div>
     <button id="connect-wallet" class="btn-primary">Connect Wallet</button>
   </nav>
 
@@ -590,12 +590,12 @@ git commit -m "feat: add Shelby Protocol client wrapper"
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — ShelbyDrive</title>
+  <title>Dashboard — Blobbed</title>
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body class="min-h-screen flex flex-col">
   <nav class="flex items-center justify-between px-8 py-6 border-b border-border">
-    <div class="text-xl font-light tracking-wider">ShelbyDrive</div>
+    <div class="text-xl font-light tracking-wider">Blobbed</div>
     <div class="flex items-center gap-4">
       <span id="wallet-address" class="text-text-muted text-sm font-mono"></span>
       <button id="disconnect" class="text-text-muted hover:text-text-primary text-sm">Disconnect</button>
@@ -772,12 +772,12 @@ git commit -m "feat: add dashboard page with upload flow"
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Download — ShelbyDrive</title>
+  <title>Download — Blobbed</title>
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center px-4">
   <div class="text-center mb-8">
-    <h1 class="text-3xl font-extralight mb-2">ShelbyDrive</h1>
+    <h1 class="text-3xl font-extralight mb-2">Blobbed</h1>
     <p class="text-text-muted text-sm">Decentralized file download</p>
   </div>
 
