@@ -12,23 +12,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Scroll reveal animations with Intersection Observer
+  // Scroll reveal with stagger
   const observerOptions = {
     root: null,
-    rootMargin: '-50px 0px',
-    threshold: 0.1
+    rootMargin: '-80px 0px',
+    threshold: 0.05
   };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+        const el = entry.target;
+        const siblings = [...el.parentElement.children].filter(c => c.matches('[data-reveal]'));
+        const index = siblings.indexOf(el);
+        const delay = index * 0.1;
+        
+        el.style.transitionDelay = `${delay}s`;
+        el.classList.remove('hidden');
+        
+        observer.unobserve(el);
       }
     });
   }, observerOptions);
 
-  document.querySelectorAll('.scroll-reveal').forEach(el => {
+  // Hide elements initially (but not if already in viewport)
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top > window.innerHeight) {
+      el.classList.add('hidden');
+    }
     observer.observe(el);
   });
 
