@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download — Blobbed</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-extralight mb-2">Blobbed</h1>
+    <p class="text-text-muted text-sm">Decentralized file download</p>
+  </div>
+
+  <div id="download-card" class="card w-full max-w-md">
+    <div id="file-info" class="mb-6 hidden">
+      <div class="text-text-primary text-lg mb-1" id="file-name"></div>
+      <div class="text-text-muted text-sm" id="file-size"></div>
+    </div>
+
+    <button id="download-btn" class="btn-primary w-full">Download File</button>
+    <div id="progress" class="mt-4 hidden">
+      <div class="h-1 bg-surface-raised rounded overflow-hidden">
+        <div id="progress-bar" class="h-full accent-gradient w-0 transition-all"></div>
+      </div>
+      <p class="text-text-muted text-xs mt-2" id="progress-text">Downloading...</p>
+    </div>
+  </div>
+
+  <script type="module" src="/scripts/download.ts"></script>
+</body>
+</html>

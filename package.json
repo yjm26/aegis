@@ -13,13 +13,16 @@
     "@aptos-labs/ts-sdk": "^5.0.0",
     "@aptos-labs/wallet-adapter-react": "^3.7.9",
     "@shelby-protocol/sdk": "^0.2.0",
+    "@types/pg": "^8.20.0",
+    "@vercel/node": "^5.8.26",
+    "pg": "^8.22.0",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
+    "playwright": "^1.49.0",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0",
-    "playwright": "^1.49.0",
-    "@types/node": "^22.0.0"
+    "vitest": "^3.0.0"
   }
 }
