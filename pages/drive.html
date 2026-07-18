@@ -3,45 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Blobbed</title>
-  <link rel="stylesheet" href="/style.css?v=9">
+  <title>Drive — Blobbed</title>
 </head>
 <body class="app-page">
 
-  <nav class="app-nav">
-    <div class="app-logo">Blobbed</div>
-    <div class="app-nav-right">
-      <span id="wallet-address" class="wallet-label"></span>
-      <a href="/" class="app-nav-link">Home</a>
-      <button id="disconnect" class="app-nav-link muted">Disconnect</button>
+  <header class="app-top">
+    <a href="/" class="app-brand">BLOBBED</a>
+    <div class="app-top-right">
+      <span id="wallet-address" class="wallet-chip" title="Connected wallet"></span>
+      <a href="/" class="app-link">Home</a>
+      <button type="button" id="disconnect" class="app-link app-link-muted">Disconnect</button>
     </div>
-  </nav>
+  </header>
 
-  <main class="app-main">
-    <aside class="app-sidebar">
-      <button id="upload-btn" class="upload-btn">+ New Upload</button>
-      <div class="sidebar-menu">
-        <div class="sidebar-label">My Files</div>
-        <div class="sidebar-item active">All Files</div>
-        <div class="sidebar-item">Shared</div>
-      </div>
+  <main class="app-shell">
+    <aside class="app-rail">
+      <button type="button" id="upload-btn" class="app-upload-cta">New upload</button>
+      <nav class="app-rail-nav" aria-label="Library">
+        <p class="app-rail-label">Library</p>
+        <button type="button" class="app-rail-item is-active" data-filter="all">All files</button>
+        <button type="button" class="app-rail-item" data-filter="shared" disabled title="Soon">Shared</button>
+      </nav>
+      <p class="app-rail-foot">Encrypted client-side<br>Stored on Shelby</p>
     </aside>
 
-    <section class="app-content">
-      <div id="drop-zone" class="drop-zone hidden">
-        <p>Drop files here</p>
+    <section class="app-stage">
+      <div class="app-stage-head">
+        <div>
+          <h1 class="app-stage-title">Files</h1>
+          <p class="app-stage-sub" id="file-count">Your encrypted library</p>
+        </div>
+        <button type="button" id="upload-btn-secondary" class="app-btn-ghost">Upload</button>
       </div>
 
-      <div id="file-list" class="file-list"></div>
-
-      <div id="empty-state" class="empty-state">
-        <p>No files yet</p>
-        <p class="empty-hint">Upload your first file</p>
+      <div id="drop-zone" class="app-drop" tabindex="0" role="button" aria-label="Drop files to upload">
+        <span class="app-drop-title">Drop files here</span>
+        <span class="app-drop-hint">or click to browse · AES-256 before upload</span>
       </div>
+
+      <div id="file-list" class="app-file-list hidden"></div>
+
+      <div id="empty-state" class="app-empty">
+        <p class="app-empty-title">No files yet</p>
+        <p class="app-empty-hint">Upload something. Only you hold the key.</p>
+      </div>
+
+      <div id="upload-status" class="app-status hidden" role="status"></div>
     </section>
   </main>
 
-  <input type="file" id="file-input" class="hidden">
+  <input type="file" id="file-input" class="hidden" multiple>
+
   <script type="module" src="/scripts/dashboard.ts"></script>
 </body>
 </html>
