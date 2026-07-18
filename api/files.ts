@@ -1,60 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import {
-  dbStatus,
-  deleteFile,
-  insertFile,
-  listFilesDb,
-} from './lib/db.js';
+import { dbStatus, listFilesDb } from './lib/db.js';
 
 /**
- * Metadata only — never stores file bytes.
- * Backed by Neon when DATABASE_URL is set; else in-memory fallback.
+ * Legacy files API — READ only.
+ * Mutations must go through authenticated POST /api/library.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
 
   try {
-    if (req.method === 'POST') {
-      const {
-        id,
-        ownerAddress,
-        storageAccount,
-        blobName,
-        blobHash,
-        originalName,
-        sizeBytes,
-        mimeType,
-        encryptedKey,
-        folderId,
-        createdAt,
-        expiresAt,
-      } = req.body || {};
-
-      const name = blobName || blobHash;
-      if (!ownerAddress || !name || !originalName) {
-        return res
-          .status(400)
-          .json({ error: 'Missing fields: ownerAddress, blobName, originalName' });
-      }
-
-      const file = await insertFile({
-        id: id || crypto.randomUUID(),
-        ownerAddress,
-        storageAccount: storageAccount || ownerAddress,
-        blobName: name,
-        shelbyHash: blobHash || name,
-        originalName,
-        sizeBytes: sizeBytes ?? 0,
-        mimeType: mimeType || 'application/octet-stream',
-        encryptedKey: encryptedKey || '',
-        folderId: folderId ?? null,
-        createdAt: createdAt || new Date().toISOString(),
-        expiresAt,
-      });
-
-      return res.status(201).json({ ...file, blobHash: file.blobName, ...dbStatus() });
-    }
-
     if (req.method === 'GET') {
       const { owner, folderId } = req.query;
       if (!owner || typeof owner !== 'string') {
@@ -66,21 +20,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           folderId === '' || folderId === 'root' ? null : folderId;
       }
       const list = await listFilesDb(owner, folderFilter);
-      return res.status(200).json(list);
+      // Never echo plain data-URL thumbs
+      const safe = list.map((f) => ({
+        ...f,
+        thumbDataUrl:
+          f.thumbDataUrl && f.thumbDataUrl.startsWith('bt1.')
+            ? f.thumbDataUrl
+            : undefined,
+        // Do not expose encryptedKey on legacy public list — empty string
+        encryptedKey: f.encryptedKey?.startsWith('bw1.')
+          ? f.encryptedKey
+          : f.encryptedKey
+            ? '[redacted-use-library-api]'
+            : '',
+      }));
+      return res.status(200).json(safe);
     }
 
-    if (req.method === 'DELETE') {
-      const id = req.query.id;
-      const owner = req.query.owner;
-      if (!id || typeof id !== 'string') {
-        return res.status(400).json({ error: 'Missing id' });
-      }
-      if (!owner || typeof owner !== 'string') {
-        return res.status(400).json({ error: 'Missing owner' });
-      }
-      const ok = await deleteFile(owner, id);
-      if (!ok) return res.status(404).json({ error: 'File not found' });
-      return res.status(200).json({ success: true, ...dbStatus() });
+    if (
+      req.method === 'POST' ||
+      req.method === 'PUT' ||
+      req.method === 'PATCH' ||
+      req.method === 'DELETE'
+    ) {
+      return res.status(410).json({
+        error: 'Legacy files mutations disabled',
+        code: 'USE_LIBRARY_API',
+        hint: 'Use authenticated POST /api/library (session or owner auth).',
+        ...dbStatus(),
+      });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

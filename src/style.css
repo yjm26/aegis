@@ -2715,3 +2715,51 @@ html, body {
     height: 2.1rem;
   }
 }
+
+/* Prod checks in rail */
+.app-rail-foot {
+  margin-top: auto;
+  padding-top: 1rem;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: rgba(180, 175, 165, 0.5);
+}
+.app-rail-foot p {
+  margin: 0 0 0.45rem;
+}
+.app-rail-foot-muted {
+  opacity: 0.75;
+  margin: 0.25rem 0 0 !important;
+}
+.app-rail-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.62rem;
+  word-break: break-all;
+}
+.prod-checks {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+.prod-checks li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.prod-checks li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a6a3a;
+  flex-shrink: 0;
+}
+.prod-checks li[data-ok='1']::before {
+  background: #6a9a72;
+  box-shadow: 0 0 6px rgba(80, 160, 100, 0.35);
+}
+.prod-checks li[data-ok='0']::before {
+  background: #c07070;
+}

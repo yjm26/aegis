@@ -105,6 +105,12 @@ export default function DrivePage() {
   const pumpQueueRef = useRef<(() => Promise<void>) | null>(null);
   const [shareSheet, setShareSheet] = useState<ShareSheetState | null>(null);
   const [lightboxAlbum, setLightboxAlbum] = useState<string[]>([]);
+  const [prodStatus, setProdStatus] = useState<{
+    ready?: boolean;
+    db?: { backend?: string };
+    shelby?: { configured?: boolean; network?: string; serviceAddress?: string | null };
+    checks?: Record<string, boolean>;
+  } | null>(null);
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
 
@@ -182,6 +188,12 @@ export default function DrivePage() {
       }
       setReady(true);
       refresh();
+      try {
+        const st = await fetch('/api/status', { cache: 'no-store' }).then((r) => r.json());
+        if (!cancelled && st && st.ok) setProdStatus(st);
+      } catch {
+        /* ignore */
+      }
     })().catch(() => nav('/gate', { replace: true }));
     return () => {
       cancelled = true;
@@ -850,11 +862,39 @@ export default function DrivePage() {
               ))}
             </div>
           </nav>
-          <p className="app-rail-foot">
-            Ciphertext → Shelby. Meta → {backend === 'neon' ? 'Neon' : backend}.
-            <br />
-            DEKs wallet-wrapped. Share keys only in #fragment.
-          </p>
+          <div className="app-rail-foot">
+            <p>
+              Ciphertext → Shelby · meta →{' '}
+              {backend === 'neon' ? 'Neon' : backend}
+            </p>
+            {prodStatus ? (
+              <ul className="prod-checks" aria-label="Production checks">
+                <li data-ok={prodStatus.checks?.neon ? '1' : '0'}>
+                  Neon {prodStatus.checks?.neon ? 'ok' : 'missing'}
+                </li>
+                <li data-ok={prodStatus.checks?.shelbyKey ? '1' : '0'}>
+                  Shelby key {prodStatus.checks?.shelbyKey ? 'ok' : 'missing'}
+                </li>
+                <li data-ok={prodStatus.checks?.shelbynet ? '1' : '0'}>
+                  Network {prodStatus.shelby?.network || '—'}
+                </li>
+                <li data-ok={prodStatus.ready ? '1' : '0'}>
+                  Ready {prodStatus.ready ? 'yes' : 'no'}
+                </li>
+              </ul>
+            ) : (
+              <p className="app-rail-foot-muted">Checking /api/status…</p>
+            )}
+            {prodStatus?.shelby?.serviceAddress ? (
+              <p
+                className="app-rail-foot-muted app-rail-mono"
+                title="Fund ShelbyUSD + APT on shelbynet"
+              >
+                svc {prodStatus.shelby.serviceAddress.slice(0, 6)}…
+                {prodStatus.shelby.serviceAddress.slice(-4)}
+              </p>
+            ) : null}
+          </div>
         </aside>
 
         <section className="app-stage app-reveal app-reveal-3">

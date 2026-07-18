@@ -1,17 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import {
-  createFolder,
-  dbStatus,
-  deleteFolder,
-  getLibrary,
-  renameFolder,
-} from './lib/db.js';
+import { dbStatus, getLibrary } from './lib/db.js';
 
 /**
- * GET    /api/folders?owner=0x…
- * POST   /api/folders  { ownerAddress, name, id? }
- * PATCH  /api/folders  { ownerAddress, folderId, name }
- * DELETE /api/folders?owner=0x…&id=uuid
+ * Legacy folders API — READ only.
+ * Mutations must go through authenticated POST /api/library.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
@@ -26,34 +18,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ folders: lib.folders, ...dbStatus() });
     }
 
-    if (req.method === 'POST') {
-      const { ownerAddress, name, id } = req.body || {};
-      if (!ownerAddress) {
-        return res.status(400).json({ error: 'Missing ownerAddress' });
-      }
-      const folder = await createFolder(ownerAddress, name || 'Album', id);
-      return res.status(201).json({ folder, ...dbStatus() });
-    }
-
-    if (req.method === 'PATCH' || req.method === 'PUT') {
-      const { ownerAddress, folderId, name } = req.body || {};
-      if (!ownerAddress || !folderId || !name) {
-        return res.status(400).json({ error: 'Missing ownerAddress, folderId, or name' });
-      }
-      const ok = await renameFolder(ownerAddress, folderId, name);
-      if (!ok) return res.status(404).json({ error: 'Folder not found' });
-      return res.status(200).json({ success: true, ...dbStatus() });
-    }
-
-    if (req.method === 'DELETE') {
-      const owner = req.query.owner;
-      const id = req.query.id;
-      if (!owner || typeof owner !== 'string' || !id || typeof id !== 'string') {
-        return res.status(400).json({ error: 'Missing owner or id' });
-      }
-      const ok = await deleteFolder(owner, id);
-      if (!ok) return res.status(404).json({ error: 'Folder not found' });
-      return res.status(200).json({ success: true, ...dbStatus() });
+    if (
+      req.method === 'POST' ||
+      req.method === 'PUT' ||
+      req.method === 'PATCH' ||
+      req.method === 'DELETE'
+    ) {
+      return res.status(410).json({
+        error: 'Legacy folders mutations disabled',
+        code: 'USE_LIBRARY_API',
+        hint: 'Use authenticated POST /api/library (session or owner auth).',
+        ...dbStatus(),
+      });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
