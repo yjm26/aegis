@@ -113,7 +113,7 @@ export default function Landing() {
               <h3>Store</h3>
               <p>
                 Ciphertext is uploaded via a service wallet on shelbynet (MVP
-                relay). Your wallet is identity. you sign to wrap keys, not to
+                relay). Your wallet is identity: you sign to wrap keys, not to
                 pay gas yet.
               </p>
             </div>
@@ -141,7 +141,7 @@ export default function Landing() {
             <summary>Can you read my files?</summary>
             <p>
               We never receive plaintext. After wallet wrap, we also should not
-              hold raw DEKs. only wrapped key material plus names/pointers.
+              hold raw DEKs, only wrapped key material plus names/pointers.
               Share links are a different path: whoever has the link can decrypt
               that object. Thumbs you generate are small client-side previews
               stored as data URLs in meta.
@@ -152,7 +152,7 @@ export default function Landing() {
             <p>
               Ciphertext stays on Shelby. Share links still work from any client
               that speaks the same fragment format. Your library index needs the
-              meta store (Neon) or a local export. not only the marketing site.
+              meta store (Neon) or a local export, not only the marketing site.
             </p>
           </details>
           <details className="faq-row">
