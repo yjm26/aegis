@@ -5,3 +5,4 @@ document.getElementById('connect-wallet')?.addEventListener('click', () => {
 document.getElementById('hero-drop-zone')?.addEventListener('click', () => {
   window.location.href = '/pages/drive.html';
 });
+// cache bust 1784392644
