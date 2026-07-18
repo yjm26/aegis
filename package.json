@@ -6,8 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "vitest run tests/crypto.test.ts tests/key-wrap.test.ts",
+    "test:watch": "vitest tests/crypto.test.ts tests/key-wrap.test.ts",
+    "test:e2e": "playwright test",
     "wallet:service": "node scripts/generate-service-wallet.mjs"
   },
   "dependencies": {

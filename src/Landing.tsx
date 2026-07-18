@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PaperShader from './components/PaperShader';
+import TrustPanel from './components/TrustPanel';
 
 export default function Landing() {
   return (
@@ -8,11 +9,12 @@ export default function Landing() {
       <nav className="landing-nav">
         <div className="nav-inner">
           <div className="landing-logo">BLOBBED</div>
-          <Link to="/gate" className="nav-cta">GO TO APP</Link>
+          <Link to="/gate" className="nav-cta">
+            GO TO APP
+          </Link>
         </div>
       </nav>
 
-      {/* HERO */}
       <section className="landing-hero">
         <div className="hero-shader">
           <PaperShader />
@@ -20,31 +22,35 @@ export default function Landing() {
         <div className="hero-content">
           <h1 className="hero-title">
             <span className="line">Your files.</span>
-            <span className="line dim">No one else's.</span>
-            <span className="line">Truly yours.</span>
+            <span className="line dim">Encrypted first.</span>
+            <span className="line">On Shelby.</span>
           </h1>
           <p className="hero-desc">
-            Decentralized, encrypted file storage on Shelby Protocol.
+            Client-side AES drive on Shelby Protocol. Ciphertext on the network;
+            keys wrapped by your wallet.
           </p>
           <div className="hero-cta">
-            <Link to="/gate" className="cta-primary">Enter the App</Link>
-            <a href="#principles" className="cta-secondary">Read more</a>
+            <Link to="/gate" className="cta-primary">
+              Enter the App
+            </Link>
+            <a href="#principles" className="cta-secondary">
+              Read more
+            </a>
           </div>
         </div>
       </section>
 
-      {/* INTRO — editorial lede */}
       <section className="band intro-band">
         <p className="eyebrow">Why it exists</p>
         <p className="lede">
-          Most “cloud storage” is someone else’s computer with a password on top.
-          Blobbed encrypts in the browser first. Ciphertext goes to Shelby nodes;
-          the key never leaves your device unless you put it in a share link.
-          The site is a window — not the vault.
+          Most “cloud storage” is someone else’s disk with a password on top.
+          Blobbed encrypts in the browser first. Ciphertext goes to Shelby nodes.
+          File keys are wrapped with a key derived from your wallet signature
+          before library meta hits the server. Share links keep the raw key in the
+          URL fragment — never as a query string to our API.
         </p>
       </section>
 
-      {/* PRINCIPLES — Topology-style figures */}
       <section className="band" id="principles">
         <header className="band-head">
           <span className="idx">01</span>
@@ -56,41 +62,35 @@ export default function Landing() {
             <h3>Encrypt first</h3>
             <p>
               AES-256-GCM runs in the browser before anything hits the network.
-              Ciphertext travels. The key does not.
+              Shelby only ever sees ciphertext.
             </p>
-            <blockquote>
-              The lock and the key should never meet outside your device.
-            </blockquote>
+            <blockquote>Plaintext never leaves the tab for storage.</blockquote>
             <figcaption>Client-side · AES-256-GCM</figcaption>
           </figure>
 
           <figure className="principle">
-            <h3>Own your keys</h3>
+            <h3>Wrap keys</h3>
             <p>
-              No password resets. No recovery email. The key lives in the share
-              link you create. Lose the link, lose the file. That’s the trade.
+              Each file DEK is wrapped with a vault key from your wallet{' '}
+              <code>signMessage</code>. Neon may hold names and wrapped blobs —
+              not raw DEKs after unlock+migrate.
             </p>
-            <blockquote>
-              With real privacy comes real responsibility.
-            </blockquote>
-            <figcaption>MEGA-style fragment keys</figcaption>
+            <blockquote>Library sync without raw keys at rest.</blockquote>
+            <figcaption>Wallet-derived vault · bw1 wrap</figcaption>
           </figure>
 
           <figure className="principle">
-            <h3>Outlive the site</h3>
+            <h3>Capability shares</h3>
             <p>
-              Blob metadata sits on Aptos. Bytes live on Shelby storage nodes.
-              This frontend can go dark — the data and the link still work.
+              Share links put account + blob + key in the URL fragment. Lose the
+              link, lose access. No server “shared with you” inbox by default.
             </p>
-            <blockquote>
-              Build for the network, not the company.
-            </blockquote>
-            <figcaption>Aptos · Shelby Protocol</figcaption>
+            <blockquote>With real privacy comes real responsibility.</blockquote>
+            <figcaption>MEGA-style fragment keys</figcaption>
           </figure>
         </div>
       </section>
 
-      {/* PROCESS — numbered list, not cards */}
       <section className="band" id="flow">
         <header className="band-head">
           <span className="idx">02</span>
@@ -103,9 +103,8 @@ export default function Landing() {
             <div className="process-body">
               <h3>Drop</h3>
               <p>
-                Choose a file. The browser generates a random 256-bit key and
-                encrypts the payload in place. You never see the key — it’s
-                bound to the share fragment later.
+                Browser generates a random 256-bit key, encrypts the file, and
+                optionally chunks large/video payloads.
               </p>
             </div>
           </li>
@@ -114,9 +113,9 @@ export default function Landing() {
             <div className="process-body">
               <h3>Store</h3>
               <p>
-                The encrypted blob is registered on-chain and distributed across
-                Shelby nodes. No central disk. Upload needs a wallet; a tiny
-                Aptos fee covers the registration.
+                Ciphertext is uploaded via a service wallet on shelbynet (MVP
+                relay). Your wallet is identity — you sign to wrap keys, not to
+                pay gas yet.
               </p>
             </div>
           </li>
@@ -125,66 +124,74 @@ export default function Landing() {
             <div className="process-body">
               <h3>Share</h3>
               <p>
-                Copy the link. Hash plus decryption key sit in the URL fragment
-                — never sent to our servers. Anyone with the link can download.
-                No wallet required to read.
+                Copy the link. Raw DEK sits in <code>#fragment</code> only.
+                Anyone with the link can decrypt in-browser. No wallet to read.
               </p>
             </div>
           </li>
         </ol>
       </section>
 
-      {/* DETAILS — hairline FAQ */}
       <section className="band" id="details">
         <header className="band-head">
           <span className="idx">03</span>
           <h2 className="band-title">Details</h2>
         </header>
 
-        <div className="faq-list">
+        <TrustPanel context="landing" />
+
+        <div className="faq-list" style={{ marginTop: '1.5rem' }}>
           <details className="faq-row">
             <summary>Can you read my files?</summary>
             <p>
-              No. Encryption is client-side before upload. We never receive the
-              key or the plaintext.
+              We never receive plaintext. After wallet wrap, we also should not
+              hold raw DEKs — only wrapped key material plus names/pointers.
+              Share links are a different path: whoever has the link can decrypt
+              that object. Thumbs you generate are small client-side previews
+              stored as data URLs in meta.
             </p>
           </details>
           <details className="faq-row">
             <summary>What if this site goes down?</summary>
             <p>
-              Files live on Shelby nodes and Aptos. Anyone with the original
-              link can still fetch and decrypt — no dependency on this UI.
+              Ciphertext stays on Shelby. Share links still work from any client
+              that speaks the same fragment format. Your library index needs the
+              meta store (Neon) or a local export — not only the marketing site.
             </p>
           </details>
           <details className="faq-row">
-            <summary>Why a wallet to upload?</summary>
+            <summary>Why a wallet?</summary>
             <p>
-              Registering a blob is an on-chain transaction. It costs a small
-              amount of APT. Download stays free and anonymous.
+              Identity for your library, and a signature to derive the vault key
+              that wraps file keys. Download/share open stays free and anonymous.
+              Upload gas is sponsored by a service wallet on testnet/shelbynet for
+              now.
             </p>
           </details>
           <details className="faq-row">
             <summary>File size limit?</summary>
             <p>
-              Around 100MB per file on the MVP. Shelby supports larger payloads;
-              limits rise as the network grows.
+              Encrypted payload capped by the upload API (default ~10MB JSON
+              body). Chunked container format is ready; limits rise with the
+              gateway.
             </p>
           </details>
         </div>
       </section>
 
-      {/* CLOSE */}
       <section className="band close-band">
         <h2 className="close-title">
           Your files.
           <br />
-          Truly yours.
+          Encrypted first.
         </h2>
-        <Link to="/gate" className="cta-primary">Enter the App</Link>
+        <Link to="/gate" className="cta-primary">
+          Enter the App
+        </Link>
       </section>
 
       <footer className="landing-footer">
-        <span>Built on Shelby Protocol</span>
+        <span>Built on Shelby Protocol · not a security audit</span>
       </footer>
     </div>
   );

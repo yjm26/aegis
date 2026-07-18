@@ -1,6 +1,6 @@
 -- Blobbed durable metadata (Neon / Postgres)
--- Blob ciphertext stays on Shelby; this DB is index + keys for the owner library.
--- Note: encrypted_key at rest is MVP risk — later wrap with wallet-derived key.
+-- Blob ciphertext stays on Shelby; this DB is index + wrapped keys for the owner library.
+-- encrypted_key: prefer wallet-wrapped `bw1.…` (see scripts/key-wrap.ts). Legacy plain base64 may exist until migrate.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 

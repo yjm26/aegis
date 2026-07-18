@@ -5,7 +5,10 @@ import type {
   FileSharePayload,
   SharePayload,
   ShareFileItem,
+  WalletAccount,
 } from './types';
+import { resolveRawKeyBase64 } from './vault';
+import { isWrappedKey } from './key-wrap';
 
 function bytesToBase64Url(bytes: Uint8Array): string {
   let bin = '';
@@ -30,7 +33,16 @@ function base64UrlToUtf8(s: string): string {
   return new TextDecoder().decode(base64UrlToBytes(s));
 }
 
+/**
+ * Sync helper — only safe when encryptedKey is already a raw DEK (legacy plain
+ * or pre-resolved). Prefer fileToShareItemAsync for owner library files.
+ */
 export function fileToShareItem(f: FileMetadata): ShareFileItem {
+  if (isWrappedKey(f.encryptedKey || '')) {
+    throw new Error(
+      'File key is wallet-wrapped — use fileToShareItemAsync after vault unlock'
+    );
+  }
   return {
     a: f.storageAccount,
     n: f.blobName || f.shelbyHash,
@@ -41,23 +53,48 @@ export function fileToShareItem(f: FileMetadata): ShareFileItem {
   };
 }
 
-export function buildFolderSharePayload(
+/** Resolve vault-wrapped DEK → raw key for share fragment / decrypt */
+export async function fileToShareItemAsync(
+  f: FileMetadata,
+  wallet?: WalletAccount | null
+): Promise<ShareFileItem> {
+  const k = await resolveRawKeyBase64(f.encryptedKey || '', wallet);
+  return {
+    a: f.storageAccount,
+    n: f.blobName || f.shelbyHash,
+    k,
+    name: f.originalName,
+    mime: f.mimeType || 'application/octet-stream',
+    size: f.sizeBytes || 0,
+  };
+}
+
+export async function buildFolderSharePayload(
   folder: FolderMetadata,
-  files: FileMetadata[]
-): FolderSharePayload {
+  files: FileMetadata[],
+  wallet?: WalletAccount | null
+): Promise<FolderSharePayload> {
+  const items: ShareFileItem[] = [];
+  for (const f of files) {
+    items.push(await fileToShareItemAsync(f, wallet));
+  }
   return {
     v: 1,
     type: 'folder',
     name: folder.name,
-    files: files.map(fileToShareItem),
+    files: items,
   };
 }
 
-export function buildFileSharePayload(f: FileMetadata): FileSharePayload {
+export async function buildFileSharePayload(
+  f: FileMetadata,
+  wallet?: WalletAccount | null
+): Promise<FileSharePayload> {
+  const item = await fileToShareItemAsync(f, wallet);
   return {
     v: 1,
     type: 'file',
-    ...fileToShareItem(f),
+    ...item,
   };
 }
 
@@ -127,11 +164,12 @@ export function parseShareFragment(hash: string): SharePayload | null {
   return null;
 }
 
-export function generateFolderShareLink(
+export async function generateFolderShareLink(
   folder: FolderMetadata,
-  files: FileMetadata[]
-): string {
-  const payload = buildFolderSharePayload(folder, files);
+  files: FileMetadata[],
+  wallet?: WalletAccount | null
+): Promise<string> {
+  const payload = await buildFolderSharePayload(folder, files, wallet);
   const frag = encodeSharePayload(payload);
   if (frag.length > 12000) {
     throw new Error(
@@ -141,8 +179,11 @@ export function generateFolderShareLink(
   return `${window.location.origin}/view#${frag}`;
 }
 
-export function generateFileShareLink(file: FileMetadata): string {
-  const payload = buildFileSharePayload(file);
+export async function generateFileShareLink(
+  file: FileMetadata,
+  wallet?: WalletAccount | null
+): Promise<string> {
+  const payload = await buildFileSharePayload(file, wallet);
   const frag = encodeSharePayload(payload);
   return `${window.location.origin}/view#${frag}`;
 }

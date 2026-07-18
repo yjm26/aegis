@@ -18,8 +18,9 @@ import {
 import {
   generateFileShareLink,
   generateFolderShareLink,
-  fileToShareItem,
+  fileToShareItemAsync,
 } from './share';
+import { ensureVaultUnlocked, migratePlainKeys, clearVaultSession } from './vault';
 import {
   previewObjectUrl,
   isImageMime,
@@ -63,6 +64,12 @@ async function init() {
 
   setStatus('Syncing library…', 'info');
   await hydrateLibrary(wallet.address);
+  try {
+    await ensureVaultUnlocked(wallet);
+    await migratePlainKeys(wallet);
+  } catch (e) {
+    console.warn('Vault unlock skipped', e);
+  }
   const backend = getLibraryBackend();
   setStatus(
     backend === 'neon'
@@ -240,7 +247,7 @@ async function loadThumb(f: FileMetadata) {
     return;
   }
   try {
-    const url = await previewObjectUrl(fileToShareItem(f));
+    const url = await previewObjectUrl(await fileToShareItemAsync(f, wallet));
     thumbUrls.set(f.id, url);
     slot.innerHTML = `<img src="${url}" alt="" />`;
   } catch {
@@ -307,7 +314,7 @@ function wireUi() {
       return;
     }
     try {
-      const link = generateFolderShareLink(folder, files);
+      const link = await generateFolderShareLink(folder, files, wallet);
       await navigator.clipboard.writeText(link);
       setStatus('Folder share link copied', 'ok');
     } catch (err: unknown) {
@@ -328,7 +335,7 @@ function wireUi() {
       const file = findFile(t.dataset.id);
       if (!file) return;
       try {
-        const link = generateFileShareLink(file);
+        const link = await generateFileShareLink(file, wallet);
         await navigator.clipboard.writeText(link);
         setStatus('Share link copied', 'ok');
       } catch {
@@ -349,7 +356,7 @@ function wireUi() {
       if (!file) return;
       try {
         setStatus('Loading preview…', 'info');
-        const url = await previewObjectUrl(fileToShareItem(file));
+        const url = await previewObjectUrl(await fileToShareItemAsync(file, wallet));
         thumbUrls.set(file.id, url);
         const w = window.open('', '_blank');
         if (w) {

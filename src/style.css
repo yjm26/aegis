@@ -2215,3 +2215,129 @@ html, body {
     transform: none;
   }
 }
+
+/* ——— Trust / vault (Security sprint) ——— */
+.trust-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0.45rem 1.25rem 0.15rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: rgba(220, 220, 230, 0.55);
+}
+.trust-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #8a6a3a;
+  box-shadow: 0 0 8px rgba(180, 120, 40, 0.35);
+}
+.trust-dot.is-ok {
+  background: #6a9a72;
+  box-shadow: 0 0 8px rgba(80, 160, 100, 0.4);
+}
+.trust-dot.is-warn {
+  background: #c4a060;
+}
+.trust-action {
+  margin-left: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d8d0c4;
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.trust-action:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+.trust-panel {
+  max-width: 520px;
+  margin: 1.1rem auto 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(12, 12, 16, 0.55);
+  text-align: left;
+  color: rgba(220, 220, 230, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.trust-panel--drive.trust-panel--expanded,
+.trust-panel--drive:not(.trust-strip) {
+  max-width: 1120px;
+  margin: 0.5rem auto 0.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+.trust-panel--gate {
+  margin-top: 1.4rem;
+  max-width: 360px;
+}
+.trust-panel--share {
+  max-width: 1120px;
+  margin: 0.35rem auto 0;
+  padding: 0.55rem 1.25rem;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+.trust-panel--landing {
+  max-width: 640px;
+  margin: 0;
+}
+.trust-lead {
+  margin: 0 0 0.45rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(200, 190, 170, 0.7);
+}
+.trust-list {
+  margin: 0;
+  padding-left: 1.05rem;
+}
+.trust-list li {
+  margin-bottom: 0.35rem;
+}
+.trust-list code {
+  font-size: 0.85em;
+  color: #c8b8a0;
+}
+.trust-banner {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(200, 195, 185, 0.55);
+  letter-spacing: 0.01em;
+}
+.vault-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(230, 220, 200, 0.85);
+  font-size: 0.68rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.vault-chip.is-ok {
+  border-color: rgba(100, 160, 110, 0.35);
+  color: #b8d4b8;
+}
+.vault-chip.is-warn {
+  border-color: rgba(200, 150, 60, 0.4);
+  color: #e0c090;
+}
+.vault-chip:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.gate-center .trust-panel {
+  animation: status-in 0.35s ease both;
+}

@@ -21,7 +21,7 @@ import {
 import {
   generateFileShareLink,
   generateFolderShareLink,
-  fileToShareItem,
+  fileToShareItemAsync,
 } from '../../scripts/share';
 import {
   previewObjectUrl,
@@ -29,10 +29,18 @@ import {
   isVideoMime,
 } from '../../scripts/preview';
 import type { FileMetadata, FolderMetadata } from '../../scripts/types';
+import {
+  ensureVaultUnlocked,
+  migratePlainKeys,
+  countKeyEncodings,
+  isVaultUnlocked,
+  clearVaultSession,
+} from '../../scripts/vault';
 import BrandLoader from '../components/BrandLoader';
 import MediaLightbox, {
   type MediaLightboxState,
 } from '../components/MediaLightbox';
+import TrustPanel from '../components/TrustPanel';
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
@@ -68,6 +76,9 @@ export default function DrivePage() {
   const [, setThumbTick] = useState(0);
   const [lightbox, setLightbox] = useState<MediaLightboxState | null>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const [vaultOk, setVaultOk] = useState(false);
+  const [keyStats, setKeyStats] = useState({ plain: 0, wrapped: 0 });
+  const [showTrust, setShowTrust] = useState(false);
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
 
@@ -89,10 +100,45 @@ export default function DrivePage() {
       setStatus({ msg: 'Syncing library…', kind: 'info' });
       await hydrateLibrary(w.address);
       if (cancelled) return;
+
+      // Unlock vault (one wallet signature per tab session)
+      try {
+        setStatus({ msg: 'Unlock keys — check wallet…', kind: 'info' });
+        await ensureVaultUnlocked(w);
+        if (cancelled) return;
+        setVaultOk(true);
+        const mig = await migratePlainKeys(w);
+        if (mig.migrated > 0) {
+          setStatus({
+            msg: `Wrapped ${mig.migrated} legacy key${mig.migrated === 1 ? '' : 's'} with wallet`,
+            kind: 'ok',
+          });
+        }
+      } catch (err) {
+        setVaultOk(false);
+        setStatus({
+          msg:
+            'Vault locked: ' +
+            (err instanceof Error ? err.message : 'sign rejected') +
+            ' — preview/share/upload need a signature',
+          kind: 'err',
+        });
+      }
+
+      if (cancelled) return;
       const backend = getLibraryBackend();
+      const stats = countKeyEncodings(listAllFiles(w.address));
+      setKeyStats(stats);
       if (backend === 'neon') {
-        setStatus({ msg: 'Library synced (Neon)', kind: 'ok' });
-        setTimeout(() => setStatus(null), 2200);
+        setStatus((s) =>
+          s?.kind === 'err'
+            ? s
+            : {
+                msg: `Library synced (Neon) · keys ${stats.wrapped} wrapped${stats.plain ? ` · ${stats.plain} legacy` : ''}`,
+                kind: 'ok',
+              }
+        );
+        setTimeout(() => setStatus((s) => (s?.kind === 'ok' ? null : s)), 2800);
       } else if (backend === 'memory') {
         setStatus({
           msg: 'Library on server memory — set DATABASE_URL for durable DB',
@@ -148,7 +194,7 @@ export default function DrivePage() {
   const currentFolder = folderId && owner ? getFolder(owner, folderId) : undefined;
 
   useEffect(() => {
-    if (!owner) return;
+    if (!owner || !wallet) return;
     // Seed thumbs from stored data URLs (Phase C) — instant, no decrypt
     for (const f of files) {
       if (f.thumbDataUrl && !thumbs.current.has(f.id)) {
@@ -156,6 +202,7 @@ export default function DrivePage() {
       }
     }
     setThumbTick((t) => t + 1);
+    setKeyStats(countKeyEncodings(listAllFiles(owner)));
 
     // Lazy: only decrypt full preview for images missing thumbs (legacy files)
     let cancelled = false;
@@ -165,7 +212,8 @@ export default function DrivePage() {
         if (!isImageMime(f.mimeType, f.originalName)) continue;
         if (thumbs.current.has(f.id)) continue;
         try {
-          const url = await previewObjectUrl(fileToShareItem(f));
+          const item = await fileToShareItemAsync(f, wallet);
+          const url = await previewObjectUrl(item);
           if (cancelled) return;
           thumbs.current.set(f.id, url);
           setThumbTick((t) => t + 1);
@@ -177,13 +225,18 @@ export default function DrivePage() {
     return () => {
       cancelled = true;
     };
-  }, [files, owner, tick]);
+  }, [files, owner, wallet, tick]);
 
   async function handleFiles(list: FileList | File[]) {
     if (!wallet) return;
     const arr = Array.from(list);
     if (!arr.length) return;
     try {
+      if (!isVaultUnlocked(wallet.address)) {
+        setStatus({ msg: 'Unlock keys — check wallet…', kind: 'info' });
+        await ensureVaultUnlocked(wallet);
+        setVaultOk(true);
+      }
       await uploadFiles(arr, wallet, folderId, (name, i, total, phase) => {
         setStatus({
           msg: `${phase || 'Uploading'} ${i + 1}/${total}: ${name}`,
@@ -194,6 +247,7 @@ export default function DrivePage() {
         msg: `Uploaded ${arr.length} file${arr.length === 1 ? '' : 's'}`,
         kind: 'ok',
       });
+      setKeyStats(countKeyEncodings(listAllFiles(wallet.address)));
       refresh();
     } catch (err) {
       setStatus({
@@ -229,7 +283,7 @@ export default function DrivePage() {
   }
 
   async function onShareFolder() {
-    if (!owner || !folderId) return;
+    if (!owner || !folderId || !wallet) return;
     const folder = getFolder(owner, folderId);
     if (!folder) return;
     const fl = listFiles(owner, folderId);
@@ -238,9 +292,12 @@ export default function DrivePage() {
       return;
     }
     try {
-      const link = generateFolderShareLink(folder, fl);
+      const link = await generateFolderShareLink(folder, fl, wallet);
       await navigator.clipboard.writeText(link);
-      setStatus({ msg: 'Folder share link copied', kind: 'ok' });
+      setStatus({
+        msg: 'Folder share copied · key in link only (lose link = lose access)',
+        kind: 'ok',
+      });
     } catch (err: unknown) {
       setStatus({
         msg: err instanceof Error ? err.message : 'Share failed',
@@ -250,14 +307,21 @@ export default function DrivePage() {
   }
 
   async function onShareFile(id: string) {
+    if (!wallet) return;
     const file = listAllFiles(owner).find((f) => f.id === id);
     if (!file) return;
     try {
-      const link = generateFileShareLink(file);
+      const link = await generateFileShareLink(file, wallet);
       await navigator.clipboard.writeText(link);
-      setStatus({ msg: 'Share link copied', kind: 'ok' });
-    } catch {
-      setStatus({ msg: 'Share failed', kind: 'err' });
+      setStatus({
+        msg: 'Share link copied · key in #fragment only',
+        kind: 'ok',
+      });
+    } catch (err) {
+      setStatus({
+        msg: err instanceof Error ? err.message : 'Share failed',
+        kind: 'err',
+      });
     }
   }
 
@@ -331,6 +395,7 @@ export default function DrivePage() {
   }
 
   async function onPreview(id: string) {
+    if (!wallet) return;
     const file = listAllFiles(owner).find((f) => f.id === id);
     if (!file) return;
 
@@ -353,11 +418,12 @@ export default function DrivePage() {
       kind,
       loading: true,
       progress: 0.02,
-      progressLabel: 'Fetching encrypted blob…',
+      progressLabel: 'Unlocking key…',
     });
 
     try {
-      const url = await previewObjectUrl(fileToShareItem(file), (p) => {
+      const item = await fileToShareItemAsync(file, wallet);
+      const url = await previewObjectUrl(item, (p) => {
         const base =
           p.phase === 'download' ? 0 : p.phase === 'decrypt' ? 0.45 : 0.95;
         const span = p.phase === 'download' ? 0.45 : p.phase === 'decrypt' ? 0.5 : 0.05;
@@ -407,8 +473,34 @@ export default function DrivePage() {
     }
   }
 
+  async function onUnlockVault() {
+    if (!wallet) return;
+    try {
+      setStatus({ msg: 'Unlock keys — check wallet…', kind: 'info' });
+      await ensureVaultUnlocked(wallet, { forcePrompt: true });
+      setVaultOk(true);
+      const mig = await migratePlainKeys(wallet);
+      setKeyStats(countKeyEncodings(listAllFiles(wallet.address)));
+      setStatus({
+        msg:
+          mig.migrated > 0
+            ? `Vault unlocked · wrapped ${mig.migrated} legacy key(s)`
+            : 'Vault unlocked · file keys wallet-wrapped',
+        kind: 'ok',
+      });
+      refresh();
+    } catch (err) {
+      setVaultOk(false);
+      setStatus({
+        msg: err instanceof Error ? err.message : 'Unlock failed',
+        kind: 'err',
+      });
+    }
+  }
+
   async function onDisconnect() {
     setWallet(null);
+    clearVaultSession();
     try {
       await disconnectWallet();
     } catch {
@@ -423,13 +515,14 @@ export default function DrivePage() {
     return (
       <BrandLoader
         label="Syncing your library"
-        hint="Encrypted index · keys stay on your device"
+        hint="Index + wallet key wrap"
       />
     );
   }
 
   const chip = wallet.address.slice(0, 6) + '…' + wallet.address.slice(-4);
   const hasContent = files.length > 0 || (folderId === null && folders.length > 0);
+  const backend = getLibraryBackend();
 
   return (
     <div className="app-page app-page--drive">
@@ -438,6 +531,25 @@ export default function DrivePage() {
           BLOBBED
         </Link>
         <div className="app-top-right">
+          <button
+            type="button"
+            className={`vault-chip ${vaultOk ? 'is-ok' : 'is-warn'}`}
+            title={
+              vaultOk
+                ? 'File keys wrapped with wallet-derived key'
+                : 'Sign with wallet to unlock wrapped keys'
+            }
+            onClick={() => void onUnlockVault()}
+          >
+            {vaultOk ? 'Keys wrapped' : 'Unlock keys'}
+          </button>
+          <button
+            type="button"
+            className="app-link app-link-muted"
+            onClick={() => setShowTrust((v) => !v)}
+          >
+            {showTrust ? 'Hide trust' : 'Trust'}
+          </button>
           <span className="wallet-chip" title={wallet.address}>
             {chip}
           </span>
@@ -453,6 +565,27 @@ export default function DrivePage() {
           </button>
         </div>
       </header>
+
+      <TrustPanel
+        context="drive"
+        compact
+        vaultOk={vaultOk}
+        backend={backend}
+        keyStats={keyStats}
+        onUnlock={() => void onUnlockVault()}
+        className="app-reveal app-reveal-1"
+      />
+
+      {showTrust ? (
+        <TrustPanel
+          context="drive"
+          vaultOk={vaultOk}
+          backend={backend}
+          keyStats={keyStats}
+          onUnlock={() => void onUnlockVault()}
+          className="app-reveal trust-panel--expanded"
+        />
+      ) : null}
 
       <main className="app-shell">
         <aside className="app-rail app-reveal app-reveal-2">
@@ -490,9 +623,9 @@ export default function DrivePage() {
             </div>
           </nav>
           <p className="app-rail-foot">
-            Library meta on Neon when configured.
+            Ciphertext → Shelby. Meta → {backend === 'neon' ? 'Neon' : backend}.
             <br />
-            Blobs on Shelby. Share keys stay in the link fragment.
+            DEKs wallet-wrapped. Share keys only in #fragment.
           </p>
         </aside>
 

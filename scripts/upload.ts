@@ -5,6 +5,8 @@ import {
 } from './chunked-crypto';
 import { generateThumbDataUrl } from './thumbs';
 import { addFile } from './library-store';
+import { ensureVaultUnlocked } from './vault';
+import { wrapFileKey } from './key-wrap';
 import type { FileMetadata, UploadResult, WalletAccount } from './types';
 
 function uint8ToBase64(bytes: Uint8Array): string {
@@ -91,12 +93,16 @@ export async function uploadFile(
     throw new Error((body.error || 'Upload failed') + extra);
   }
 
-  report('Save library', 0.9);
+  report('Wrap key', 0.88);
   const storageAccount = body.storageAccount as string;
   const blobName = (body.blobName || body.blobHash) as string;
   const keyB64 = keyToBase64(key);
+  // Wallet-wrap DEK before it hits Neon / localStorage (server never sees raw key)
+  const vaultKey = await ensureVaultUnlocked(wallet);
+  const storedKey = await wrapFileKey(key, vaultKey);
   const id = crypto.randomUUID();
 
+  report('Save library', 0.92);
   const meta: FileMetadata = {
     id,
     ownerAddress: wallet.address,
@@ -106,7 +112,7 @@ export async function uploadFile(
     originalName: file.name,
     sizeBytes: file.size,
     mimeType: file.type || 'application/octet-stream',
-    encryptedKey: keyB64,
+    encryptedKey: storedKey,
     createdAt: new Date().toISOString(),
     folderId,
     encFormat: format,
@@ -120,7 +126,7 @@ export async function uploadFile(
     storageAccount,
     blobName,
     blobHash: blobName,
-    key: keyB64,
+    key: keyB64, // raw DEK for caller (share immediately); not what we store
     fileId: id,
   };
 }

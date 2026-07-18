@@ -11,6 +11,7 @@ import type { ShareFileItem, SharePayload } from '../../scripts/types';
 import MediaLightbox, {
   type MediaLightboxState,
 } from '../components/MediaLightbox';
+import TrustPanel from '../components/TrustPanel';
 
 function filesFromPayload(p: SharePayload): { title: string; files: ShareFileItem[] } {
   if (p.type === 'folder') {
@@ -65,7 +66,7 @@ export default function ViewPage() {
       }
       setTitle(t);
       setSub(
-        `${files.length} item${files.length === 1 ? '' : 's'} · preview decrypts in your browser`
+        `${files.length} item${files.length === 1 ? '' : 's'} · decrypts in your browser only`
       );
       setTiles(files.map((item) => ({ item })));
 
@@ -112,6 +113,8 @@ export default function ViewPage() {
           </Link>
         </div>
       </header>
+
+      <TrustPanel context="share" className="app-reveal app-reveal-1" />
 
       <main className="view-main app-reveal app-reveal-2">
         <header className="view-head">

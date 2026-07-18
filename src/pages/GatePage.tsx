@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { connectWallet, getConnectedWallet, hasAppSession } from '../../scripts/aptos-client';
 import BrandLoader from '../components/BrandLoader';
+import TrustPanel from '../components/TrustPanel';
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -12,7 +13,7 @@ export default function GatePage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sub, setSub] = useState('Connect a wallet to enter');
-  const [hintHtml, setHintHtml] = useState('Petra or any Aptos wallet (testnet)');
+  const [hintHtml, setHintHtml] = useState('Petra or any Aptos wallet · shelbynet');
   const [checking, setChecking] = useState(true);
   const [entering, setEntering] = useState(false);
   const [enterLabel, setEnterLabel] = useState('Entering Blobbed');
@@ -55,7 +56,6 @@ export default function GatePage() {
       setSub('Connected');
       setEnterLabel('Entering Blobbed');
       setEntering(true);
-      // Beat for the handoff animation — feels intentional, not abrupt
       await sleep(680);
       nav('/drive', { replace: true });
     } catch (e: unknown) {
@@ -98,6 +98,7 @@ export default function GatePage() {
         </button>
         <p className="gate-hint" dangerouslySetInnerHTML={{ __html: hintHtml }} />
         {error ? <p className="gate-error">{error}</p> : null}
+        {!checking && !entering ? <TrustPanel context="gate" /> : null}
       </main>
 
       {entering ? <BrandLoader overlay variant="enter" label={enterLabel} /> : null}

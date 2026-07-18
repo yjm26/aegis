@@ -17,8 +17,9 @@ export const config = {
  * POST /api/upload
  * Body: { encryptedBase64, fileName, ownerAddress, fileSize? }
  *
- * Encrypts already done client-side. Backend relays ciphertext to Shelby
+ * Encrypt already done client-side. Backend relays ciphertext to Shelby
  * using service wallet (APTOS_PRIVATE_KEY) on shelbynet.
+ * Never accepts file DEKs / plaintext — keys stay client-side (wrapped in library meta).
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

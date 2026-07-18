@@ -266,10 +266,24 @@ export async function disconnectWallet(): Promise<void> {
     /* ignore wallet errors — still clear our session */
   }
   activeWallet = null;
+  // Clear vault sig cache (dynamic import avoids circular init issues)
+  try {
+    const { clearVaultSession } = await import('./vault');
+    clearVaultSession();
+  } catch {
+    /* vault module optional during early boot */
+  }
   clearSessionStorage();
 }
 
-export async function signMessage(message: string): Promise<string> {
+/**
+ * Sign an arbitrary message (AIP-62 aptos:signMessage).
+ * Pass a fixed `nonce` when the signature must be reproducible (vault key derive).
+ */
+export async function signMessage(
+  message: string,
+  opts?: { nonce?: string }
+): Promise<string> {
   if (!hasAppSession()) throw new Error('Wallet not connected');
 
   const preferred = sessionStorage.getItem(STORAGE_WALLET_NAME);
@@ -281,13 +295,17 @@ export async function signMessage(message: string): Promise<string> {
 
   const res = await sign({
     message,
-    nonce: String(Date.now()),
+    nonce: opts?.nonce ?? String(Date.now()),
   });
   if (!isApproved(res) || !res.args) {
     throw new Error('Sign rejected');
   }
-  const out = res.args as { signature?: { toString(): string } | string };
+  const out = res.args as {
+    signature?: { toString(): string } | string;
+    fullMessage?: string;
+  };
   const sig = out.signature;
+  if (sig == null) throw new Error('Wallet returned no signature');
   return typeof sig === 'string' ? sig : sig?.toString?.() || String(sig);
 }
 
