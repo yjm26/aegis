@@ -27,50 +27,45 @@ body {
   line-height: 1.6;
 }
 
-/* ===== TOPOLOGY.VC STYLE HEADER ===== */
+/* ===== TOPOLOGY STYLE - full width, transparent, clean font ===== */
 .landing-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 200;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  border-bottom: none;
+  background: transparent;
+  backdrop-filter: blur(12px);
 }
 
 .nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 48px; /* airy like Topology */
+  padding: 18px 40px;
 }
 
 .landing-logo {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.25em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #ffffff;
-  opacity: 0.95;
+  color: #fff;
 }
 
 .nav-cta {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #ffffff;
-  opacity: 0.65;
+  color: #fff;
   text-decoration: none;
-  transition: opacity 0.2s ease;
-  padding: 4px 0;
+  transition: opacity 0.15s ease;
 }
 
 .nav-cta:hover {
-  opacity: 1;
+  opacity: 0.6;
 }
 
 /* HERO + Shader */
