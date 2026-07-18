@@ -37,14 +37,21 @@ const LegacyPagesRedirect = lazyRetry(() => import('./pages/LegacyPagesRedirect'
 
 function RouteFallback() {
   const loc = useLocation();
-  const label = loc.pathname.startsWith('/drive')
-    ? 'Opening library'
-    : loc.pathname.startsWith('/gate')
-      ? 'Opening gate'
-      : loc.pathname.startsWith('/view')
-        ? 'Opening share'
-        : 'Loading';
-  return <BrandLoader label={label} />;
+  if (loc.pathname.startsWith('/drive')) {
+    return (
+      <BrandLoader
+        label="Opening library"
+        hint="Almost there"
+      />
+    );
+  }
+  if (loc.pathname.startsWith('/gate')) {
+    return <BrandLoader label="Opening gate" hint="Wallet connect next" />;
+  }
+  if (loc.pathname.startsWith('/view')) {
+    return <BrandLoader label="Opening share" hint="Decrypts in your browser" />;
+  }
+  return <BrandLoader label="Loading" />;
 }
 
 class ErrorBoundary extends React.Component<

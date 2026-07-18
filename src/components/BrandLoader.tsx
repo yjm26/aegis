@@ -1,38 +1,53 @@
 import React from 'react';
 
 type Props = {
-  /** Short line under brand */
+  /** Primary line */
   label?: string;
+  /** Secondary quiet line */
+  hint?: string;
   /** Full-screen fixed overlay (connect → drive) */
   overlay?: boolean;
-  /** Slightly denser for gate success */
+  /** Gate success handoff */
   variant?: 'default' | 'enter';
 };
 
 /**
- * Minimal brand loader — used for lazy route chunks + session handoff.
- * Intentionally quiet: mark, thin ring, one line of copy.
+ * Full-viewport brand loader — route chunks, drive hydrate, gate handoff.
+ * Always covers the screen (no parent-column “strip”).
  */
 export default function BrandLoader({
   label = 'Loading',
+  hint,
   overlay = false,
   variant = 'default',
 }: Props) {
   return (
     <div
-      className={`brand-loader ${overlay ? 'brand-loader--overlay' : ''} ${
-        variant === 'enter' ? 'brand-loader--enter' : ''
-      }`}
+      className={[
+        'brand-loader',
+        overlay ? 'brand-loader--overlay' : '',
+        variant === 'enter' ? 'brand-loader--enter' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="status"
       aria-live="polite"
       aria-busy="true"
     >
+      <div className="brand-loader-ambient" aria-hidden="true" />
       <div className="brand-loader-inner">
+        <p className="brand-loader-word">Blobbed</p>
         <div className="brand-loader-mark" aria-hidden="true">
           <span className="brand-loader-ring" />
           <span className="brand-loader-core">B</span>
         </div>
-        <p className="brand-loader-label">{label}</p>
+        <div className="brand-loader-copy">
+          <p className="brand-loader-label">{label}</p>
+          {hint ? <p className="brand-loader-hint">{hint}</p> : null}
+        </div>
+        <div className="brand-loader-bar" aria-hidden="true">
+          <span className="brand-loader-bar-fill" />
+        </div>
       </div>
     </div>
   );

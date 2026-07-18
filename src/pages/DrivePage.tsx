@@ -303,9 +303,10 @@ export default function DrivePage() {
 
   if (!ready || !wallet) {
     return (
-      <div className="app-page app-page--boot">
-        <BrandLoader label="Syncing your library" />
-      </div>
+      <BrandLoader
+        label="Syncing your library"
+        hint="Encrypted index · keys stay on your device"
+      />
     );
   }
 
