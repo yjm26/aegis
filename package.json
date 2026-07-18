@@ -14,25 +14,29 @@
     "@aptos-labs/wallet-adapter-react": "^3.7.9",
     "@paper-design/shaders": "^0.0.77",
     "@paper-design/shaders-react": "^0.0.77",
-    "@react-three/fiber": "^9.6.1",
+    "@react-three/fiber": "^8.17.10",
     "@shelby-protocol/s3-gateway": "^1.0.2",
     "@shelby-protocol/sdk": "^0.2.4",
     "@types/pg": "^8.20.0",
     "@types/three": "^0.185.1",
     "@vercel/node": "^5.8.26",
     "pg": "^8.22.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^4.0.0",
     "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "playwright": "^1.49.0",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
     "vitest": "^3.0.0"
+  },
+  "overrides": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
