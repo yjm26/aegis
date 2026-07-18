@@ -8,28 +8,6 @@
 </head>
 <body class="landing-page">
 
-  <!-- MORPHING BLOB VISUAL -->
-  <div class="hero-blob" aria-hidden="true">
-    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="blobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#111111;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <path fill="url(#blobGrad)" opacity="0.5">
-        <animate attributeName="d"
-          dur="10s"
-          repeatCount="indefinite"
-          values="M440.5,320.5Q418,391,355.5,442.5Q293,494,226,450.5Q159,407,99,347Q39,287,26.5,205Q14,123,86.5,74.5Q159,26,226,37.5Q293,49,350.5,83.5Q408,118,440.5,189.5Q473,261,440.5,320.5Z;
-                  M432.5,314Q405,378,348.5,418.5Q292,459,225,433.5Q158,408,109,346Q60,284,44.5,207Q29,130,92.5,76.5Q156,23,222,44.5Q288,66,349,91.5Q410,117,435.5,183.5Q461,250,432.5,314Z;
-                  M440.5,320.5Q418,391,355.5,442.5Q293,494,226,450.5Q159,407,99,347Q39,287,26.5,205Q14,123,86.5,74.5Q159,26,226,37.5Q293,49,350.5,83.5Q408,118,440.5,189.5Q473,261,440.5,320.5Z"
-        />
-      </path>
-    </svg>
-  </div>
-
   <!-- NAVBAR -->
   <nav class="landing-nav">
     <div class="landing-logo">Blobbed</div>
@@ -38,58 +16,218 @@
 
   <!-- HERO -->
   <section class="landing-hero">
-    <h1>
-      <span class="line-1">Your files.</span>
-      <span class="line-2">No one else's.</span>
-      <span class="line-3">Truly yours.</span>
-    </h1>
-    <p class="landing-tagline">
-      Decentralized, encrypted file storage on Shelby Protocol.
-      Censorship-resistant. Ownerless. Forever.
-    </p>
-    <div class="landing-cta">
-      <a href="/pages/drive.html">Enter the App →</a>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="line">Your files.</span>
+        <span class="line">No one else's.</span>
+        <span class="line">Truly yours.</span>
+      </h1>
+      <p class="hero-desc">
+        Decentralized, encrypted file storage on Shelby Protocol.
+        Censorship-resistant. Ownerless. Forever.
+      </p>
+      <div class="hero-cta">
+        <a href="/pages/drive.html" class="cta-primary">Enter the App</a>
+        <a href="#how" class="cta-secondary">Learn more</a>
+      </div>
+    </div>
+    <div class="hero-blob" aria-hidden="true">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="blobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <path fill="url(#blobGrad)" opacity="0.8">
+          <animate attributeName="d"
+            dur="12s"
+            repeatCount="indefinite"
+            values="M440.5,320.5Q418,391,355.5,442.5Q293,494,226,450.5Q159,407,99,347Q39,287,26.5,205Q14,123,86.5,74.5Q159,26,226,37.5Q293,49,350.5,83.5Q408,118,440.5,189.5Q473,261,440.5,320.5Z;
+                    M432.5,314Q405,378,348.5,418.5Q292,459,225,433.5Q158,408,109,346Q60,284,44.5,207Q29,130,92.5,76.5Q156,23,222,44.5Q288,66,349,91.5Q410,117,435.5,183.5Q461,250,432.5,314Z;
+                    M440.5,320.5Q418,391,355.5,442.5Q293,494,226,450.5Q159,407,99,347Q39,287,26.5,205Q14,123,86.5,74.5Q159,26,226,37.5Q293,49,350.5,83.5Q408,118,440.5,189.5Q473,261,440.5,320.5Z"
+          />
+        </path>
+      </svg>
     </div>
   </section>
 
-  <!-- WHAT IS BLOBBED -->
-  <section class="landing-section">
-    <h2>What is Blobbed</h2>
-    <div class="section-title">Storage without masters.</div>
-    <p>
-      Traditional cloud storage — Google Drive, Dropbox, MEGA — stores your files
-      on centralized servers. They can suspend your account. Inspect your data.
-      Or disappear overnight.
-    </p>
-    <p style="margin-top: 1.5rem;">
-      Blobbed is different. Your files are encrypted in your browser before upload,
-      then stored across a decentralized network of Shelby Protocol nodes.
-      No single entity controls your data. No backdoors. No compromises.
-    </p>
+  <!-- PROBLEM -->
+  <section class="landing-section scroll-reveal" id="problem">
+    <div class="section-label">The problem</div>
+    <h2 class="section-title">You don't own your files anymore.</h2>
+    <div class="problem-grid">
+      <div class="problem-item">
+        <div class="problem-number">01</div>
+        <h3>Centralized control</h3>
+        <p>Google, Dropbox, MEGA — they hold the keys. They can lock you out anytime.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-number">02</div>
+        <h3>Data inspection</h3>
+        <p>Your files are scanned, analyzed, and monetized without your consent.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-number">03</div>
+        <h3>Single point of failure</h3>
+        <p>One hack. One policy change. One bankruptcy. Your data disappears.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="landing-section scroll-reveal" id="features">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Built different.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3>Decentralized storage</h3>
+        <p>Files stored across Shelby Protocol nodes. No central server. No single point of failure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h3>Client-side encryption</h3>
+        <p>AES-256-GCM encryption in your browser. The key never leaves your device. We can't read your files. No one can.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <h3>Shareable links</h3>
+        <p>Share with a simple link. Recipients download directly from Shelby nodes. No servers in between.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+          </svg>
+        </div>
+        <h3>Censorship resistant</h3>
+        <p>No government or corporation can block your files. Distributed across the globe. Always online.</p>
+      </div>
+    </div>
   </section>
 
   <!-- HOW IT WORKS -->
-  <section class="landing-section">
-    <h2>How it works</h2>
-    <div class="section-title">Three steps. Total control.</div>
-    <p>
-      01. Drop a file. It is instantly encrypted with AES-256-GCM using a key
-      that never leaves your device.
-    </p>
-    <p style="margin-top: 1rem;">
-      02. The encrypted blob is registered on Aptos and stored across
-      Shelby storage providers — decentralized, redundant, always online.
-    </p>
-    <p style="margin-top: 1rem;">
-      03. Share with a link. The recipient downloads directly from Shelby nodes
-      and decrypts in their browser. No servers in between. No trust required.
-    </p>
+  <section class="landing-section scroll-reveal" id="how">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Three steps. Total control.</h2>
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <h3>Encrypt</h3>
+          <p>Drop a file. It's instantly encrypted with AES-256-GCM using a random key generated in your browser. The key never leaves your device.</p>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <h3>Upload</h3>
+          <p>The encrypted blob is registered on Aptos blockchain and stored across Shelby storage providers — decentralized, redundant, permanent.</p>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <h3>Share</h3>
+          <p>Copy the link and send it. The recipient downloads directly from Shelby nodes and decrypts in their browser. No trust required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MECHANISM -->
+  <section class="landing-section scroll-reveal" id="mechanism">
+    <div class="section-label">Mechanism</div>
+    <h2 class="section-title">Under the hood.</h2>
+    <div class="mechanism-content">
+      <div class="mechanism-item">
+        <div class="mech-label">Storage layer</div>
+        <p class="mech-value">Shelby Protocol blob storage</p>
+      </div>
+      <div class="mechanism-item">
+        <div class="mech-label">Blockchain</div>
+        <p class="mech-value">Aptos (Move language)</p>
+      </div>
+      <div class="mechanism-item">
+        <div class="mech-label">Encryption</div>
+        <p class="mech-value">AES-256-GCM + random 256-bit key</p>
+      </div>
+      <div class="mechanism-item">
+        <div class="mech-label">Key storage</div>
+        <p class="mech-value">In the URL fragment (#hash:key) — never on servers</p>
+      </div>
+      <div class="mechanism-item">
+        <div class="mech-label">Availability</div>
+        <p class="mech-value">Erasure-coded, redundant across nodes</p>
+      </div>
+      <div class="mechanism-item">
+        <div class="mech-label">Cost</div>
+        <p class="mech-value">~0.001 APT per upload (~$0.0006)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="landing-section scroll-reveal" id="faq">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Questions answered.</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Can Blobbed read my files?</summary>
+        <p>No. Files are encrypted in your browser before upload. The decryption key never leaves your device. We physically cannot access your data.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if Blobbed shuts down?</summary>
+        <p>Your files live on Shelby Protocol nodes, not our servers. Even if this website disappears, anyone with your link can still download the file directly from the decentralized network.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is there a file size limit?</summary>
+        <p>Currently ~100MB per file for the MVP. Shelby Protocol supports much larger blobs — we'll raise limits as the network matures.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why does upload require a wallet?</summary>
+        <p>Registering a blob on Shelby requires an on-chain transaction on Aptos. This ensures ownership and provenance. Downloading is completely free and anonymous — no wallet needed.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How do I share a file?</summary>
+        <p>After upload, click "Copy Link". The link contains the blob hash and encryption key in the URL fragment (after #). Send it via any channel — the recipient just opens the link and clicks download.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="landing-section scroll-reveal cta-section">
+    <h2 class="cta-title">Ready to own your files?</h2>
+    <a href="/pages/drive.html" class="cta-primary large">Enter the App</a>
   </section>
 
   <!-- FOOTER -->
   <footer class="landing-footer">
-    <p>Built on Shelby Protocol · Encrypted · Decentralized · Censorship-Resistant</p>
+    <p>Built on Shelby Protocol — Encrypted — Decentralized — Censorship-Resistant</p>
   </footer>
 
+  <script src="/scripts/landing.js"></script>
 </body>
 </html>
