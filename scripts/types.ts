@@ -1,7 +1,10 @@
 export interface FileMetadata {
   id: string;
   ownerAddress: string;
+  /** Aptos account that registered the blob on Shelby (service wallet) */
+  storageAccount: string;
   blobName: string;
+  /** alias of blobName */
   shelbyHash: string;
   originalName: string;
   sizeBytes: number;
@@ -27,7 +30,8 @@ export interface UploadProgress {
 }
 
 export interface DownloadState {
-  blobHash: string;
+  storageAccount: string;
+  blobName: string;
   decryptionKey: string;
   fileName: string;
   mimeType: string;

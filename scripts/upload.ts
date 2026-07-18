@@ -2,25 +2,38 @@ import { generateKey, encryptFile, keyToBase64 } from './crypto';
 import type { WalletAccount } from './types';
 
 export interface UploadResult {
+  storageAccount: string;
+  blobName: string;
+  /** alias of blobName */
   blobHash: string;
   key: string;
 }
 
+function uint8ToBase64(bytes: Uint8Array): string {
+  const chunk = 0x8000;
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+/**
+ * Encrypt client-side → relay encrypted bytes to backend → ShelbyNodeClient.upload
+ */
 export async function uploadFile(file: File, wallet: WalletAccount): Promise<UploadResult> {
   const arrayBuffer = await file.arrayBuffer();
   const data = new Uint8Array(arrayBuffer);
 
-  // Encrypt
   const key = generateKey();
   const encrypted = await encryptFile(data, key);
 
-  // Combine IV + ciphertext → base64 for JSON transport
+  // IV (12) + ciphertext
   const combined = new Uint8Array(encrypted.iv.length + encrypted.ciphertext.length);
   combined.set(encrypted.iv);
   combined.set(encrypted.ciphertext, encrypted.iv.length);
-  const encryptedBase64 = btoa(String.fromCharCode(...combined));
+  const encryptedBase64 = uint8ToBase64(combined);
 
-  // Upload to backend relay (backend submits to Shelby Protocol)
   const res = await fetch('/api/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,29 +45,38 @@ export async function uploadFile(file: File, wallet: WalletAccount): Promise<Upl
     }),
   });
 
+  const body = await res.json().catch(() => ({ error: 'Upload failed' }));
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Upload failed' }));
-    throw new Error(err.error || 'Upload failed');
+    const extra = body.code === 'MISSING_APTOS_PRIVATE_KEY'
+      ? ' (server needs APTOS_PRIVATE_KEY)'
+      : '';
+    throw new Error((body.error || 'Upload failed') + extra);
   }
 
-  const result = await res.json();
+  const storageAccount = body.storageAccount as string;
+  const blobName = (body.blobName || body.blobHash) as string;
+  const keyB64 = keyToBase64(key);
 
-  // Store metadata in backend DB
+  // Metadata only (no ciphertext)
   await fetch('/api/files', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ownerAddress: wallet.address,
-      blobHash: result.blobHash,
+      storageAccount,
+      blobName,
+      blobHash: blobName,
       originalName: file.name,
       sizeBytes: file.size,
       mimeType: file.type || 'application/octet-stream',
-      encryptedKey: keyToBase64(key),
+      encryptedKey: keyB64,
     }),
   });
 
   return {
-    blobHash: result.blobHash,
-    key: keyToBase64(key),
+    storageAccount,
+    blobName,
+    blobHash: blobName,
+    key: keyB64,
   };
 }

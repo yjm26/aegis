@@ -1,69 +1,100 @@
 import { downloadFromShelby } from './shelby-client';
 import { decryptFile, base64ToKey } from './crypto';
+import { parseShareFragment } from './share';
 
-async function init() {
-  const hash = window.location.hash.slice(1);
-  if (!hash.includes(':')) {
-    document.getElementById('download-btn')!.textContent = 'Invalid link';
-    return;
-  }
-
-  const [blobHash, keyBase64] = hash.split(':');
-  const key = base64ToKey(keyBase64);
-
-  // TODO: fetch metadata from backend / Shelby
-  document.getElementById('file-info')!.classList.remove('hidden');
-  document.getElementById('file-name')!.textContent = 'Encrypted file';
-
-  document.getElementById('download-btn')?.addEventListener('click', async () => {
-    await downloadAndDecrypt(blobHash, key);
-  });
-}
-
-async function downloadAndDecrypt(blobHash: string, key: Uint8Array): Promise<void> {
-  const progress = document.getElementById('progress')!;
-  const bar = document.getElementById('progress-bar')!;
-  progress.classList.remove('hidden');
-
-  // Download from Shelby
-  const stream = await downloadFromShelby('0x1', blobHash);
-
-  // Read stream to array
+async function readStream(stream: ReadableStream<Uint8Array>): Promise<Uint8Array> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
+  let total = 0;
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
     chunks.push(value);
+    total += value.length;
   }
-
-  // Combine chunks
-  const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
-  const encryptedData = new Uint8Array(totalLength);
+  const out = new Uint8Array(total);
   let offset = 0;
-  for (const chunk of chunks) {
-    encryptedData.set(chunk, offset);
-    offset += chunk.length;
+  for (const c of chunks) {
+    out.set(c, offset);
+    offset += c.length;
+  }
+  return out;
+}
+
+async function init() {
+  const btn = document.getElementById('download-btn') as HTMLButtonElement | null;
+  const info = document.getElementById('file-info');
+  const nameEl = document.getElementById('file-name');
+
+  const payload = parseShareFragment(window.location.hash);
+  if (!payload || !payload.key || !payload.blobName) {
+    if (btn) btn.textContent = 'Invalid link';
+    return;
   }
 
-  // Extract IV and ciphertext
+  if (!payload.storageAccount) {
+    if (btn) btn.textContent = 'Legacy link (missing storage account)';
+    // still allow attempt if env injects default — otherwise click fails clearly
+  }
+
+  info?.classList.remove('hidden');
+  if (nameEl) {
+    // show blob path tail
+    const tail = payload.blobName.split('/').pop() || payload.blobName;
+    nameEl.textContent = tail;
+  }
+
+  btn?.addEventListener('click', async () => {
+    try {
+      await downloadAndDecrypt(payload.storageAccount, payload.blobName, payload.key);
+    } catch (err: any) {
+      alert('Download failed: ' + (err?.message || err));
+    }
+  });
+}
+
+async function downloadAndDecrypt(
+  storageAccount: string,
+  blobName: string,
+  keyBase64: string
+): Promise<void> {
+  if (!storageAccount) {
+    throw new Error('Share link missing storage account. Re-upload and share a new link.');
+  }
+
+  const progress = document.getElementById('progress');
+  const bar = document.getElementById('progress-bar') as HTMLElement | null;
+  const progressText = document.getElementById('progress-text');
+  progress?.classList.remove('hidden');
+  if (progressText) progressText.textContent = 'Downloading from Shelby…';
+  if (bar) bar.style.width = '20%';
+
+  const key = base64ToKey(keyBase64);
+  const stream = await downloadFromShelby(storageAccount, blobName);
+  if (bar) bar.style.width = '55%';
+  if (progressText) progressText.textContent = 'Decrypting…';
+
+  const encryptedData = await readStream(stream);
+  // IV = first 12 bytes (AES-GCM)
   const iv = encryptedData.slice(0, 12);
   const ciphertext = encryptedData.slice(12);
-
-  // Decrypt
   const decrypted = await decryptFile({ ciphertext, iv }, key);
 
-  // Download to user
-  const blob = new Blob([decrypted]);
+  if (bar) bar.style.width = '90%';
+
+  const nameGuess = blobName.split('/').pop()?.replace(/^[a-z0-9]+_[a-z0-9]+_/i, '') || 'file';
+  const ab = new ArrayBuffer(decrypted.byteLength);
+  new Uint8Array(ab).set(decrypted);
+  const blob = new Blob([ab]);
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'file';
+  a.download = nameGuess;
   a.click();
   URL.revokeObjectURL(url);
 
-  bar.style.width = '100%';
-  document.getElementById('progress-text')!.textContent = 'Done!';
+  if (bar) bar.style.width = '100%';
+  if (progressText) progressText.textContent = 'Done';
 }
 
 init().catch(console.error);

@@ -1,46 +1,69 @@
-import type { VercelRequest, VercelResponse } from 'vercel';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import {
+  isShelbyConfigured,
+  makeBlobName,
+  uploadBlobToShelby,
+} from './lib/shelby.js';
 
-// MVP: backend relay — encrypted blob diterima, nanti submit ke Shelby Protocol
-// Butuh APTOS_PRIVATE_KEY env untuk real submit.
-// Sekarang: store metadata, return mock hash untuk demo flow.
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '12mb',
+    },
+  },
+};
 
-const mockHashes: Record<string, string> = {};
-
+/**
+ * POST /api/upload
+ * Body: { encryptedBase64, fileName, ownerAddress, fileSize? }
+ *
+ * Encrypts already done client-side. Backend relays ciphertext to Shelby
+ * using service wallet (APTOS_PRIVATE_KEY).
+ */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { encryptedBase64, fileName, ownerAddress, fileSize } = req.body;
+    if (!isShelbyConfigured()) {
+      return res.status(503).json({
+        error: 'Shelby upload not configured',
+        code: 'MISSING_APTOS_PRIVATE_KEY',
+        hint: 'Set APTOS_PRIVATE_KEY (testnet) on the server, then retry.',
+      });
+    }
+
+    const { encryptedBase64, fileName, ownerAddress, fileSize } = req.body || {};
     if (!encryptedBase64 || !fileName || !ownerAddress) {
-      return res.status(400).json({ error: 'Missing fields' });
+      return res.status(400).json({ error: 'Missing fields: encryptedBase64, fileName, ownerAddress' });
     }
 
-    const blobData = new Uint8Array(Buffer.from(encryptedBase64, 'base64'));
-    if (blobData.length > 5 * 1024 * 1024) {
-      return res.status(413).json({ error: 'Max file size 5MB for MVP' });
+    const blobData = Uint8Array.from(Buffer.from(encryptedBase64, 'base64'));
+    const maxBytes = Number(process.env.MAX_UPLOAD_BYTES || 10 * 1024 * 1024);
+    if (blobData.length > maxBytes) {
+      return res.status(413).json({
+        error: `Max encrypted payload ${Math.floor(maxBytes / (1024 * 1024))}MB`,
+      });
     }
 
-    // TODO: real Shelby upload with ShelbyClient
-    // const shelby = new ShelbyClient({ network: Network.TESTNET });
-    // const tx = await shelby.upload({ blobData, signer: backendAccount, blobName: fileName, expirationMicros: ... });
-
-    const mockHash = '0x' + Array.from({ length: 64 }, () =>
-      '0123456789abcdef'[Math.floor(Math.random() * 16)]
-    ).join('');
-
-    mockHashes[mockHash] = fileName;
+    const blobName = makeBlobName(String(ownerAddress), String(fileName));
+    const result = await uploadBlobToShelby({ blobData, blobName });
 
     return res.status(200).json({
       success: true,
-      blobHash: mockHash,
-      fileName,
+      storageAccount: result.storageAccount,
+      blobName: result.blobName,
+      // keep blobHash alias = blobName for older UI bits
+      blobHash: result.blobName,
       ownerAddress,
-      fileSize,
+      fileName,
+      fileSize: fileSize ?? blobData.length,
+      network: process.env.APTOS_NETWORK || 'testnet',
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Upload failed';
     console.error('Upload error:', err);
-    return res.status(500).json({ error: err.message || 'Upload failed' });
+    return res.status(500).json({ error: message });
   }
 }

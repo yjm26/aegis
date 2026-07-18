@@ -3,7 +3,7 @@ import { uploadFile } from './upload';
 import { generateShareLink } from './share';
 import type { FileMetadata } from './types';
 
-let wallet: any = null;
+let wallet: { address: string; publicKey: string } | null = null;
 
 async function init() {
   wallet = await connectWallet();
@@ -12,8 +12,17 @@ async function init() {
   await loadFiles();
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 async function loadFiles() {
-  const res = await fetch(`/api/files?owner=${wallet.address}`);
+  if (!wallet) return;
+  const res = await fetch(`/api/files?owner=${encodeURIComponent(wallet.address)}`);
   const files: FileMetadata[] = res.ok ? await res.json() : [];
   const list = document.getElementById('file-list')!;
   const empty = document.getElementById('empty-state')!;
@@ -26,21 +35,29 @@ async function loadFiles() {
 
   empty.classList.add('hidden');
   list.classList.remove('hidden');
-  list.innerHTML = files.map((f: FileMetadata) => `
+  list.innerHTML = files
+    .map((f) => {
+      const account = f.storageAccount || '';
+      const name = f.blobName || f.shelbyHash || '';
+      return `
     <div class="file-row">
       <div class="file-info">
         <span class="file-icon">📄</span>
         <div>
-          <div class="file-name">${f.originalName}</div>
+          <div class="file-name">${escapeHtml(f.originalName)}</div>
           <div class="file-size">${formatSize(f.sizeBytes)}</div>
         </div>
       </div>
       <div class="file-actions">
-        <button class="share-btn" data-id="${f.id}" data-hash="${f.shelbyHash}" data-key="${f.encryptedKey}">Share</button>
-        <button class="delete-btn" data-id="${f.id}">Delete</button>
+        <button class="share-btn"
+          data-account="${escapeHtml(account)}"
+          data-name="${escapeHtml(name)}"
+          data-key="${escapeHtml(f.encryptedKey || '')}">Share</button>
+        <button class="delete-btn" data-id="${escapeHtml(f.id)}">Delete</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+    })
+    .join('');
 }
 
 function formatSize(bytes: number): string {
@@ -50,7 +67,6 @@ function formatSize(bytes: number): string {
   return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
 }
 
-// Upload flow
 document.getElementById('upload-btn')?.addEventListener('click', () => {
   document.getElementById('file-input')?.click();
 });
@@ -58,33 +74,38 @@ document.getElementById('upload-btn')?.addEventListener('click', () => {
 document.getElementById('file-input')?.addEventListener('change', async (e) => {
   const files = (e.target as HTMLInputElement).files;
   if (!files || !wallet) return;
-  for (const file of files) {
+  for (const file of Array.from(files)) {
     try {
       const result = await uploadFile(file, wallet);
-      const link = generateShareLink(result.blobHash, result.key);
+      const link = generateShareLink(result.storageAccount, result.blobName, result.key);
       navigator.clipboard.writeText(link).catch(() => {});
-      alert(`Uploaded! Share link copied:\n${link.slice(0, 60)}...`);
+      alert(`Uploaded to Shelby.\nShare link copied:\n${link.slice(0, 80)}…`);
     } catch (err: any) {
       alert('Upload failed: ' + (err.message || err));
     }
   }
   await loadFiles();
+  (e.target as HTMLInputElement).value = '';
 });
 
-// Share & Delete handlers
 document.getElementById('file-list')?.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
   if (target.classList.contains('share-btn')) {
-    const hash = target.dataset.hash || '';
+    const account = target.dataset.account || '';
+    const name = target.dataset.name || '';
     const key = target.dataset.key || '';
-    const link = generateShareLink(hash, key);
+    if (!account || !name || !key) {
+      alert('Missing share data for this file');
+      return;
+    }
+    const link = generateShareLink(account, name, key);
     navigator.clipboard.writeText(link).catch(() => {});
     alert('Share link copied!');
   }
   if (target.classList.contains('delete-btn')) {
     const fileId = target.dataset.id;
-    if (confirm('Delete this file?')) {
-      fetch(`/api/files?id=${fileId}`, { method: 'DELETE' }).then(loadFiles);
+    if (fileId && confirm('Delete this file metadata? (blob on Shelby remains until expiry)')) {
+      fetch(`/api/files?id=${encodeURIComponent(fileId)}`, { method: 'DELETE' }).then(loadFiles);
     }
   }
 });
@@ -94,4 +115,8 @@ document.getElementById('disconnect')?.addEventListener('click', () => {
   window.location.reload();
 });
 
-init().catch(console.error);
+init().catch((err) => {
+  console.error(err);
+  const el = document.getElementById('wallet-address');
+  if (el) el.textContent = 'Connect wallet failed';
+});
