@@ -8,6 +8,9 @@ import {
   isVideoMime,
 } from '../../scripts/preview';
 import type { ShareFileItem, SharePayload } from '../../scripts/types';
+import MediaLightbox, {
+  type MediaLightboxState,
+} from '../components/MediaLightbox';
 
 function filesFromPayload(p: SharePayload): { title: string; files: ShareFileItem[] } {
   if (p.type === 'folder') {
@@ -40,9 +43,7 @@ export default function ViewPage() {
   const [sub, setSub] = useState('Decrypting in your browser…');
   const [error, setError] = useState('');
   const [tiles, setTiles] = useState<TileState[]>([]);
-  const [lightbox, setLightbox] = useState<{ html: React.ReactNode; cap: string } | null>(
-    null
-  );
+  const [lightbox, setLightbox] = useState<MediaLightboxState | null>(null);
 
   useEffect(() => {
     const objectUrls: string[] = [];
@@ -68,7 +69,6 @@ export default function ViewPage() {
       );
       setTiles(files.map((item) => ({ item })));
 
-      // progressive preview URLs
       for (let i = 0; i < files.length; i++) {
         if (cancelled) return;
         const item = files[i];
@@ -98,14 +98,6 @@ export default function ViewPage() {
       for (const u of objectUrls) URL.revokeObjectURL(u);
     };
   }, [loc.hash]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightbox(null);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, []);
 
   return (
     <div className="app-page view-page">
@@ -149,19 +141,11 @@ export default function ViewPage() {
                     }
                     return;
                   }
-                  if (image) {
-                    setLightbox({
-                      html: <img src={url} alt="" />,
-                      cap: item.name,
-                    });
-                  } else if (video) {
-                    setLightbox({
-                      html: (
-                        <video src={url} controls autoPlay playsInline />
-                      ),
-                      cap: item.name,
-                    });
-                  }
+                  setLightbox({
+                    url,
+                    name: item.name,
+                    kind: video ? 'video' : 'image',
+                  });
                 }}
               >
                 <div className="view-tile-media">
@@ -202,29 +186,9 @@ export default function ViewPage() {
             );
           })}
         </div>
-
-        {lightbox ? (
-          <div
-            className="lightbox"
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setLightbox(null);
-            }}
-          >
-            <button
-              type="button"
-              className="lightbox-close"
-              aria-label="Close"
-              onClick={() => setLightbox(null)}
-            >
-              ×
-            </button>
-            <div className="lightbox-body">{lightbox.html}</div>
-            <p className="lightbox-cap">{lightbox.cap}</p>
-          </div>
-        ) : null}
       </main>
+
+      <MediaLightbox state={lightbox} onClose={() => setLightbox(null)} />
     </div>
   );
 }

@@ -30,6 +30,9 @@ import {
 } from '../../scripts/preview';
 import type { FileMetadata, FolderMetadata } from '../../scripts/types';
 import BrandLoader from '../components/BrandLoader';
+import MediaLightbox, {
+  type MediaLightboxState,
+} from '../components/MediaLightbox';
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
@@ -63,6 +66,8 @@ export default function DrivePage() {
   const [dialogBusy, setDialogBusy] = useState(false);
   const thumbs = useRef(new Map<string, string>());
   const [, setThumbTick] = useState(0);
+  const [lightbox, setLightbox] = useState<MediaLightboxState | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
 
@@ -307,29 +312,60 @@ export default function DrivePage() {
   async function onPreview(id: string) {
     const file = listAllFiles(owner).find((f) => f.id === id);
     if (!file) return;
+
+    const kind: 'image' | 'video' = isVideoMime(file.mimeType, file.originalName)
+      ? 'video'
+      : 'image';
+
+    // Reuse cached thumb URL for images if already decrypted
+    const cached = thumbs.current.get(file.id);
+    if (cached && kind === 'image') {
+      setLightbox({ url: cached, name: file.originalName, kind: 'image' });
+      return;
+    }
+
+    setLightbox({
+      url: '',
+      name: file.originalName,
+      kind,
+      loading: true,
+    });
+
     try {
-      setStatus({ msg: 'Loading preview…', kind: 'info' });
       const url = await previewObjectUrl(fileToShareItem(file));
-      thumbs.current.set(file.id, url);
-      const w = window.open('', '_blank');
-      if (w) {
-        const safe = file.originalName.replace(/[<>&"]/g, '');
-        if (isImageMime(file.mimeType, file.originalName)) {
-          w.document.write(
-            `<title>${safe}</title><body style="margin:0;background:#0a0a0a;display:flex;min-height:100vh;align-items:center;justify-content:center"><img src="${url}" style="max-width:100%;max-height:100vh;object-fit:contain"/></body>`
-          );
-        } else {
-          w.document.write(
-            `<title>${safe}</title><body style="margin:0;background:#0a0a0a;display:flex;min-height:100vh;align-items:center;justify-content:center"><video src="${url}" controls autoplay style="max-width:100%;max-height:100vh"></video></body>`
-          );
+      if (kind === 'image') {
+        thumbs.current.set(file.id, url);
+        setThumbTick((t) => t + 1);
+      } else {
+        if (previewUrlRef.current) {
+          try {
+            URL.revokeObjectURL(previewUrlRef.current);
+          } catch {
+            /* ignore */
+          }
         }
+        previewUrlRef.current = url;
       }
-      setStatus(null);
+      setLightbox({ url, name: file.originalName, kind });
     } catch (err) {
-      setStatus({
-        msg: 'Preview failed: ' + (err instanceof Error ? err.message : String(err)),
-        kind: 'err',
+      setLightbox({
+        url: '',
+        name: file.originalName,
+        kind,
+        error: err instanceof Error ? err.message : String(err),
       });
+    }
+  }
+
+  function closeLightbox() {
+    setLightbox(null);
+    if (previewUrlRef.current) {
+      try {
+        URL.revokeObjectURL(previewUrlRef.current);
+      } catch {
+        /* ignore */
+      }
+      previewUrlRef.current = null;
     }
   }
 
@@ -542,13 +578,27 @@ export default function DrivePage() {
                 const thumb = thumbs.current.get(f.id);
                 return (
                   <article key={f.id} className="app-file-row">
-                    <div className="app-file-thumb">
+                    <button
+                      type="button"
+                      className="app-file-thumb app-file-thumb-btn"
+                      onClick={() => {
+                        if (canPreview) void onPreview(f.id);
+                      }}
+                      disabled={!canPreview}
+                      title={canPreview ? 'Preview' : undefined}
+                    >
                       {thumb ? (
                         <img src={thumb} alt="" />
                       ) : (
-                        <span className="app-file-thumb-ph">{canPreview ? '…' : 'FILE'}</span>
+                        <span className="app-file-thumb-ph">
+                          {isVideoMime(f.mimeType, f.originalName)
+                            ? '▶'
+                            : canPreview
+                              ? '…'
+                              : 'FILE'}
+                        </span>
                       )}
-                    </div>
+                    </button>
                     <div className="app-file-meta">
                       <h3 className="app-file-name">{f.originalName}</h3>
                       <p className="app-file-sub">
@@ -562,7 +612,7 @@ export default function DrivePage() {
                           className="app-btn-text"
                           onClick={() => void onPreview(f.id)}
                         >
-                          Preview
+                          {isVideoMime(f.mimeType, f.originalName) ? 'Play' : 'Preview'}
                         </button>
                       ) : null}
                       <button
@@ -749,6 +799,8 @@ export default function DrivePage() {
           </div>
         </div>
       ) : null}
+
+      <MediaLightbox state={lightbox} onClose={closeLightbox} />
     </div>
   );
 }
