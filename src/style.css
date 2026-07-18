@@ -221,6 +221,7 @@ body::before {
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .section-title {
@@ -231,6 +232,9 @@ body::before {
   color: var(--text-primary);
   margin-bottom: 3rem;
   max-width: 600px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ===== SCROLL REVEAL ===== */
