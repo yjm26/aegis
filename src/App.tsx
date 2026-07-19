@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Landing from './Landing';
-import PageTransition from './components/PageTransition';
+import PageTransition from './components/shared/PageTransition';
 import BrandLoader from './components/shared/BrandLoader';
 
 const lazyRetry = <T extends { default: React.ComponentType<unknown> }>(

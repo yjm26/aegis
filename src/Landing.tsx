@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PaperShader from './components/PaperShader';
+import PaperShader from './components/shared/PaperShader';
 
 export default function Landing() {
   return (
