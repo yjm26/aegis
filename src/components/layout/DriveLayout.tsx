@@ -1,74 +1,76 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import type { FolderMetadata } from '../../../scripts/types';
 
-interface DriveLayoutProps {
+export type DriveLayoutProps = {
   children: React.ReactNode;
-  folderName?: string;
-  onNewFolder?: () => void;
-  onUpload?: () => void;
-  onRefresh?: () => void;
-  onSearch?: (query: string) => void;
-  isLoading?: boolean;
-}
+  folders: FolderMetadata[];
+  folderId: string | null;
+  onSelectAll: () => void;
+  onSelectFolder: (id: string) => void;
+  onNewFolder: () => void;
+  onUpload: () => void;
+  countInFolder: (folderId: string) => number;
+  railFoot?: string;
+};
 
+/**
+ * Shell: sidebar rail (Library + folders under All files) + stage.
+ */
 export default function DriveLayout({
   children,
-  folderName,
+  folders,
+  folderId,
+  onSelectAll,
+  onSelectFolder,
   onNewFolder,
   onUpload,
-  onRefresh,
-  onSearch,
-  isLoading = false,
+  countInFolder,
+  railFoot,
 }: DriveLayoutProps) {
   return (
-    <div className="app-page app-page--drive">
-      {/* Top bar sudah dihandle MainLayout / AppNavbar biasanya */}
-      <main className="app-shell">
-        {/* Sidebar / Rail */}
-        <aside className="app-rail app-reveal app-reveal-2">
+    <main className="app-shell">
+      <aside className="app-rail app-reveal app-reveal-2">
+        <button
+          type="button"
+          className="app-btn-ghost app-btn-block"
+          onClick={onNewFolder}
+        >
+          New folder
+        </button>
+        <button type="button" className="app-upload-cta" onClick={onUpload}>
+          Upload files
+        </button>
+
+        <nav className="app-rail-nav" aria-label="Library">
+          <p className="app-rail-label">Library</p>
           <button
             type="button"
-            className="app-btn-ghost app-btn-block"
-            onClick={onNewFolder}
+            className={`app-rail-item ${folderId === null ? 'is-active' : ''}`}
+            onClick={onSelectAll}
           >
-            New folder
+            All files
           </button>
+          <div className="app-folder-nav">
+            {folders.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                className={`app-rail-item ${folderId === f.id ? 'is-active' : ''}`}
+                onClick={() => onSelectFolder(f.id)}
+              >
+                {f.name}
+                <span className="app-rail-count">{countInFolder(f.id)}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
 
-          <button
-            type="button"
-            className="app-upload-cta"
-            onClick={onUpload}
-          >
-            Upload files
-          </button>
+        <p className="app-rail-foot">
+          {railFoot || 'Encrypted on device. Blobs on Shelby.'}
+        </p>
+      </aside>
 
-          <nav className="app-rail-nav" aria-label="Library">
-            <p className="app-rail-label">Library</p>
-
-            <button
-              type="button"
-              className={`app-rail-item ${!folderName ? 'is-active' : ''}`}
-              onClick={() => window.history.back()} // nanti diganti setFolderId(null)
-            >
-              All files
-            </button>
-
-            {/* Folder list akan di-inject lewat children atau context nanti */}
-            <div className="app-folder-nav">
-              {/* Placeholder — nanti diisi dari DrivePage */}
-            </div>
-          </nav>
-
-          <p className="app-rail-foot">
-            Encrypted on device. Blobs on Shelby.
-          </p>
-        </aside>
-
-        {/* Main Stage */}
-        <section className="app-stage app-reveal app-reveal-3">
-          {children}
-        </section>
-      </main>
-    </div>
+      <section className="app-stage app-reveal app-reveal-3">{children}</section>
+    </main>
   );
 }

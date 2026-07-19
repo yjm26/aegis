@@ -1,65 +1,67 @@
 import React from 'react';
-import FilterMenu, { type FileKindFilter, type SortKey } from '../../shared/FilterMenu';
+import FilterMenu, {
+  type FileKindFilter,
+  type SortKey,
+} from '../../shared/FilterMenu';
 
-interface DriveHeaderProps {
-  folderName?: string;
-  onNewFolder?: () => void;
-  onUpload?: () => void;
-  // tambahan props yang biasa dipakai di legacy
-  viewMode?: 'list' | 'grid';
-  onViewChange?: (mode: 'list' | 'grid') => void;
-  filterOpen?: boolean;
-  onFilterOpenChange?: (open: boolean) => void;
-  filterQuery?: string;
-  onFilterQueryChange?: (q: string) => void;
-  filterKind?: FileKindFilter;
-  onFilterKindChange?: (k: FileKindFilter) => void;
-  sortBy?: SortKey;
-  onSortChange?: (s: SortKey) => void;
-  fileCount?: number;
-  folderCount?: number;
+export type DriveHeaderProps = {
+  folderName?: string | null;
+  onBackToLibrary: () => void;
+  fileCount: number;
+  folderCount: number;
+  looseFileCount: number;
+  viewMode: 'list' | 'grid';
+  onViewChange: (mode: 'list' | 'grid') => void;
+  filterOpen: boolean;
+  onFilterOpenChange: (open: boolean) => void;
+  filterQuery: string;
+  onFilterQueryChange: (q: string) => void;
+  filterKind: FileKindFilter;
+  onFilterKindChange: (k: FileKindFilter) => void;
+  sortBy: SortKey;
+  onSortChange: (s: SortKey) => void;
+  onUpload: () => void;
   onShareFolder?: () => void;
   onDeleteFolder?: () => void;
-}
+};
 
 export default function DriveHeader({
   folderName,
-  onNewFolder,
-  onUpload,
-  viewMode = 'list',
+  onBackToLibrary,
+  fileCount,
+  folderCount,
+  looseFileCount,
+  viewMode,
   onViewChange,
-  filterOpen = false,
+  filterOpen,
   onFilterOpenChange,
-  filterQuery = '',
+  filterQuery,
   onFilterQueryChange,
-  filterKind = 'all',
+  filterKind,
   onFilterKindChange,
-  sortBy = 'date',
+  sortBy,
   onSortChange,
-  fileCount = 0,
-  folderCount = 0,
+  onUpload,
   onShareFolder,
   onDeleteFolder,
 }: DriveHeaderProps) {
+  const inFolder = Boolean(folderName);
+
   return (
     <div className="app-stage-head">
       <div>
-        {folderName ? (
-          <button
-            type="button"
-            className="app-back"
-            onClick={() => window.history.back()} // placeholder, nanti disesuaikan
-          >
+        {inFolder ? (
+          <button type="button" className="app-back" onClick={onBackToLibrary}>
             ← Library
           </button>
         ) : null}
-        <h1 className="app-stage-title">
-          {folderName || 'Library'}
-        </h1>
+        <h1 className="app-stage-title">{folderName || 'Library'}</h1>
         <p className="app-stage-sub">
-          {folderName
+          {inFolder
             ? `${fileCount} file${fileCount === 1 ? '' : 's'} in this folder`
-            : `${folderCount} folder${folderCount === 1 ? '' : 's'} · ${fileCount} loose file${fileCount === 1 ? '' : 's'}`}
+            : `${folderCount} folder${folderCount === 1 ? '' : 's'} · ${looseFileCount} loose file${
+                looseFileCount === 1 ? '' : 's'
+              }`}
         </p>
       </div>
 
@@ -68,7 +70,7 @@ export default function DriveHeader({
           <button
             type="button"
             className={`app-tool ${viewMode === 'list' ? 'is-active' : ''}`}
-            onClick={() => onViewChange?.('list')}
+            onClick={() => onViewChange('list')}
             title="List view"
           >
             List
@@ -76,12 +78,11 @@ export default function DriveHeader({
           <button
             type="button"
             className={`app-tool ${viewMode === 'grid' ? 'is-active' : ''}`}
-            onClick={() => onViewChange?.('grid')}
+            onClick={() => onViewChange('grid')}
             title="Grid view"
           >
             Grid
           </button>
-
           <FilterMenu
             open={filterOpen}
             onOpenChange={onFilterOpenChange}
@@ -95,7 +96,7 @@ export default function DriveHeader({
           />
         </div>
 
-        {folderName ? (
+        {inFolder ? (
           <>
             <button
               type="button"
@@ -114,11 +115,7 @@ export default function DriveHeader({
           </>
         ) : null}
 
-        <button
-          type="button"
-          className="app-btn-ghost"
-          onClick={onUpload}
-        >
+        <button type="button" className="app-btn-ghost" onClick={onUpload}>
           Upload
         </button>
       </div>
