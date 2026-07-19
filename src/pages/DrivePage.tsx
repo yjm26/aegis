@@ -31,7 +31,7 @@ import {
   isImageMime,
   isVideoMime,
 } from '../../scripts/preview';
-import type { FileMetadata, FolderMetadata } from '../../scripts/types';
+import type { FileMetadata, FolderMetadata, WalletAccount } from '../../scripts/types';
 import {
   ensureVaultUnlocked,
   migratePlainKeys,
@@ -68,7 +68,7 @@ export default function DrivePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
-  const [wallet, setWallet] = useState<{ address: string; publicKey: string } | null>(null);
+  const [wallet, setWallet] = useState<WalletAccount | null>(null);
   const [ready, setReady] = useState(false);
   const [loadingError, setLoadingError] = useState<string | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -96,9 +96,10 @@ export default function DrivePage() {
   const [sortBy, setSortBy] = useState<SortKey>(() => {
     try {
       const s = localStorage.getItem('blobbed_sort');
-      return (s as SortKey) || 'date';
+      if (s === 'newest' || s === 'name' || s === 'size') return s;
+      return 'newest';
     } catch {
-      return 'date';
+      return 'newest';
     }
   });
   const [filterKind, setFilterKind] = useState<FileKindFilter>('all');
@@ -123,9 +124,10 @@ export default function DrivePage() {
     if (isRetry) setIsRetrying(true);
     setLoadingError(null);
 
-    const timeout = (ms: number) => new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout')), ms)
-    );
+    const timeout = (ms: number) =>
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), ms)
+      );
 
     try {
       if (!hasAppSession()) {
@@ -135,12 +137,18 @@ export default function DrivePage() {
 
       const w = await Promise.race([
         getConnectedWallet(),
-        timeout(8000)
+        timeout(8000),
       ]);
 
       if (!w?.address) {
         await disconnectWallet().catch(() => {});
         nav('/gate', { replace: true });
+        return;
+      }
+      if (!w.publicKey) {
+        setLoadingError(
+          'Wallet public key missing. Disconnect, reconnect Petra, then try again.'
+        );
         return;
       }
 
@@ -152,21 +160,21 @@ export default function DrivePage() {
         setStatus({ msg: 'Unlock vault. Check wallet…', kind: 'info' });
         await Promise.race([
           ensureVaultUnlocked(w),
-          timeout(20000)
+          timeout(20000),
         ]);
         setVaultOk(true);
 
         setStatus({ msg: 'Library session. Check wallet…', kind: 'info' });
         await Promise.race([
           ensureLibrarySession(w),
-          timeout(15000)
+          timeout(15000),
         ]);
 
         // hydrate AFTER session — sync requires sessionToken
         setStatus({ msg: 'Loading library…', kind: 'info' });
         await Promise.race([
           hydrateLibrary(w.address),
-          timeout(15000)
+          timeout(15000),
         ]);
 
         const mig = await migratePlainKeys(w);
@@ -176,15 +184,27 @@ export default function DrivePage() {
       } catch (err: unknown) {
         setVaultOk(false);
         const msg = err instanceof Error ? err.message : '';
-        if (/session|sign|auth|rejected/i.test(msg)) {
+        if (msg === 'Timeout') {
+          setLoadingError('Unlock/session timed out. Check Petra popup, then Retry.');
+        } else if (/SESSION_CONFIG|Session service unavailable/i.test(msg)) {
           setLoadingError(
-            'Vault or library session failed. Check Petra popup, then Retry.'
+            'Server session not configured. Set LIBRARY_SESSION_SECRET on Render, then Retry.'
           );
-        } else if (msg === 'Timeout') {
-          setLoadingError('Unlock/session timed out. Check Petra and try again.');
+        } else if (/public key|publicKey/i.test(msg)) {
+          setLoadingError(
+            'Wallet public key missing. Disconnect, reconnect Petra, then Retry.'
+          );
+        } else if (/session|sign|auth|rejected|signature/i.test(msg)) {
+          setLoadingError(
+            msg.length > 8 && msg.length < 140
+              ? msg
+              : 'Vault or library session failed. Approve Petra popup, then Retry.'
+          );
         } else {
           setLoadingError(
-            'Failed to unlock vault or library session. Check Petra popup and try again.'
+            msg && msg.length < 140
+              ? msg
+              : 'Failed to unlock vault or library session. Check Petra popup and try again.'
           );
         }
         return;
@@ -233,16 +253,25 @@ export default function DrivePage() {
     if (!wallet) return;
     for (const file of Array.from(fileList)) {
       try {
-        await uploadFile(file, folderId || undefined);
+        await uploadFile(file, wallet, folderId);
       } catch (e: unknown) {
-        /* upload failed — surface via status if needed */
+        const msg = e instanceof Error ? e.message : 'Upload failed';
+        setStatus({ msg: msg.slice(0, 100), kind: 'err' });
       }
     }
     refresh();
   }, [wallet, folderId, refresh]);
 
   const onDisconnect = async () => {
-    await disconnectWallet();
+    clearVaultSession();
+    clearLibrarySession();
+    setWallet(null);
+    setReady(false);
+    try {
+      await disconnectWallet();
+    } catch {
+      /* ignore */
+    }
     nav('/gate', { replace: true });
   };
 
@@ -285,22 +314,45 @@ export default function DrivePage() {
   if (!ready || !wallet) {
     if (loadingError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white gap-4">
-          <div className="text-red-400 text-center px-4">{loadingError}</div>
-          <button
-            onClick={retrySync}
-            disabled={isRetrying}
-            className="px-6 py-2 bg-white text-black rounded hover:bg-gray-200 disabled:opacity-50"
-          >
-            {isRetrying ? 'Retrying...' : 'Retry'}
-          </button>
-          <button onClick={onDisconnect} className="text-sm text-white/60 hover:text-white">
-            Disconnect
-          </button>
+        <div className="brand-loader brand-loader--error" role="alert">
+          <div className="brand-loader-ambient" aria-hidden="true" />
+          <div className="brand-loader-inner">
+            <p className="brand-loader-word">Blobbed</p>
+            <div className="brand-loader-mark" aria-hidden="true">
+              <span className="brand-loader-ring brand-loader-ring--static" />
+              <span className="brand-loader-core">B</span>
+            </div>
+            <div className="brand-loader-copy">
+              <p className="brand-loader-label">Couldn&apos;t open library</p>
+              <p className="brand-loader-hint">{loadingError}</p>
+            </div>
+            <div className="brand-loader-actions">
+              <button
+                type="button"
+                className="app-modal-btn app-modal-btn-primary"
+                onClick={retrySync}
+                disabled={isRetrying}
+              >
+                {isRetrying ? 'Retrying…' : 'Retry'}
+              </button>
+              <button
+                type="button"
+                className="app-modal-btn app-modal-btn-ghost"
+                onClick={() => void onDisconnect()}
+              >
+                Disconnect
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
-    return <BrandLoader label="Syncing your library" />;
+    return (
+      <BrandLoader
+        label="Syncing your library"
+        hint="Index + wallet key wrap"
+      />
+    );
   }
 
   return (
@@ -365,29 +417,34 @@ export default function DrivePage() {
 
         {files.length > 0 && (
           <div className={viewMode === 'grid' ? 'drive-file-grid' : 'drive-file-list'}>
-            {files.map((file) => (
+            {files.map((file) => {
+              const mime = file.mimeType || '';
+              const name = file.originalName || 'Untitled';
+              const size = Number(file.sizeBytes || 0);
+              return (
               <div key={file.id} className="drive-file-item">
                 <div className="drive-file-icon">
-                  {isImageMime(file.mime) ? '🖼️' : isVideoMime(file.mime) ? '🎥' : '📄'}
+                  {isImageMime(mime, name) ? '🖼️' : isVideoMime(mime, name) ? '🎥' : '📄'}
                 </div>
                 <div className="drive-file-info">
-                  <div className="drive-file-name">{file.name}</div>
+                  <div className="drive-file-name">{name}</div>
                   <div className="drive-file-meta">
-                    {formatSize(file.size)} · {new Date(file.createdAt).toLocaleDateString()}
+                    {formatSize(size)} · {new Date(file.createdAt).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="drive-file-actions">
-                  <button>Open</button>
-                  <button>Share</button>
-                  <button onClick={() => askDeleteFile(file.id, file.name)}>Delete</button>
+                  <button type="button">Open</button>
+                  <button type="button">Share</button>
+                  <button type="button" onClick={() => askDeleteFile(file.id, name)}>Delete</button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
         {files.length === 0 && folders.length === 0 && (
-          <div className="text-white/50 text-center py-12">No files yet. Upload something!</div>
+          <div className="app-empty-hint">No files yet. Upload something!</div>
         )}
       </DriveContent>
 

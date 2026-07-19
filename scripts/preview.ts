@@ -62,14 +62,14 @@ export async function decryptShareItem(
   return plain;
 }
 
-export function isImageMime(mime: string, name = ''): boolean {
-  if (mime.startsWith('image/')) return true;
-  return /\.(png|jpe?g|gif|webp|avif|bmp|svg)$/i.test(name);
+export function isImageMime(mime: string | undefined | null, name = ''): boolean {
+  if (mime && mime.startsWith('image/')) return true;
+  return /\.(png|jpe?g|gif|webp|avif|bmp|svg)$/i.test(name || '');
 }
 
-export function isVideoMime(mime: string, name = ''): boolean {
-  if (mime.startsWith('video/')) return true;
-  return /\.(mp4|webm|ogg|mov|m4v)$/i.test(name);
+export function isVideoMime(mime: string | undefined | null, name = ''): boolean {
+  if (mime && mime.startsWith('video/')) return true;
+  return /\.(mp4|webm|ogg|mov|m4v)$/i.test(name || '');
 }
 
 function guessMime(name: string): string {

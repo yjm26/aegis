@@ -17,17 +17,17 @@ const PREFIX_THUMB = 'bt1.';
 
 export type KeyEncoding = 'plain' | 'wallet-v1';
 
-export function detectKeyEncoding(stored: string): KeyEncoding {
-  if (stored.startsWith(PREFIX_V1)) return 'wallet-v1';
+export function detectKeyEncoding(stored: string | undefined | null): KeyEncoding {
+  if (stored && stored.startsWith(PREFIX_V1)) return 'wallet-v1';
   return 'plain';
 }
 
-export function isWrappedKey(stored: string): boolean {
+export function isWrappedKey(stored: string | undefined | null): boolean {
   return detectKeyEncoding(stored) === 'wallet-v1';
 }
 
-export function isWrappedThumb(stored: string): boolean {
-  return stored.startsWith(PREFIX_THUMB);
+export function isWrappedThumb(stored: string | undefined | null): boolean {
+  return Boolean(stored && stored.startsWith(PREFIX_THUMB));
 }
 
 export function isPlainThumbDataUrl(stored: string | undefined | null): boolean {

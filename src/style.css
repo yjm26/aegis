@@ -2008,6 +2008,36 @@ html, body {
   animation: brand-bar-slide 1.35s ease-in-out infinite;
 }
 
+.brand-loader--error .brand-loader-bar {
+  display: none;
+}
+
+.brand-loader-ring--static {
+  animation: none !important;
+  opacity: 0.55;
+}
+
+.brand-loader-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.brand-loader-actions .app-modal-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.app-empty-hint {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.9rem;
+}
+
 @keyframes brand-spin {
   to { transform: rotate(360deg); }
 }
