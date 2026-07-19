@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Body parser (penting untuk upload & API)
+// Body parser
 app.use(express.json({ limit: '12mb' }));
 app.use(express.urlencoded({ extended: true, limit: '12mb' }));
 
@@ -21,10 +21,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ============================================
-// API Routes - import handler Vercel style
-// ============================================
-
+// API Routes
 import statusHandler from './api/status.ts';
 app.all('/api/status', async (req, res) => await statusHandler(req as any, res as any));
 
@@ -43,17 +40,15 @@ app.all('/api/folders', async (req, res) => await foldersHandler(req as any, res
 import sharesHandler from './api/shares.ts';
 app.all('/api/shares', async (req, res) => await sharesHandler(req as any, res as any));
 
-// ============================================
-// Serve React SPA
-// ============================================
+// Serve static files
 app.use(express.static(path.join(__dirname, 'dist'), {
   maxAge: '1y',
   immutable: true,
   index: false,
 }));
 
-// SPA fallback
-app.get('/*', (req, res) => {
+// SPA fallback (compatible)
+app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API not found' });
   }
