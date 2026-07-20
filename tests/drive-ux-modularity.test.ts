@@ -126,6 +126,34 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('uses Tailwind as the shared view gallery styling path instead of keeping view vanilla CSS blocks', () => {
+    const style = read('src/style.css');
+    const view = read('src/pages/ViewPage.tsx');
+
+    expect(view).toMatch(/\bgrid\b|\bborder-\[/);
+    for (const selector of [
+      '.view-page .view-main',
+      '.view-head',
+      '.view-kicker',
+      '.view-title',
+      '.view-meta',
+      '.view-sub',
+      '.view-error',
+      '.view-grid',
+      '.view-tile',
+      '.view-tile-media',
+      '.view-tile-ph',
+      '.view-tile-badge',
+      '.view-tile-foot',
+      '.view-tile-copy',
+      '.view-tile-name',
+      '.view-tile-kind',
+      '.view-dl',
+    ]) {
+      expect(style).not.toContain(selector);
+    }
+  });
+
   it('uses Tailwind as the upload/share overlay styling path instead of keeping upload/share vanilla CSS blocks', () => {
     const style = read('src/style.css');
     const overlayFiles = [

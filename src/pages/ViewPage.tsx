@@ -42,6 +42,20 @@ type TileState = {
   failed?: boolean;
 };
 
+const VIEW_META_BADGE_CLASS =
+  'border border-[color-mix(in_oklch,var(--border,#2a2a2a)_82%,var(--text,#fff))] bg-[color-mix(in_oklch,var(--surface,#111)_72%,transparent)] px-[0.55rem] py-[0.38rem] text-[0.6875rem] uppercase tracking-[0.06em] text-[color-mix(in_oklch,var(--text,#fff)_64%,transparent)]';
+
+const VIEW_TILE_CLASS =
+  'flex cursor-pointer flex-col overflow-hidden border border-[var(--border,#2a2a2a)] bg-[color-mix(in_oklch,var(--surface,#111)_76%,transparent)] transition-[border-color,background,transform] duration-150 hover:-translate-y-px hover:border-[color-mix(in_oklch,var(--text,#fff)_34%,var(--border,#333))] hover:bg-[color-mix(in_oklch,var(--surface,#111)_92%,var(--text,#fff))] motion-reduce:transition-none motion-reduce:hover:translate-y-0';
+
+const VIEW_PLACEHOLDER_CLASS =
+  'text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text-muted,#666)]';
+
+const VIEW_MEDIA_OBJECT_CLASS = 'h-full w-full object-cover';
+
+const VIEW_DOWNLOAD_BUTTON_CLASS =
+  'min-h-[2.45rem] w-full cursor-pointer appearance-none border border-[color-mix(in_oklch,var(--border,#2a2a2a)_78%,var(--text,#fff))] bg-transparent text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text,#fff)] transition-[background,color,border-color] duration-150 hover:border-[var(--text,#fff)] hover:bg-[var(--text,#fff)] hover:text-[var(--bg,#0a0a0a)] motion-reduce:transition-none';
+
 function fileKindLabel(item: ShareFileItem): string {
   if (isImageMime(item.mime, item.name)) return 'Image';
   if (isVideoMime(item.mime, item.name)) return 'Video';
@@ -158,28 +172,28 @@ export default function ViewPage() {
       </header>
 
 
-      <main className="view-main">
-        <header className="view-head">
-          <p className="view-kicker">{shareLabel}</p>
-          <h1 className="view-title">{title}</h1>
-          <div className="view-meta" aria-label="Share details">
-            <span>{itemCount} item{itemCount === 1 ? '' : 's'}</span>
-            <span>{isLiveFolder ? 'Live folder' : 'Snapshot'}</span>
-            <span>Browser decrypt</span>
+      <main className="mx-auto w-full max-w-[58rem] px-[clamp(1.15rem,4vw,2.5rem)] pb-20 pt-10 sm:pt-[clamp(3rem,7vw,5rem)]">
+        <header className="grid max-w-[44rem] gap-3">
+          <p className="mb-[0.15rem] text-[0.6875rem] uppercase tracking-[0.16em] text-[color-mix(in_oklch,var(--text-muted,#888)_80%,transparent)]">{shareLabel}</p>
+          <h1 className="m-0 text-[clamp(2.25rem,5vw,4rem)] font-[250] leading-[0.98] tracking-[-0.055em]">{title}</h1>
+          <div className="mt-1 flex flex-wrap gap-[0.45rem]" aria-label="Share details">
+            <span className={VIEW_META_BADGE_CLASS}>{itemCount} item{itemCount === 1 ? '' : 's'}</span>
+            <span className={VIEW_META_BADGE_CLASS}>{isLiveFolder ? 'Live folder' : 'Snapshot'}</span>
+            <span className={VIEW_META_BADGE_CLASS}>Browser decrypt</span>
           </div>
-          <p className="view-sub">{sub}</p>
+          <p className="mt-1 max-w-[34rem] text-sm leading-[1.6] text-[color-mix(in_oklch,var(--text-muted,#888)_88%,var(--text,#fff))]">{sub}</p>
         </header>
 
-        {error ? <div className="view-error">{error}</div> : null}
+        {error ? <div className="mt-6 text-sm text-[#e8a0a0]">{error}</div> : null}
 
-        <div className="view-grid">
+        <div className="mt-[clamp(2rem,5vw,3rem)] grid grid-cols-1 items-start gap-4 sm:grid-cols-[repeat(auto-fill,minmax(min(100%,14rem),16rem))]">
           {tiles.map(({ item, url, failed }, index) => {
             const image = isImageMime(item.mime, item.name);
             const video = isVideoMime(item.mime, item.name);
             return (
               <article
                 key={`${item.n}-${index}`}
-                className="view-tile"
+                className={VIEW_TILE_CLASS}
                 onClick={() => {
                   if (!url) {
                     if (!image && !video) {
@@ -199,30 +213,30 @@ export default function ViewPage() {
                   });
                 }}
               >
-                <div className="view-tile-media">
+                <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[#0f0f0f]">
                   {url && image ? (
-                    <img src={url} alt="" loading="lazy" />
+                    <img className={VIEW_MEDIA_OBJECT_CLASS} src={url} alt="" loading="lazy" />
                   ) : url && video ? (
                     <>
-                      <video src={url} muted playsInline preload="metadata" />
-                      <span className="view-tile-badge">Video</span>
+                      <video className={VIEW_MEDIA_OBJECT_CLASS} src={url} muted playsInline preload="metadata" />
+                      <span className="absolute bottom-2 left-2 bg-black/70 px-[0.42rem] py-[0.24rem] text-[0.5625rem] uppercase tracking-[0.1em] text-white">Video</span>
                     </>
                   ) : failed ? (
-                    <span className="view-tile-ph">Failed</span>
+                    <span className={VIEW_PLACEHOLDER_CLASS}>Failed</span>
                   ) : image || video ? (
-                    <span className="view-tile-ph">…</span>
+                    <span className={VIEW_PLACEHOLDER_CLASS}>…</span>
                   ) : (
-                    <span className="view-tile-ph">FILE</span>
+                    <span className={VIEW_PLACEHOLDER_CLASS}>FILE</span>
                   )}
                 </div>
-                <div className="view-tile-foot">
-                  <div className="view-tile-copy">
-                    <p className="view-tile-name" title={item.name}>{shortName(item.name)}</p>
-                    <p className="view-tile-kind">{fileKindLabel(item)}</p>
+                <div className="grid gap-3 border-t border-[var(--border,#2a2a2a)] p-[0.85rem]">
+                  <div className="min-w-0">
+                    <p className="m-0 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.8125rem] text-[color-mix(in_oklch,var(--text,#fff)_88%,transparent)]" title={item.name}>{shortName(item.name)}</p>
+                    <p className="mt-[0.22rem] text-[0.6875rem] uppercase tracking-[0.08em] text-[color-mix(in_oklch,var(--text-muted,#888)_76%,transparent)]">{fileKindLabel(item)}</p>
                   </div>
                   <button
                     type="button"
-                    className="view-dl"
+                    className={VIEW_DOWNLOAD_BUTTON_CLASS}
                     onClick={(e) => {
                       e.stopPropagation();
                       void downloadShareItem(item).catch((err) =>
