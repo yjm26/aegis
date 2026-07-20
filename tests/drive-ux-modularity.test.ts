@@ -177,6 +177,19 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('keeps app chrome transitions smooth without restoring vanilla CSS', () => {
+    const drive = read('src/pages/DrivePage.tsx');
+    const pageTransition = read('src/components/shared/PageTransition.tsx');
+
+    expect(drive).toContain('MODAL_VISIBLE_BACKDROP_CLASS');
+    expect(drive).toContain('MODAL_VISIBLE_CARD_CLASS');
+    expect(drive).toMatch(/transition-\[opacity,transform\]/);
+    expect(drive).toMatch(/scale-9[58]|translate-y-2/);
+    expect(pageTransition).toContain('requestAnimationFrame');
+    expect(pageTransition).toMatch(/duration-\[520ms\]|duration-500/);
+    expect(pageTransition).toContain('ease-[cubic-bezier(0.16,1,0.3,1)]');
+  });
+
   it('keeps tailwind.css limited to Tailwind imports and global base styles after the migration', () => {
     const style = read('src/tailwind.css');
     const appFiles = [

@@ -10,15 +10,21 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
   useEffect(() => {
     setEntering(true);
-    const raf = window.requestAnimationFrame(() => setEntering(false));
-    return () => window.cancelAnimationFrame(raf);
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => setEntering(false));
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame) window.cancelAnimationFrame(secondFrame);
+    };
   }, [location.pathname]);
 
   return (
     <div className="min-h-[100vh]" data-path={location.pathname}>
       <div
-        className={`transition-[opacity,transform] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-          entering ? 'translate-y-2.5 opacity-0' : 'translate-y-0 opacity-100'
+        className={`transition-[opacity,transform] duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+          entering ? 'translate-y-3 opacity-0' : 'translate-y-0 opacity-100'
         }`}
       >
         {children}

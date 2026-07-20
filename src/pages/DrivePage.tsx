@@ -74,10 +74,16 @@ type DialogState =
   | { type: 'move-file'; fileId: string; name: string };
 
 const MODAL_BACKDROP_CLASS =
-  'fixed inset-0 z-[80] grid place-items-center bg-black/70 p-5 backdrop-blur-md';
+  'fixed inset-0 z-[80] grid place-items-center bg-black/70 p-5 backdrop-blur-md transition-opacity duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none';
+
+const MODAL_VISIBLE_BACKDROP_CLASS = 'opacity-100';
+const MODAL_HIDDEN_BACKDROP_CLASS = 'opacity-0';
 
 const MODAL_CARD_CLASS =
-  'w-[min(100%,22.5rem)] rounded-[14px] border border-white/10 bg-[#121212] px-[1.35rem] pb-5 pt-[1.35rem] shadow-[0_24px_64px_rgba(0,0,0,0.55)]';
+  'w-[min(100%,22.5rem)] rounded-[14px] border border-white/10 bg-[#121212] px-[1.35rem] pb-5 pt-[1.35rem] shadow-[0_24px_64px_rgba(0,0,0,0.55)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none';
+
+const MODAL_VISIBLE_CARD_CLASS = 'translate-y-0 scale-100 opacity-100';
+const MODAL_HIDDEN_CARD_CLASS = 'translate-y-2 scale-95 opacity-0';
 
 const MODAL_TITLE_CLASS =
   'm-0 text-[1.05rem] font-medium tracking-[-0.02em] text-[#f2f2f2]';
@@ -125,6 +131,7 @@ export default function DrivePage() {
   } | null>(null);
   const [drag, setDrag] = useState(false);
   const [dialog, setDialog] = useState<DialogState>(null);
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [folderName, setFolderName] = useState('Album');
   const [dialogBusy, setDialogBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaLightboxState | null>(null);
@@ -297,12 +304,23 @@ export default function DrivePage() {
 
   useEffect(() => {
     if (!dialog) return;
+    setDialogVisible(false);
+    const raf = window.requestAnimationFrame(() => setDialogVisible(true));
+    return () => window.cancelAnimationFrame(raf);
+  }, [dialog]);
+
+  useEffect(() => {
+    if (!dialog) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !dialogBusy) setDialog(null);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [dialog, dialogBusy]);
+
+  useEffect(() => {
+    if (!dialog) setDialogVisible(false);
+  }, [dialog]);
 
   const owner = wallet?.address || '';
 
@@ -1006,14 +1024,18 @@ export default function DrivePage() {
 
       {dialog ? (
         <div
-          className={MODAL_BACKDROP_CLASS}
+          className={`${MODAL_BACKDROP_CLASS} ${
+            dialogVisible ? MODAL_VISIBLE_BACKDROP_CLASS : MODAL_HIDDEN_BACKDROP_CLASS
+          }`}
           role="presentation"
           onClick={() => {
             if (!dialogBusy) setDialog(null);
           }}
         >
           <div
-            className={MODAL_CARD_CLASS}
+            className={`${MODAL_CARD_CLASS} ${
+              dialogVisible ? MODAL_VISIBLE_CARD_CLASS : MODAL_HIDDEN_CARD_CLASS
+            }`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="app-modal-title"
