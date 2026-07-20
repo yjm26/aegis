@@ -10,11 +10,14 @@ export type DriveAction = {
 export type DriveActionMenuProps = {
   label?: string;
   actions: DriveAction[];
+  /** Use for list rows near the bottom so the menu opens upward. */
+  align?: 'down' | 'up';
 };
 
 export default function DriveActionMenu({
   label = 'More',
   actions,
+  align = 'down',
 }: DriveActionMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -38,10 +41,10 @@ export default function DriveActionMenu({
   if (!actions.length) return null;
 
   return (
-    <div className="drive-action-menu" ref={ref}>
+    <div className="relative shrink-0" ref={ref}>
       <button
         type="button"
-        className="app-btn-text drive-action-menu-trigger"
+        className="min-w-11 border-0 bg-transparent px-1 py-1 text-[0.72rem] uppercase tracking-[0.08em] text-white/50 transition hover:text-white"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
@@ -49,14 +52,21 @@ export default function DriveActionMenu({
         {label}
       </button>
       {open ? (
-        <div className="drive-action-menu-popover" role="menu">
+        <div
+          className={`absolute right-0 z-50 min-w-40 border border-white/12 bg-[#0c0c0ef5] p-1 shadow-[0_18px_48px_rgba(0,0,0,0.38)] backdrop-blur-xl ${
+            align === 'up' ? 'bottom-[calc(100%+0.45rem)]' : 'top-[calc(100%+0.45rem)]'
+          }`}
+          role="menu"
+        >
           {actions.map((action) => (
             <button
               key={action.label}
               type="button"
               role="menuitem"
-              className={`drive-action-menu-item ${
-                action.tone === 'danger' ? 'is-danger' : ''
+              className={`w-full border-0 bg-transparent px-3 py-2 text-left text-[0.75rem] transition hover:bg-white/[0.055] hover:text-white ${
+                action.tone === 'danger'
+                  ? 'text-red-200/78'
+                  : 'text-white/76'
               }`}
               disabled={action.disabled}
               onClick={() => {

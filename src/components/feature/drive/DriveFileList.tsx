@@ -32,7 +32,13 @@ export default function DriveFileList({
   if (!files.length) return null;
 
   return (
-    <div className={viewMode === 'grid' ? 'app-file-grid' : 'app-file-list'}>
+    <div
+      className={
+        viewMode === 'grid'
+          ? 'mt-3 grid grid-cols-[repeat(auto-fill,minmax(148px,1fr))] gap-3'
+          : 'flex flex-col border-t border-white/10'
+      }
+    >
       {files.map((f) => {
         const name = f.originalName || 'Untitled';
         const mime = f.mimeType || '';
@@ -49,19 +55,19 @@ export default function DriveFileList({
           ...(onMove ? [{ label: 'Move', onSelect: () => onMove(f.id) }] : []),
           { label: 'Delete', tone: 'danger', onSelect: () => onDelete(f.id) },
         ];
+        const articleClass =
+          viewMode === 'grid'
+            ? `flex flex-col overflow-hidden rounded-xl border border-white/8 bg-white/[0.02] transition hover:border-white/15 hover:bg-white/[0.035] ${checked ? 'border-white/24 bg-white/[0.045]' : ''}`
+            : `flex items-center justify-between gap-4 border-b border-white/10 px-0.5 py-4 transition hover:bg-white/[0.02] max-[720px]:flex-col max-[720px]:items-start ${checked ? 'bg-white/[0.035]' : ''}`;
+        const thumbClass =
+          viewMode === 'grid'
+            ? 'relative flex aspect-square h-auto w-full shrink-0 items-center justify-center overflow-hidden border-0 bg-white/[0.02]'
+            : 'relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden border border-white/10 bg-white/[0.02]';
 
         return (
-          <article
-            key={f.id}
-            className={[
-              viewMode === 'grid' ? 'app-file-card' : 'app-file-row',
-              checked ? 'is-selected' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
+          <article key={f.id} className={articleClass}>
             {onToggleSelect ? (
-              <label className="app-file-check">
+              <label className="flex shrink-0 items-center justify-center text-white/55">
                 <input
                   type="checkbox"
                   checked={checked}
@@ -72,7 +78,7 @@ export default function DriveFileList({
             ) : null}
             <button
               type="button"
-              className="app-file-thumb app-file-thumb-btn"
+              className={thumbClass}
               onClick={() => {
                 if (canPreview) onPreview(f.id);
               }}
@@ -80,28 +86,39 @@ export default function DriveFileList({
               title={canPreview ? 'Preview' : undefined}
             >
               {thumb ? (
-                <img src={thumb} alt="" />
+                <img className="h-full w-full object-cover" src={thumb} alt="" />
               ) : (
-                <span className="app-file-thumb-ph app-file-thumb-ph--pulse">
+                <span className="text-[0.64rem] uppercase tracking-[0.12em] text-white/45">
                   {video ? '▶' : canPreview ? '' : kindLabel}
                 </span>
               )}
-              <span className="app-file-badge">{kindLabel}</span>
+              <span className="pointer-events-none absolute bottom-1.5 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.04em] text-[#ddd]">
+                {kindLabel}
+              </span>
             </button>
-            <div className="app-file-meta">
-              <h3 className="app-file-name" title={name}>
+            <div className={viewMode === 'grid' ? 'min-w-0 px-3 pb-1 pt-2' : 'min-w-0 flex-1'}>
+              <h3
+                className="m-0 truncate text-[0.86rem] font-normal tracking-[-0.01em] text-white/90"
+                title={name}
+              >
                 {name}
               </h3>
-              <p className="app-file-sub">
+              <p className="m-0 mt-1 text-[0.72rem] text-white/42">
                 {formatFileSize(Number(f.sizeBytes || 0))} ·{' '}
                 {formatFileDate(f.createdAt)}
               </p>
             </div>
-            <div className="app-file-actions">
+            <div
+              className={
+                viewMode === 'grid'
+                  ? 'flex flex-wrap gap-1 px-2 pb-3 pt-1'
+                  : 'flex shrink-0 items-center gap-2'
+              }
+            >
               {canPreview ? (
                 <button
                   type="button"
-                  className="app-btn-text"
+                  className="border-0 bg-transparent px-1 py-1 text-[0.72rem] uppercase tracking-[0.08em] text-white/55 transition hover:text-white"
                   onClick={() => onPreview(f.id)}
                 >
                   {video ? 'Play' : 'Preview'}
@@ -109,12 +126,12 @@ export default function DriveFileList({
               ) : null}
               <button
                 type="button"
-                className="app-btn-text app-btn-text-primary"
+                className="border-0 bg-transparent px-1 py-1 text-[0.72rem] uppercase tracking-[0.08em] text-white/85 transition hover:text-white"
                 onClick={() => onShare(f.id)}
               >
                 Share
               </button>
-              <DriveActionMenu actions={menuActions} />
+              <DriveActionMenu actions={menuActions} align="up" />
             </div>
           </article>
         );

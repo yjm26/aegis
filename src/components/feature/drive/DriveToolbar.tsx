@@ -22,6 +22,14 @@ export type DriveToolbarProps = {
   onDeleteFolder?: () => void;
 };
 
+const toolBase =
+  'rounded-full px-2.5 py-1 text-[0.7rem] text-white/60 transition hover:text-white';
+const toolActive = 'bg-white/10 text-[#f0ebe3]';
+const secondaryButton =
+  'border border-white/10 bg-white/[0.02] px-3 py-2 text-[0.68rem] uppercase tracking-[0.14em] text-white/62 transition hover:border-white/22 hover:text-white';
+const dangerButton =
+  'border-red-200/12 text-red-200/62 hover:border-red-200/25 hover:text-red-100';
+
 export default function DriveToolbar({
   inFolder,
   viewMode,
@@ -40,11 +48,18 @@ export default function DriveToolbar({
   onDeleteFolder,
 }: DriveToolbarProps) {
   return (
-    <div className="drive-toolbar" aria-label="Drive actions">
-      <div className="app-toolbar drive-toolbar-panel" role="group" aria-label="View options">
+    <div
+      className="flex max-w-full flex-wrap items-center justify-start gap-2 sm:justify-end"
+      aria-label="Drive actions"
+    >
+      <div
+        className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/8 bg-white/[0.03] p-1"
+        role="group"
+        aria-label="View options"
+      >
         <button
           type="button"
-          className={`app-tool ${viewMode === 'list' ? 'is-active' : ''}`}
+          className={`${toolBase} ${viewMode === 'list' ? toolActive : ''}`}
           onClick={() => onViewChange('list')}
           title="List view"
         >
@@ -52,7 +67,7 @@ export default function DriveToolbar({
         </button>
         <button
           type="button"
-          className={`app-tool ${viewMode === 'grid' ? 'is-active' : ''}`}
+          className={`${toolBase} ${viewMode === 'grid' ? toolActive : ''}`}
           onClick={() => onViewChange('grid')}
           title="Grid view"
         >
@@ -72,20 +87,24 @@ export default function DriveToolbar({
       </div>
 
       {inFolder && onShareFolder ? (
-        <button type="button" className="app-btn-ghost" onClick={onShareFolder}>
+        <button type="button" className={secondaryButton} onClick={onShareFolder}>
           Share folder
         </button>
       ) : null}
       {inFolder && onDeleteFolder ? (
         <button
           type="button"
-          className="app-btn-ghost app-btn-ghost-danger"
+          className={`${secondaryButton} ${dangerButton}`}
           onClick={onDeleteFolder}
         >
           Delete folder
         </button>
       ) : null}
-      <button type="button" className="app-upload-cta drive-toolbar-upload" onClick={onUpload}>
+      <button
+        type="button"
+        className="min-w-28 border border-white bg-white px-4 py-2 text-[0.68rem] uppercase tracking-[0.14em] text-black transition hover:bg-[#e8e1d7]"
+        onClick={onUpload}
+      >
         Upload
       </button>
     </div>

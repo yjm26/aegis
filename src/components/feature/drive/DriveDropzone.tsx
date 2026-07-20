@@ -26,7 +26,15 @@ export default function DriveDropzone({
 
   return (
     <div
-      className={`app-drop ${compact ? 'app-drop-compact' : ''} ${dragging ? 'is-drag' : ''}`}
+      className={`flex cursor-pointer items-center border border-dashed p-6 outline-none transition ${
+        compact
+          ? 'min-h-18 flex-row justify-start gap-4 px-5 py-4'
+          : 'min-h-44 flex-col justify-center gap-1.5 text-center'
+      } ${
+        dragging
+          ? 'border-white/28 bg-white/[0.045]'
+          : 'border-white/12 bg-[radial-gradient(ellipse_60%_80%_at_50%_0%,rgba(255,255,255,0.035),transparent_65%),rgba(255,255,255,0.01)] hover:border-white/24 hover:bg-white/[0.025]'
+      }`}
       tabIndex={0}
       role="button"
       aria-label="Drop files to encrypt and upload"
@@ -48,9 +56,14 @@ export default function DriveDropzone({
         if (e.dataTransfer.files?.length) onDropFiles(e.dataTransfer.files);
       }}
     >
-      <span className="app-drop-mark" aria-hidden="true" />
-      <span className="app-drop-title">{title}</span>
-      <span className="app-drop-hint">{detail}</span>
+      <span
+        className={`mb-1 block border border-white/18 bg-[linear-gradient(90deg,transparent_47%,rgba(255,255,255,0.18)_47%_53%,transparent_53%),linear-gradient(0deg,transparent_47%,rgba(255,255,255,0.18)_47%_53%,transparent_53%)] opacity-55 ${
+          compact ? 'h-5 w-5 shrink-0' : 'h-7 w-7'
+        }`}
+        aria-hidden="true"
+      />
+      <span className="text-[0.94rem] font-normal text-white/88">{title}</span>
+      <span className="text-[0.75rem] text-white/45">{detail}</span>
     </div>
   );
 }
