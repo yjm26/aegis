@@ -89,6 +89,39 @@ describe('key-wrap', () => {
     const open = await unwrapThumbDataUrl(sealed, vault);
     expect(open).toBe(dataUrl);
   });
+
+  it('folder share key wraps file DEKs with fk1 and only opens with same folder key', async () => {
+    const {
+      generateFolderKey,
+      wrapFolderFileKey,
+      unwrapFolderFileKey,
+      isFolderWrappedKey,
+      folderKeyToFragment,
+      fragmentToFolderKey,
+    } = await import('../scripts/key-wrap');
+    const fk = generateFolderKey();
+    const dek = generateKey();
+    const wrapped = await wrapFolderFileKey(dek, fk);
+    expect(isFolderWrappedKey(wrapped)).toBe(true);
+    expect(wrapped.startsWith('fk1.')).toBe(true);
+    await expect(unwrapFolderFileKey(wrapped, generateFolderKey())).rejects.toThrow(/unwrap|folder/i);
+    expect(await unwrapFolderFileKey(wrapped, fk)).toEqual(dek);
+    expect(fragmentToFolderKey(folderKeyToFragment(fk))).toEqual(fk);
+  });
+
+  it('parses live folder share fragments without treating them as snapshot payloads', async () => {
+    const {
+      generateFolderKey,
+      folderKeyToFragment,
+    } = await import('../scripts/key-wrap');
+    const { parseLiveFolderFragment, parseShareFragment } = await import('../scripts/share');
+    const fk = generateFolderKey();
+    const frag = `#s1.share_123.${folderKeyToFragment(fk)}`;
+    const live = parseLiveFolderFragment(frag);
+    expect(live?.shareId).toBe('share_123');
+    expect(live?.folderKey).toEqual(fk);
+    expect(parseShareFragment(frag)).toBeNull();
+  });
 });
 
 describe('owner-auth message', () => {

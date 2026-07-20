@@ -9,6 +9,7 @@ import type {
 } from './types';
 import { resolveRawKeyBase64 } from './vault';
 import { isWrappedKey } from './key-wrap';
+import { fragmentToFolderKey, folderKeyToFragment } from './key-wrap';
 
 function bytesToBase64Url(bytes: Uint8Array): string {
   let bin = '';
@@ -105,7 +106,7 @@ export function encodeSharePayload(payload: SharePayload): string {
 
 export function parseShareFragment(hash: string): SharePayload | null {
   const raw = hash.startsWith('#') ? hash.slice(1) : hash;
-  if (!raw) return null;
+  if (!raw || raw.startsWith('s1.')) return null;
 
   // New compact base64url JSON
   try {
@@ -186,6 +187,30 @@ export async function generateFileShareLink(
   const payload = await buildFileSharePayload(file, wallet);
   const frag = encodeSharePayload(payload);
   return `${window.location.origin}/view#${frag}`;
+}
+
+export function generateLiveFolderShareLink(
+  shareId: string,
+  folderKey: Uint8Array,
+  origin = window.location.origin
+): string {
+  return `${origin}/view#s1.${encodeURIComponent(shareId)}.${folderKeyToFragment(folderKey)}`;
+}
+
+export function parseLiveFolderFragment(
+  hash: string
+): { shareId: string; folderKey: Uint8Array } | null {
+  const raw = hash.startsWith('#') ? hash.slice(1) : hash;
+  if (!raw.startsWith('s1.')) return null;
+  const parts = raw.split('.');
+  if (parts.length !== 3 || parts[0] !== 's1') return null;
+  try {
+    const shareId = decodeURIComponent(parts[1]);
+    if (!shareId) return null;
+    return { shareId, folderKey: fragmentToFolderKey(parts[2]) };
+  } catch {
+    return null;
+  }
 }
 
 /** Keep old download links working → SPA /view */

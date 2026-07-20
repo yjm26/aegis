@@ -14,6 +14,7 @@
 
 const PREFIX_V1 = 'bw1.';
 const PREFIX_THUMB = 'bt1.';
+const PREFIX_FOLDER_FILE = 'fk1.';
 
 export type KeyEncoding = 'plain' | 'wallet-v1';
 
@@ -28,6 +29,10 @@ export function isWrappedKey(stored: string | undefined | null): boolean {
 
 export function isWrappedThumb(stored: string | undefined | null): boolean {
   return Boolean(stored && stored.startsWith(PREFIX_THUMB));
+}
+
+export function isFolderWrappedKey(stored: string | undefined | null): boolean {
+  return Boolean(stored && stored.startsWith(PREFIX_FOLDER_FILE));
 }
 
 export function isPlainThumbDataUrl(stored: string | undefined | null): boolean {
@@ -213,4 +218,54 @@ export function base64ToRawKey(b64: string): Uint8Array {
   const raw = b64ToBytes(b64);
   if (raw.length !== 32) throw new Error('Invalid key length');
   return raw;
+}
+
+export function generateFolderKey(): Uint8Array {
+  return crypto.getRandomValues(new Uint8Array(32));
+}
+
+export function folderKeyToFragment(rawKey: Uint8Array): string {
+  if (rawKey.length !== 32) throw new Error('Folder key must be 32 bytes');
+  return bytesToB64(rawKey).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+export function fragmentToFolderKey(fragmentKey: string): Uint8Array {
+  const b64 = fragmentKey.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
+  const raw = b64ToBytes(b64 + pad);
+  if (raw.length !== 32) throw new Error('Invalid folder key length');
+  return raw;
+}
+
+async function importRawAesKey(rawKey: Uint8Array): Promise<CryptoKey> {
+  if (rawKey.length !== 32) throw new Error('Folder key must be 32 bytes');
+  return crypto.subtle.importKey('raw', toArrayBuffer(rawKey), { name: 'AES-GCM' }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
+}
+
+export async function wrapFolderFileKey(
+  rawFileKey: Uint8Array,
+  folderKey: Uint8Array
+): Promise<string> {
+  if (rawFileKey.length !== 32) throw new Error('File key must be 32 bytes');
+  const aesKey = await importRawAesKey(folderKey);
+  return PREFIX_FOLDER_FILE + (await aesGcmEncrypt(aesKey, rawFileKey));
+}
+
+export async function unwrapFolderFileKey(
+  stored: string,
+  folderKey: Uint8Array
+): Promise<Uint8Array> {
+  if (!isFolderWrappedKey(stored)) throw new Error('Missing folder-wrapped key');
+  const aesKey = await importRawAesKey(folderKey);
+  try {
+    const raw = await aesGcmDecrypt(aesKey, stored.slice(PREFIX_FOLDER_FILE.length));
+    if (raw.length !== 32) throw new Error('Unwrapped key wrong size');
+    return raw;
+  } catch (err) {
+    if (err instanceof Error && /wrong size/i.test(err.message)) throw err;
+    throw new Error('Cannot unwrap folder key - wrong folder link or corrupted data');
+  }
 }
