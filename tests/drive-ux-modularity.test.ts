@@ -400,4 +400,28 @@ describe('Tailwind migration guardrails', () => {
     expect(files).toContain('minmax(min(100%,11.5rem),1fr)');
     expect(files).toContain('max-[560px]:grid-cols-1');
   });
+
+  it('keeps Drive hierarchy obvious with breadcrumb, sections, and visible search', () => {
+    const page = read('src/pages/DrivePage.tsx');
+    const header = read('src/components/feature/drive/DriveHeader.tsx');
+    const index = read('src/components/feature/drive/index.ts');
+    const breadcrumb = read('src/components/feature/drive/DriveBreadcrumb.tsx');
+    const sectionHeader = read('src/components/feature/drive/DriveSectionHeader.tsx');
+    const filesToolbar = read('src/components/feature/drive/FilesToolbar.tsx');
+
+    expect(existsSync(join(root, 'src/style.css'))).toBe(false);
+    expect(index).toContain('DriveBreadcrumb');
+    expect(index).toContain('DriveSectionHeader');
+    expect(index).toContain('FilesToolbar');
+    expect(header).toContain('DriveBreadcrumb');
+    expect(breadcrumb).toContain('Library');
+    expect(breadcrumb).toContain('All files');
+    expect(sectionHeader).toContain('aria-level={2}');
+    expect(filesToolbar).toContain('Search files and folders');
+    expect(filesToolbar).toContain('Select all');
+    expect(filesToolbar).toContain('Clear selection');
+    expect(filesToolbar).toContain('max-[560px]:');
+    expect(page).toContain('<DriveSectionHeader');
+    expect(page).toContain('<FilesToolbar');
+  });
 });

@@ -1,5 +1,8 @@
 export { default as DriveHeader } from './DriveHeader';
 export { default as DriveToolbar } from './DriveToolbar';
+export { default as DriveBreadcrumb } from './DriveBreadcrumb';
+export { default as DriveSectionHeader } from './DriveSectionHeader';
+export { default as FilesToolbar } from './FilesToolbar';
 export { default as DriveDropzone } from './DriveDropzone';
 export { default as DriveFolderGrid } from './DriveFolderGrid';
 export { default as DriveFileList } from './DriveFileList';

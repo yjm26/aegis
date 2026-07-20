@@ -51,6 +51,8 @@ import {
   DriveBootProgress,
   DriveBulkBar,
   DriveEmptyState,
+  DriveSectionHeader,
+  FilesToolbar,
   type BootStepId,
 } from '../components/feature/drive';
 import TrustPanel from '../components/shared/TrustPanel';
@@ -381,6 +383,13 @@ export default function DrivePage() {
 
   const currentFolder =
     folderId && owner ? getFolder(owner, folderId) : undefined;
+
+  const visibleFolders = useMemo(() => {
+    if (folderId) return [];
+    const q = filterQuery.trim().toLowerCase();
+    if (!q) return folders;
+    return folders.filter((folder) => folder.name.toLowerCase().includes(q));
+  }, [folderId, folders, filterQuery]);
 
   const {
     queue,
@@ -852,8 +861,9 @@ export default function DrivePage() {
     return <DriveBootProgress activeId={bootStep} detail={bootDetail} />;
   }
 
-  const hasContent =
-    files.length > 0 || (folderId === null && folders.length > 0);
+  const hasVisibleFolders = folderId === null && visibleFolders.length > 0;
+  const hasContent = files.length > 0 || hasVisibleFolders;
+  const hasLibraryItems = files.length > 0 || folders.length > 0;
   const backend = getLibraryBackend();
   const railFoot = [
     'Encrypted on device. Blobs on Shelby.',
@@ -932,51 +942,58 @@ export default function DrivePage() {
         />
 
         {!folderId ? (
-          <DriveFolderGrid
-            folders={folders}
-            countInFolder={(id) => countFilesInFolder(owner, id)}
-            onOpen={setFolderId}
-            onDelete={askDeleteFolder}
-            onRename={askRenameFolder}
+          <section className="space-y-3" aria-labelledby="drive-folders-title">
+            <DriveSectionHeader
+              id="drive-folders-title"
+              title="Folders"
+              description="Collections inside this private library. Search matches folder names too."
+              count={visibleFolders.length}
+            />
+            <DriveFolderGrid
+              folders={visibleFolders}
+              countInFolder={(id) => countFilesInFolder(owner, id)}
+              onOpen={setFolderId}
+              onDelete={askDeleteFolder}
+              onRename={askRenameFolder}
+            />
+          </section>
+        ) : null}
+
+        <section className="space-y-3" aria-labelledby="drive-files-title">
+          <DriveSectionHeader
+            id="drive-files-title"
+            title="Files"
+            description={
+              folderId
+                ? 'Files in this folder. Tap media to preview, then share from the card.'
+                : 'All encrypted files in this library. Search is visible and local to your metadata.'
+            }
+            count={files.length}
           />
-        ) : null}
+          <FilesToolbar
+            query={filterQuery}
+            onQueryChange={setFilterQuery}
+            fileCount={files.length}
+            selectedCount={selection.count}
+            onSelectAll={() => selection.selectAll()}
+            onClearSelection={() => selection.clear()}
+          />
+          <DriveFileList
+            files={files}
+            viewMode={viewMode}
+            thumbs={thumbs}
+            selectedIds={selection.selected}
+            onToggleSelect={selection.toggle}
+            onPreview={(id) => void onPreview(id)}
+            onShare={(id) => void onShareFile(id)}
+            onDelete={askDelete}
+            onRename={askRenameFile}
+            onMove={askMoveFile}
+          />
+        </section>
 
-        {files.length > 0 ? (
-          <div className="mt-1 mb-3 flex items-center gap-3">
-            <button
-              type="button"
-              className="border-0 bg-transparent px-0 py-1 text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--text-2)] transition-colors duration-150 hover:text-[var(--text)] motion-reduce:transition-none"
-              onClick={() => selection.selectAll()}
-            >
-              Select all
-            </button>
-            {selection.count > 0 ? (
-              <button
-                type="button"
-                className="border-0 bg-transparent px-0 py-1 text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--text-2)] transition-colors duration-150 hover:text-[var(--text)] motion-reduce:transition-none"
-                onClick={() => selection.clear()}
-              >
-                Clear selection
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-
-        <DriveFileList
-          files={files}
-          viewMode={viewMode}
-          thumbs={thumbs}
-          selectedIds={selection.selected}
-          onToggleSelect={selection.toggle}
-          onPreview={(id) => void onPreview(id)}
-          onShare={(id) => void onShareFile(id)}
-          onDelete={askDelete}
-          onRename={askRenameFile}
-          onMove={askMoveFile}
-        />
-
-        {hasContent &&
-        files.length === 0 &&
+        {hasLibraryItems &&
+        !hasContent &&
         (filterQuery || filterKind !== 'all') ? (
           <DriveEmptyState
             scope="filtered"

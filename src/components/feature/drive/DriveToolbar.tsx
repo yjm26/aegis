@@ -83,6 +83,7 @@ export default function DriveToolbar({
           sort={sortBy}
           onSortChange={onSortChange}
           resultCount={resultCount}
+          showSearch={false}
         />
       </div>
 

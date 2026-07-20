@@ -13,6 +13,7 @@ type Props = {
   sort: SortKey;
   onSortChange: (s: SortKey) => void;
   resultCount?: number;
+  showSearch?: boolean;
 };
 
 const KINDS: { id: FileKindFilter; label: string }[] = [
@@ -60,6 +61,7 @@ export default function FilterMenu({
   sort,
   onSortChange,
   resultCount,
+  showSearch = true,
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +71,9 @@ export default function FilterMenu({
 
   useEffect(() => {
     if (!open) return;
-    const t = window.setTimeout(() => inputRef.current?.focus(), 30);
+    const t = window.setTimeout(() => {
+      if (showSearch) inputRef.current?.focus();
+    }, 30);
     const onDoc = (e: MouseEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) onOpenChange(false);
     };
@@ -83,7 +87,7 @@ export default function FilterMenu({
       document.removeEventListener('mousedown', onDoc);
       window.removeEventListener('keydown', onKey);
     };
-  }, [open, onOpenChange]);
+  }, [open, onOpenChange, showSearch]);
 
   function clearAll() {
     onQueryChange('');
@@ -109,19 +113,23 @@ export default function FilterMenu({
 
       {open ? (
         <div className={FILTER_PANEL_CLASS} role="dialog" aria-label="Filter files">
-          <label className={FILTER_LABEL_CLASS} htmlFor="drive-filter-search">
-            Search
-          </label>
-          <input
-            id="drive-filter-search"
-            ref={inputRef}
-            className={FILTER_SEARCH_CLASS}
-            type="search"
-            placeholder="Name…"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            autoComplete="off"
-          />
+          {showSearch ? (
+            <>
+              <label className={FILTER_LABEL_CLASS} htmlFor="drive-filter-search">
+                Search
+              </label>
+              <input
+                id="drive-filter-search"
+                ref={inputRef}
+                className={FILTER_SEARCH_CLASS}
+                type="search"
+                placeholder="Name…"
+                value={query}
+                onChange={(e) => onQueryChange(e.target.value)}
+                autoComplete="off"
+              />
+            </>
+          ) : null}
 
           <p className={FILTER_LABEL_CLASS}>Type</p>
           <div className="flex flex-wrap gap-[0.3rem]" role="group" aria-label="File type">
