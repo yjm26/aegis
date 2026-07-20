@@ -77,5 +77,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Blobbed running on port ${PORT}`);
+  console.log(`Aegis running on port ${PORT}`);
 });

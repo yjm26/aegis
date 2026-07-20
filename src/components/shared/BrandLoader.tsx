@@ -36,10 +36,10 @@ export default function BrandLoader({
     >
       <div className="brand-loader-ambient" aria-hidden="true" />
       <div className="brand-loader-inner">
-        <p className="brand-loader-word">Blobbed</p>
+        <p className="brand-loader-word">Aegis</p>
         <div className="brand-loader-mark" aria-hidden="true">
           <span className="brand-loader-ring" />
-          <span className="brand-loader-core">B</span>
+          <span className="brand-loader-core">A</span>
         </div>
         <div className="brand-loader-copy">
           <p className="brand-loader-label">{label}</p>

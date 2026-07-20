@@ -62,7 +62,7 @@ export default function DownloadPage() {
     <div className="app-page" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
       <div style={{ textAlign: 'center', maxWidth: 420, padding: 24 }}>
         <Link to="/" className="app-brand" style={{ display: 'inline-block', marginBottom: 24 }}>
-          BLOBBED
+          AEGIS
         </Link>
         <h1 className="app-stage-title">{msg}</h1>
         {err ? <p className="gate-error" style={{ display: 'block' }}>{err}</p> : null}

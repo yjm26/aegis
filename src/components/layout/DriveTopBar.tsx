@@ -28,7 +28,7 @@ export default function DriveTopBar({
   return (
     <header className="app-top app-reveal app-reveal-1">
       <Link to="/" className="app-brand">
-        BLOBBED
+        AEGIS
       </Link>
       <div className="app-top-right">
         {showVaultChip ? (

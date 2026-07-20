@@ -7,7 +7,7 @@ export default function Landing() {
     <div className="landing-page">
       <nav className="landing-nav">
         <div className="nav-inner">
-          <div className="landing-logo">BLOBBED</div>
+          <div className="landing-logo">AEGIS</div>
           <Link to="/gate" className="nav-cta">
             GO TO APP
           </Link>
@@ -43,7 +43,7 @@ export default function Landing() {
         <p className="eyebrow">Why it exists</p>
         <p className="lede">
           Most “cloud storage” is someone else’s disk with a password on top.
-          Blobbed encrypts in the browser first. Ciphertext goes to Shelby nodes.
+          Aegis encrypts in the browser first. Ciphertext goes to Shelby nodes.
           File keys are wrapped with a key derived from your wallet signature
           before library meta hits the server. Share links keep the raw key in the
           URL fragment, never as a query string to our API.

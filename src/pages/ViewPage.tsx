@@ -103,7 +103,7 @@ export default function ViewPage() {
     <div className="app-page view-page">
       <header className="app-top app-reveal app-reveal-1">
         <Link to="/" className="app-brand">
-          BLOBBED
+          AEGIS
         </Link>
         <div className="app-top-right">
           <span className="wallet-chip">{title.slice(0, 24)}</span>

@@ -15,7 +15,7 @@ export default function GatePage() {
   const [needPetra, setNeedPetra] = useState(false);
   const [checking, setChecking] = useState(true);
   const [entering, setEntering] = useState(false);
-  const [enterLabel, setEnterLabel] = useState('Entering Blobbed');
+  const [enterLabel, setEnterLabel] = useState('Entering Aegis');
 
   React.useEffect(() => {
     let cancelled = false;
@@ -54,7 +54,7 @@ export default function GatePage() {
       const wallet = await connectWallet();
       if (!wallet?.address) throw new Error('No address returned');
       setSub('Connected');
-      setEnterLabel('Entering Blobbed');
+      setEnterLabel('Entering Aegis');
       setEntering(true);
       await sleep(680);
       nav('/drive', { replace: true });
@@ -82,7 +82,7 @@ export default function GatePage() {
       </Link>
 
       <main className="gate-center">
-        <h1 className="gate-brand">Blobbed</h1>
+        <h1 className="gate-brand">Aegis</h1>
         <p className="gate-sub">{checking ? 'Checking session…' : sub}</p>
         <button
           type="button"

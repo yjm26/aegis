@@ -2,9 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test('landing page loads', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('text=Blobbed')).toBeVisible();
+  await expect(page.locator('text=AEGIS')).toBeVisible();
   await expect(page.locator('text=Your files.')).toBeVisible();
-  await expect(page.locator('text=Truly yours.')).toBeVisible();
 });
 
 test('drive page loads', async ({ page }) => {

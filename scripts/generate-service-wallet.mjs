@@ -15,7 +15,7 @@ const address = account.accountAddress.toString();
 const privateKeyHex = account.privateKey.toString().replace(/^ed25519-priv-/i, '');
 const aip80 = account.privateKey.toString();
 
-const block = `# Blobbed service wallet (TESTNET) — generated ${new Date().toISOString()}
+const block = `# Aegis service wallet (TESTNET) — generated ${new Date().toISOString()}
 # Paste into Vercel → Settings → Environment Variables
 # DO NOT commit this file. DO NOT use mainnet keys.
 
@@ -29,7 +29,7 @@ APTOS_PRIVATE_KEY=${privateKeyHex}
 # ${aip80}
 `;
 
-console.log('\n=== Blobbed service wallet (TESTNET) ===\n');
+console.log('\n=== Aegis service wallet (TESTNET) ===\n');
 console.log('Address:     ', address);
 console.log('Private key:', privateKeyHex);
 console.log('\n1) Fund APT (testnet faucet):');

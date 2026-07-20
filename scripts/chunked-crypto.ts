@@ -1,5 +1,5 @@
 /**
- * Blobbed container formats
+ * Aegis container formats
  *
  * Legacy:  [iv 12][ciphertext…]
  * Chunked: [magic 6][chunkSize u32BE][numChunks u32BE]

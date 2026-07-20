@@ -1,4 +1,4 @@
--- Blobbed durable metadata (Neon / Postgres)
+-- Aegis durable metadata (Neon / Postgres)
 -- Blob ciphertext stays on Shelby; this DB is index + wrapped keys for the owner library.
 -- encrypted_key: prefer wallet-wrapped `bw1.…` (see scripts/key-wrap.ts). Legacy plain base64 may exist until migrate.
 
