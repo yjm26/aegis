@@ -177,6 +177,46 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('keeps style.css limited to global base styles after the Tailwind migration', () => {
+    const style = read('src/style.css');
+    const appFiles = [
+      'src/pages/DrivePage.tsx',
+      'src/components/feature/drive/DriveBulkBar.tsx',
+      'src/components/shared/PageTransition.tsx',
+      'src/App.tsx',
+    ].map(read).join('\n');
+
+    expect(appFiles).toMatch(/\bfixed\b|\bmin-h-\[|\bsr-only\b/);
+    for (const selector of [
+      '.app-modal',
+      '.app-modal-backdrop',
+      '.app-modal-title',
+      '.app-modal-sub',
+      '.app-modal-em',
+      '.app-modal-label',
+      '.app-modal-input',
+      '.app-modal-actions',
+      '.app-modal-btn',
+      '.page-shell',
+      '.drive-bulk-bar',
+      '.drive-bulk-count',
+      '.drive-bulk-actions',
+      '.drive-bulk-select',
+      '.app-file-check',
+      '.app-fatal',
+      '.app-fatal-card',
+      '.app-fatal-title',
+      '.app-fatal-pre',
+      '.app-fatal-hint',
+      '@keyframes app-modal-fade',
+      '@keyframes app-modal-pop',
+      '@keyframes page-enter',
+    ]) {
+      expect(style).not.toContain(selector);
+    }
+    expect(style).not.toMatch(/^\.[\w-]+/m);
+  });
+
   it('uses Tailwind as the upload/share overlay styling path instead of keeping upload/share vanilla CSS blocks', () => {
     const style = read('src/style.css');
     const overlayFiles = [

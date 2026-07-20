@@ -35,6 +35,10 @@ const ViewPage = lazyRetry(() => import('./pages/ViewPage'));
 const DownloadPage = lazyRetry(() => import('./pages/DownloadPage'));
 const LegacyPagesRedirect = lazyRetry(() => import('./pages/LegacyPagesRedirect'));
 
+
+const FATAL_RELOAD_BUTTON_CLASS =
+  'cursor-pointer appearance-none rounded-full border border-[#f0f0f0] bg-[#f0f0f0] px-[1.05rem] py-[0.55rem] text-[0.8125rem] font-medium text-[#0a0a0a] transition-opacity duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none';
+
 function RouteFallback() {
   const loc = useLocation();
   if (loc.pathname.startsWith('/drive')) {
@@ -78,16 +82,16 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.err) {
       return (
-        <div className="app-fatal">
-          <div className="app-fatal-card">
-            <h1 className="app-fatal-title">App failed to load</h1>
-            <pre className="app-fatal-pre">{this.state.err}</pre>
-            <p className="app-fatal-hint">
+        <div className="grid min-h-[100vh] place-items-center bg-[#0a0a0a] p-6 text-white">
+          <div className="w-full max-w-md">
+            <h1 className="mb-3 text-[1.15rem] font-medium">App failed to load</h1>
+            <pre className="mb-4 whitespace-pre-wrap text-[0.8125rem] leading-[1.45] text-[#e8a0a0]">{this.state.err}</pre>
+            <p className="mb-4 text-[0.8125rem] leading-[1.45] text-[#8a8a8a]">
               Often a stale tab after deploy. Hard refresh (Ctrl+Shift+R) fixes it.
             </p>
             <button
               type="button"
-              className="app-modal-btn app-modal-btn-primary"
+              className={FATAL_RELOAD_BUTTON_CLASS}
               onClick={() => {
                 try {
                   sessionStorage.removeItem('blobbed_chunk_reload');

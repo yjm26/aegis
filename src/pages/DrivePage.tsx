@@ -73,6 +73,36 @@ type DialogState =
   | { type: 'rename-folder'; folderId: string; currentName: string }
   | { type: 'move-file'; fileId: string; name: string };
 
+const MODAL_BACKDROP_CLASS =
+  'fixed inset-0 z-[80] grid place-items-center bg-black/70 p-5 backdrop-blur-md';
+
+const MODAL_CARD_CLASS =
+  'w-[min(100%,22.5rem)] rounded-[14px] border border-white/10 bg-[#121212] px-[1.35rem] pb-5 pt-[1.35rem] shadow-[0_24px_64px_rgba(0,0,0,0.55)]';
+
+const MODAL_TITLE_CLASS =
+  'm-0 text-[1.05rem] font-medium tracking-[-0.02em] text-[#f2f2f2]';
+
+const MODAL_SUB_CLASS = 'mt-1 text-[0.8125rem] leading-[1.45] text-[#8a8a8a]';
+
+const MODAL_EM_CLASS = 'font-medium text-[#e8e8e8]';
+
+const MODAL_LABEL_CLASS =
+  'mb-1 mt-[1.15rem] block text-[0.6875rem] uppercase tracking-[0.1em] text-[#6e6e6e]';
+
+const MODAL_INPUT_CLASS =
+  'w-full appearance-none rounded-[10px] border border-white/10 bg-[#0a0a0a] px-[0.9rem] py-3 text-[0.9375rem] text-[#f5f5f5] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[rgba(200,200,255,0.35)] focus:shadow-[0_0_0_3px_rgba(180,180,255,0.08)] disabled:opacity-55 motion-reduce:transition-none';
+
+const MODAL_ACTIONS_CLASS = 'mt-5 flex justify-end gap-2';
+
+const MODAL_ACTIONS_STACK_CLASS = 'mt-5 flex flex-col items-stretch gap-2';
+
+const MODAL_BUTTON_BASE_CLASS =
+  'cursor-pointer appearance-none rounded-full px-[1.05rem] py-[0.55rem] text-[0.8125rem] font-medium transition-[opacity,background,border-color] duration-150 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none';
+
+const MODAL_BUTTON_GHOST_CLASS = `${MODAL_BUTTON_BASE_CLASS} border border-white/10 bg-transparent text-[#bdbdbd] hover:border-white/20 hover:text-white`;
+const MODAL_BUTTON_PRIMARY_CLASS = `${MODAL_BUTTON_BASE_CLASS} border border-[#f0f0f0] bg-[#f0f0f0] text-[#0a0a0a] hover:opacity-90`;
+const MODAL_BUTTON_DANGER_CLASS = `${MODAL_BUTTON_BASE_CLASS} border border-[#5a2828] bg-[#3a1818] text-[#f0c4c4] hover:bg-[#4a1e1e]`;
+
 export default function DrivePage() {
   const nav = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -976,14 +1006,14 @@ export default function DrivePage() {
 
       {dialog ? (
         <div
-          className="app-modal-backdrop"
+          className={MODAL_BACKDROP_CLASS}
           role="presentation"
           onClick={() => {
             if (!dialogBusy) setDialog(null);
           }}
         >
           <div
-            className="app-modal"
+            className={MODAL_CARD_CLASS}
             role="dialog"
             aria-modal="true"
             aria-labelledby="app-modal-title"
@@ -991,17 +1021,17 @@ export default function DrivePage() {
           >
             {dialog.type === 'folder' ? (
               <>
-                <h2 id="app-modal-title" className="app-modal-title">
+                <h2 id="app-modal-title" className={MODAL_TITLE_CLASS}>
                   New folder
                 </h2>
-                <p className="app-modal-sub">Name your album or collection</p>
-                <label className="app-modal-label" htmlFor="folder-name-input">
+                <p className={MODAL_SUB_CLASS}>Name your album or collection</p>
+                <label className={MODAL_LABEL_CLASS} htmlFor="folder-name-input">
                   Folder name
                 </label>
                 <input
                   id="folder-name-input"
                   ref={folderInputRef}
-                  className="app-modal-input"
+                  className={MODAL_INPUT_CLASS}
                   type="text"
                   value={folderName}
                   maxLength={80}
@@ -1015,20 +1045,20 @@ export default function DrivePage() {
                     }
                   }}
                 />
-                <div className="app-modal-actions">
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
-                  <button type="button" className="app-modal-btn app-modal-btn-primary" disabled={dialogBusy} onClick={() => void submitNewFolder()}>{dialogBusy ? 'Creating…' : 'Create'}</button>
+                <div className={MODAL_ACTIONS_CLASS}>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
+                  <button type="button" className={MODAL_BUTTON_PRIMARY_CLASS} disabled={dialogBusy} onClick={() => void submitNewFolder()}>{dialogBusy ? 'Creating…' : 'Create'}</button>
                 </div>
               </>
             ) : dialog.type === 'rename-file' || dialog.type === 'rename-folder' ? (
               <>
-                <h2 id="app-modal-title" className="app-modal-title">
+                <h2 id="app-modal-title" className={MODAL_TITLE_CLASS}>
                   {dialog.type === 'rename-file' ? 'Rename file' : 'Rename folder'}
                 </h2>
-                <label className="app-modal-label" htmlFor="rename-input">Name</label>
+                <label className={MODAL_LABEL_CLASS} htmlFor="rename-input">Name</label>
                 <input
                   id="rename-input"
-                  className="app-modal-input"
+                  className={MODAL_INPUT_CLASS}
                   type="text"
                   value={renameValue}
                   maxLength={120}
@@ -1042,50 +1072,50 @@ export default function DrivePage() {
                     }
                   }}
                 />
-                <div className="app-modal-actions">
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
-                  <button type="button" className="app-modal-btn app-modal-btn-primary" disabled={dialogBusy || !renameValue.trim()} onClick={() => void submitRename()}>{dialogBusy ? 'Saving…' : 'Save'}</button>
+                <div className={MODAL_ACTIONS_CLASS}>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
+                  <button type="button" className={MODAL_BUTTON_PRIMARY_CLASS} disabled={dialogBusy || !renameValue.trim()} onClick={() => void submitRename()}>{dialogBusy ? 'Saving…' : 'Save'}</button>
                 </div>
               </>
             ) : dialog.type === 'move-file' ? (
               <>
-                <h2 id="app-modal-title" className="app-modal-title">Move file</h2>
-                <p className="app-modal-sub">
-                  Move <strong className="app-modal-em">{dialog.name}</strong> to…
+                <h2 id="app-modal-title" className={MODAL_TITLE_CLASS}>Move file</h2>
+                <p className={MODAL_SUB_CLASS}>
+                  Move <strong className={MODAL_EM_CLASS}>{dialog.name}</strong> to…
                 </p>
-                <div className="app-modal-actions" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => void submitMoveFile(null)}>All files (root)</button>
+                <div className={MODAL_ACTIONS_STACK_CLASS}>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => void submitMoveFile(null)}>All files (root)</button>
                   {folders.map((f) => (
-                    <button key={f.id} type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => void submitMoveFile(f.id)}>{f.name}</button>
+                    <button key={f.id} type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => void submitMoveFile(f.id)}>{f.name}</button>
                   ))}
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
                 </div>
               </>
             ) : dialog.type === 'delete-folder' ? (
               <>
-                <h2 id="app-modal-title" className="app-modal-title">Delete folder?</h2>
-                <p className="app-modal-sub">
-                  <strong className="app-modal-em">{dialog.name}</strong> will be removed.
+                <h2 id="app-modal-title" className={MODAL_TITLE_CLASS}>Delete folder?</h2>
+                <p className={MODAL_SUB_CLASS}>
+                  <strong className={MODAL_EM_CLASS}>{dialog.name}</strong> will be removed.
                   {dialog.fileCount > 0 ? (
-                    <> Its {dialog.fileCount} file{dialog.fileCount === 1 ? '' : 's'} move to <strong className="app-modal-em">All files</strong>.</>
+                    <> Its {dialog.fileCount} file{dialog.fileCount === 1 ? '' : 's'} move to <strong className={MODAL_EM_CLASS}>All files</strong>.</>
                   ) : (
                     <> It&apos;s empty.</>
                   )}
                 </p>
-                <div className="app-modal-actions">
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
-                  <button type="button" className="app-modal-btn app-modal-btn-danger" disabled={dialogBusy} onClick={() => void confirmDelete()}>{dialogBusy ? 'Deleting…' : 'Delete folder'}</button>
+                <div className={MODAL_ACTIONS_CLASS}>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
+                  <button type="button" className={MODAL_BUTTON_DANGER_CLASS} disabled={dialogBusy} onClick={() => void confirmDelete()}>{dialogBusy ? 'Deleting…' : 'Delete folder'}</button>
                 </div>
               </>
             ) : dialog.type === 'delete' ? (
               <>
-                <h2 id="app-modal-title" className="app-modal-title">Remove file?</h2>
-                <p className="app-modal-sub">
-                  <strong className="app-modal-em">{dialog.name}</strong> will leave your library index. The blob stays on Shelby until it expires.
+                <h2 id="app-modal-title" className={MODAL_TITLE_CLASS}>Remove file?</h2>
+                <p className={MODAL_SUB_CLASS}>
+                  <strong className={MODAL_EM_CLASS}>{dialog.name}</strong> will leave your library index. The blob stays on Shelby until it expires.
                 </p>
-                <div className="app-modal-actions">
-                  <button type="button" className="app-modal-btn app-modal-btn-ghost" disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
-                  <button type="button" className="app-modal-btn app-modal-btn-danger" disabled={dialogBusy} onClick={() => void confirmDelete()}>{dialogBusy ? 'Removing…' : 'Remove'}</button>
+                <div className={MODAL_ACTIONS_CLASS}>
+                  <button type="button" className={MODAL_BUTTON_GHOST_CLASS} disabled={dialogBusy} onClick={() => setDialog(null)}>Cancel</button>
+                  <button type="button" className={MODAL_BUTTON_DANGER_CLASS} disabled={dialogBusy} onClick={() => void confirmDelete()}>{dialogBusy ? 'Removing…' : 'Remove'}</button>
                 </div>
               </>
             ) : null}
