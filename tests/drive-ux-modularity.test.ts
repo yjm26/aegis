@@ -91,6 +91,30 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('uses Tailwind as the trust panel styling path instead of keeping trust/vault vanilla CSS blocks', () => {
+    const style = read('src/style.css');
+    const trust = read('src/components/shared/TrustPanel.tsx');
+
+    expect(trust).toContain('rounded-');
+    expect(trust).toContain('border-');
+    for (const selector of [
+      '.trust-strip',
+      '.trust-dot',
+      '.trust-action',
+      '.trust-panel',
+      '.trust-panel--drive',
+      '.trust-panel--gate',
+      '.trust-panel--share',
+      '.trust-panel--landing',
+      '.trust-lead',
+      '.trust-list',
+      '.trust-banner',
+      '.vault-chip',
+    ]) {
+      expect(style).not.toContain(selector);
+    }
+  });
+
   it('uses Tailwind as the app shell styling path instead of keeping core app chrome vanilla CSS blocks', () => {
     const style = read('src/style.css');
     const shellFiles = [

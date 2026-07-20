@@ -17,6 +17,17 @@ type Props = {
   className?: string;
 };
 
+const panelBase =
+  'text-left text-[0.78rem] leading-[1.45] text-[rgba(220,220,230,0.72)]';
+const boxedPanel =
+  'rounded-xl border border-white/[0.08] bg-[rgba(12,12,16,0.55)] px-4 py-3.5';
+const leadClass =
+  'm-0 mb-2 text-[0.68rem] uppercase tracking-[0.12em] text-[rgba(200,190,170,0.7)]';
+const listClass =
+  'm-0 list-disc space-y-1.5 pl-[1.05rem] marker:text-[rgba(200,190,170,0.45)] [&_code]:text-[0.85em] [&_code]:text-[#c8b8a0]';
+const unlockButton =
+  'mt-3 rounded-none border border-[var(--border)] bg-transparent px-4 py-3 text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text)] transition-colors duration-150 hover:border-white/30 hover:bg-white/[0.04] motion-reduce:transition-none';
+
 /**
  * Honest trust copy - what the server sees vs what stays client-side.
  * Prefer understatement over MEGA marketing claims.
@@ -32,9 +43,9 @@ export default function TrustPanel({
 }: Props) {
   if (context === 'gate') {
     return (
-      <div className={`trust-panel trust-panel--gate ${className}`.trim()}>
-        <p className="trust-lead">Before you connect</p>
-        <ul className="trust-list">
+      <div className={`${panelBase} ${boxedPanel} mx-auto mt-6 max-w-[22.5rem] ${className}`.trim()}>
+        <p className={leadClass}>Before you connect</p>
+        <ul className={listClass}>
           <li>
             <strong>Ciphertext only</strong> goes to Shelby. Encrypt happens in
             your browser.
@@ -64,8 +75,8 @@ export default function TrustPanel({
 
   if (context === 'share') {
     return (
-      <div className={`trust-panel trust-panel--share ${className}`.trim()}>
-        <p className="trust-banner">
+      <div className={`${panelBase} mx-auto mt-1.5 w-full max-w-[70rem] px-5 py-2 ${className}`.trim()}>
+        <p className="m-0 text-[0.72rem] tracking-[0.01em] text-[rgba(200,195,185,0.55)]">
           Capability link · decrypts only in this browser · key lives in the
           URL fragment · we do not store this share key · lose the link = lose
           access
@@ -76,9 +87,9 @@ export default function TrustPanel({
 
   if (context === 'landing') {
     return (
-      <div className={`trust-panel trust-panel--landing ${className}`.trim()}>
-        <p className="trust-lead">Threat model (MVP, honest)</p>
-        <ul className="trust-list">
+      <div className={`${panelBase} max-w-[40rem] ${className}`.trim()}>
+        <p className={leadClass}>Threat model (MVP, honest)</p>
+        <ul className={listClass}>
           <li>
             Browser encrypts with AES-256-GCM before upload. Shelby stores
             ciphertext.
@@ -111,8 +122,14 @@ export default function TrustPanel({
 
   if (compact) {
     return (
-      <div className={`trust-strip ${className}`.trim()}>
-        <span className={`trust-dot ${vaultOk ? 'is-ok' : 'is-warn'}`} />
+      <div className={`mx-auto flex w-full max-w-[70rem] flex-wrap items-center gap-2 px-5 pb-1 pt-2 text-[0.72rem] tracking-[0.02em] text-[rgba(220,220,230,0.55)] ${className}`.trim()}>
+        <span
+          className={`h-[7px] w-[7px] shrink-0 rounded-full ${
+            vaultOk
+              ? 'bg-[#6a9a72] shadow-[0_0_8px_rgba(80,160,100,0.4)]'
+              : 'bg-[#c4a060] shadow-[0_0_8px_rgba(180,120,40,0.35)]'
+          }`}
+        />
         <span>
           {vaultOk ? 'Vault unlocked' : 'Vault locked'}
           {keyStats
@@ -125,7 +142,11 @@ export default function TrustPanel({
           {` · meta: ${be}`}
         </span>
         {!vaultOk && onUnlock ? (
-          <button type="button" className="trust-action" onClick={onUnlock}>
+          <button
+            type="button"
+            className="ml-1 rounded-full border border-white/[0.12] bg-white/[0.04] px-2 py-1 text-[0.68rem] text-[#d8d0c4] transition-colors duration-150 hover:border-white/30 hover:text-white motion-reduce:transition-none"
+            onClick={onUnlock}
+          >
             Unlock
           </button>
         ) : null}
@@ -134,9 +155,9 @@ export default function TrustPanel({
   }
 
   return (
-    <div className={`trust-panel trust-panel--drive ${className}`.trim()}>
-      <p className="trust-lead">What we can and cannot see</p>
-      <ul className="trust-list">
+    <div className={`${panelBase} ${boxedPanel} mx-auto mt-2 w-full max-w-[70rem] px-5 ${className}`.trim()}>
+      <p className={leadClass}>What we can and cannot see</p>
+      <ul className={listClass}>
         <li>
           <strong>Can see:</strong> wallet address, file names, sizes, blob
           pointers, wrapped key blobs, optional thumbs you generate.
@@ -157,7 +178,7 @@ export default function TrustPanel({
         </li>
       </ul>
       {!vaultOk && onUnlock ? (
-        <button type="button" className="mt-3 border border-[var(--border)] bg-transparent px-4 py-3 text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text)] transition-colors duration-150 hover:border-white/30 hover:bg-white/[0.04] motion-reduce:transition-none" onClick={onUnlock}>
+        <button type="button" className={unlockButton} onClick={onUnlock}>
           Sign to unlock keys
         </button>
       ) : null}
