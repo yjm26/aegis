@@ -472,4 +472,13 @@ describe('Tailwind migration guardrails', () => {
     expect(bulkBar).toContain('max-[560px]:rounded-t-2xl');
     expect(bulkBar).toContain('max-[560px]:pb-[calc(env(safe-area-inset-bottom)+0.85rem)]');
   });
+
+  it('avoids duplicate upload CTAs in empty folders', () => {
+    const page = read('src/pages/DrivePage.tsx');
+
+    expect(page).toContain('const shouldShowDropzone');
+    expect(page).toContain('folderId ? files.length > 0 : true');
+    expect(page).toContain('{shouldShowDropzone ? (');
+    expect(page).not.toContain('<DriveDropzone\n          compact={files.length > 0}');
+  });
 });

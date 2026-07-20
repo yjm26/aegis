@@ -864,6 +864,7 @@ export default function DrivePage() {
   const hasVisibleFolders = folderId === null && visibleFolders.length > 0;
   const hasContent = files.length > 0 || hasVisibleFolders;
   const hasLibraryItems = files.length > 0 || folders.length > 0;
+  const shouldShowDropzone = folderId ? files.length > 0 : true;
   const backend = getLibraryBackend();
   const railFoot = [
     'Files encrypt on this device before upload. Blobs live on Shelby.',
@@ -928,18 +929,20 @@ export default function DrivePage() {
           }
         />
 
-        <DriveDropzone
-          compact={files.length > 0}
-          dragging={drag}
-          hint={
-            folderId
-              ? 'Upload into this folder · multi-select ok'
-              : 'or click to browse · multi-select ok'
-          }
-          onBrowse={() => inputRef.current?.click()}
-          onDrag={setDrag}
-          onDropFiles={(fl) => void handleFiles(fl)}
-        />
+        {shouldShowDropzone ? (
+          <DriveDropzone
+            compact={files.length > 0}
+            dragging={drag}
+            hint={
+              folderId
+                ? 'Upload into this folder · multi-select ok'
+                : 'or click to browse · multi-select ok'
+            }
+            onBrowse={() => inputRef.current?.click()}
+            onDrag={setDrag}
+            onDropFiles={(fl) => void handleFiles(fl)}
+          />
+        ) : null}
 
         {!folderId ? (
           <section className="space-y-3" aria-labelledby="drive-folders-title">
