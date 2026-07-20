@@ -316,11 +316,44 @@ body {
 .landing-cell-wide { grid-column: span 6; min-height: 17rem; }
 .landing-cell-mid { grid-column: span 3; }
 .landing-cell-tall { grid-column: span 3; min-height: 30rem; }
+.landing-cell-recover { grid-column: span 3; min-height: 16rem; }
+.landing-cell-map { grid-column: span 9; min-height: 16rem; }
 .landing-cell-full { grid-column: span 12; min-height: 12rem; border-right: 0; }
 
-.landing-cell-accent {
-  background: oklch(0.18 0.04 190);
+.landing-cell-client {
+  background:
+    radial-gradient(circle at 12% 0%, oklch(0.32 0.035 250 / 0.38), transparent 18rem),
+    linear-gradient(135deg, oklch(0.12 0.018 250), oklch(0.075 0 0));
+}
+
+.landing-cell-vault {
+  background:
+    radial-gradient(circle at 100% 0%, oklch(0.34 0.05 190 / 0.42), transparent 15rem),
+    linear-gradient(135deg, oklch(0.18 0.04 190), oklch(0.095 0.012 190));
   color: oklch(0.96 0.03 190);
+}
+
+.landing-cell-share {
+  background:
+    radial-gradient(circle at 80% 14%, oklch(0.28 0.05 285 / 0.34), transparent 16rem),
+    linear-gradient(135deg, oklch(0.12 0.02 285), oklch(0.07 0 0));
+}
+
+.landing-cell-recover {
+  background:
+    radial-gradient(circle at 0% 100%, oklch(0.28 0.045 90 / 0.28), transparent 14rem),
+    linear-gradient(135deg, oklch(0.13 0.022 85), oklch(0.075 0 0));
+}
+
+.landing-cell-map {
+  background:
+    linear-gradient(90deg, oklch(0.10 0.014 250), oklch(0.11 0.012 210), oklch(0.10 0.018 285));
+}
+
+.landing-system-rule {
+  background:
+    radial-gradient(circle at 88% 50%, oklch(0.24 0.055 28 / 0.22), transparent 18rem),
+    linear-gradient(135deg, oklch(0.095 0.012 28), oklch(0.065 0 0));
 }
 
 .landing-cell h3,
@@ -351,7 +384,51 @@ body {
   font-size: 0.95rem;
 }
 
-.landing-cell-accent p { color: color-mix(in oklch, currentColor 72%, transparent); }
+.landing-cell-vault p { color: color-mix(in oklch, currentColor 72%, transparent); }
+
+.landing-boundary-map {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  color: var(--text);
+  font-size: clamp(1.1rem, 2.3vw, 1.65rem);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+}
+
+.landing-boundary-map span {
+  border: 1px solid color-mix(in oklch, var(--text) 18%, transparent);
+  background: color-mix(in oklch, var(--text) 6%, transparent);
+  padding: 0.65rem 0.8rem;
+}
+
+.landing-boundary-map i {
+  display: block;
+  flex: 1;
+  min-width: 2rem;
+  height: 1px;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--text) 18%, transparent), color-mix(in oklch, var(--text) 58%, transparent));
+  position: relative;
+}
+
+.landing-boundary-map i::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-top: 1px solid color-mix(in oklch, var(--text) 58%, transparent);
+  border-right: 1px solid color-mix(in oklch, var(--text) 58%, transparent);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.landing-system-rule h3 {
+  max-width: 48rem;
+  font-size: clamp(1.55rem, 3.2vw, 3rem);
+}
+
+.landing-system-rule p { max-width: 42rem; }
 
 .landing-process-board {
   display: grid;
@@ -491,6 +568,8 @@ html, body { overflow-x: hidden; }
   .landing-cell-wide,
   .landing-cell-mid,
   .landing-cell-tall,
+  .landing-cell-recover,
+  .landing-cell-map,
   .landing-cell-full {
     grid-column: span 12;
     min-height: auto;
@@ -602,6 +681,25 @@ html, body { overflow-x: hidden; }
     align-items: center;
   }
   .landing-faq-row p { padding: 0 1.1rem 1.25rem; }
+  .landing-boundary-map {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .landing-boundary-map i {
+    width: 1px;
+    min-width: 0;
+    height: 1.8rem;
+    flex: 0 0 auto;
+    margin-left: 1rem;
+    background: linear-gradient(180deg, color-mix(in oklch, var(--text) 12%, transparent), color-mix(in oklch, var(--text) 42%, transparent));
+  }
+  .landing-boundary-map i::after {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 0;
+    transform: translateX(-50%) rotate(135deg);
+  }
   .landing-close-panel a {
     width: 100%;
     max-width: 20rem;

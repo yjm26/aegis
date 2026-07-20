@@ -12,25 +12,25 @@ const principles = [
     label: '01 / Client',
     title: 'Encrypt first',
     text: 'The browser generates the file key and encrypts bytes before upload. Shelby receives ciphertext only.',
-    className: 'landing-cell landing-cell-wide',
+    className: 'landing-cell landing-cell-wide landing-cell-client',
   },
   {
     label: '02 / Vault',
     title: 'Wrap keys',
     text: 'Library metadata can sync while raw DEKs stay wrapped by the wallet-derived vault key.',
-    className: 'landing-cell landing-cell-mid landing-cell-accent',
+    className: 'landing-cell landing-cell-mid landing-cell-vault',
   },
   {
     label: '03 / Share',
     title: 'Live capability folders',
     text: 'Folder links use a folder key in the URL fragment. New files appear without regenerating the link.',
-    className: 'landing-cell landing-cell-tall',
+    className: 'landing-cell landing-cell-tall landing-cell-share',
   },
   {
     label: '04 / Recover',
     title: 'Readable states',
     text: 'Errors, empty folders, and revoked shares explain what happened without exposing secrets.',
-    className: 'landing-cell landing-cell-mid',
+    className: 'landing-cell landing-cell-recover',
   },
 ];
 
@@ -107,7 +107,18 @@ export default function LandingSections() {
               </div>
             </article>
           ))}
-          <article className="landing-cell landing-cell-full">
+          <article className="landing-cell landing-cell-map" aria-label="Security boundary map">
+            <span className="landing-cell-number">Boundary map</span>
+            <div className="landing-boundary-map" aria-hidden="true">
+              <span>Client</span>
+              <i />
+              <span>Vault</span>
+              <i />
+              <span>Share</span>
+            </div>
+            <p>Plain files become encrypted objects, then wrapped capabilities.</p>
+          </article>
+          <article className="landing-cell landing-cell-full landing-system-rule">
             <span className="landing-cell-number">System rule</span>
             <div>
               <h3>No plaintext crosses the API for storage.</h3>
