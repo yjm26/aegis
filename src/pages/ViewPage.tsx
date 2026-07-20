@@ -41,12 +41,29 @@ type TileState = {
   failed?: boolean;
 };
 
+function fileKindLabel(item: ShareFileItem): string {
+  if (isImageMime(item.mime, item.name)) return 'Image';
+  if (isVideoMime(item.mime, item.name)) return 'Video';
+  return 'File';
+}
+
+function shortName(name: string): string {
+  if (name.length <= 34) return name;
+  const dot = name.lastIndexOf('.');
+  const ext = dot > 0 && name.length - dot <= 8 ? name.slice(dot) : '';
+  const base = ext ? name.slice(0, dot) : name;
+  return `${base.slice(0, 12)}…${base.slice(-6)}${ext}`;
+}
+
 export default function ViewPage() {
   const loc = useLocation();
   const [title, setTitle] = useState('Shared');
   const [sub, setSub] = useState('Decrypting in your browser…');
   const [error, setError] = useState('');
   const [tiles, setTiles] = useState<TileState[]>([]);
+  const [isLiveFolder, setIsLiveFolder] = useState(false);
+  const [shareLabel, setShareLabel] = useState('Shared');
+  const [itemCount, setItemCount] = useState(0);
   const [lightbox, setLightbox] = useState<MediaLightboxState | null>(null);
 
   useEffect(() => {
@@ -59,15 +76,15 @@ export default function ViewPage() {
       let t = 'Shared';
       let files: ShareFileItem[] = [];
       const liveRef = parseLiveFolderFragment(hash);
+      setIsLiveFolder(Boolean(liveRef));
+      setShareLabel(liveRef ? 'Live folder' : 'Shared');
       if (liveRef) {
         setTitle('Live folder');
         setSub('Loading current folder contents…');
         const live = await fetchLiveFolderShare(liveRef.shareId);
         files = await liveFolderItemsToShareItems(live, liveRef.folderKey);
         t = live.name || 'Live folder';
-        setSub(
-          `${files.length} item${files.length === 1 ? '' : 's'} · live folder · decrypts in your browser`
-        );
+        setSub('This link stays current as the owner adds or removes files. Keys stay in the URL fragment.');
       } else {
         const payload = parseShareFragment(hash);
         if (!payload) {
@@ -77,20 +94,23 @@ export default function ViewPage() {
           return;
         }
         const snap = filesFromPayload(payload);
+        setShareLabel(payload.type === 'folder' ? 'Shared folder' : 'Shared file');
         t = snap.title;
         files = snap.files;
         setSub(
           files.length
-            ? `${files.length} item${files.length === 1 ? '' : 's'} · decrypts in your browser only`
+            ? 'This share decrypts locally in your browser. The server never receives the file key.'
             : 'This folder is empty.'
         );
       }
       if (!files.length) {
         setTitle(t);
+        setItemCount(0);
         setTiles([]);
         return;
       }
       setTitle(t);
+      setItemCount(files.length);
       setTiles(files.map((item) => ({ item })));
 
       for (let i = 0; i < files.length; i++) {
@@ -130,7 +150,6 @@ export default function ViewPage() {
           AEGIS
         </Link>
         <div className="app-top-right">
-          <span className="wallet-chip">{title.slice(0, 24)}</span>
           <Link to="/" className="app-link">
             Home
           </Link>
@@ -140,7 +159,13 @@ export default function ViewPage() {
 
       <main className="view-main app-reveal app-reveal-2">
         <header className="view-head">
+          <p className="view-kicker">{shareLabel}</p>
           <h1 className="view-title">{title}</h1>
+          <div className="view-meta" aria-label="Share details">
+            <span>{itemCount} item{itemCount === 1 ? '' : 's'}</span>
+            <span>{isLiveFolder ? 'Live folder' : 'Snapshot'}</span>
+            <span>Browser decrypt</span>
+          </div>
           <p className="view-sub">{sub}</p>
         </header>
 
@@ -190,10 +215,13 @@ export default function ViewPage() {
                   )}
                 </div>
                 <div className="view-tile-foot">
-                  <p className="view-tile-name">{item.name}</p>
+                  <div className="view-tile-copy">
+                    <p className="view-tile-name" title={item.name}>{shortName(item.name)}</p>
+                    <p className="view-tile-kind">{fileKindLabel(item)}</p>
+                  </div>
                   <button
                     type="button"
-                    className="app-btn-text view-dl"
+                    className="view-dl"
                     onClick={(e) => {
                       e.stopPropagation();
                       void downloadShareItem(item).catch((err) =>

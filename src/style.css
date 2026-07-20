@@ -50,9 +50,9 @@ body {
 }
 
 .landing-logo {
-  font-size: 0.8125rem;
+  font-size: clamp(0.875rem, 1vw, 1rem);
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.17em;
   text-transform: uppercase;
   color: var(--text);
 }
@@ -833,9 +833,9 @@ html, body {
 }
 
 .app-brand {
-  font-size: clamp(1rem, 1.4vw, 1.18rem);
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+  font-weight: 500;
+  letter-spacing: 0.17em;
   text-transform: uppercase;
   color: var(--text, #fff);
   text-decoration: none;
@@ -1390,34 +1390,75 @@ html, body {
 }
 
 /* ===== SHARED VIEW GALLERY ===== */
+.view-page .app-top {
+  background: color-mix(in oklch, var(--bg, #0a0a0a) 96%, transparent);
+  backdrop-filter: none;
+}
+
 .view-page .view-main {
-  max-width: 72rem;
+  width: min(100%, 58rem);
   margin: 0 auto;
-  padding: 1.75rem clamp(1rem, 3vw, 2rem) 4rem;
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.15rem, 4vw, 2.5rem) 5rem;
+}
+
+.view-head {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 44rem;
+}
+
+.view-kicker {
+  margin: 0 0 0.15rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--text-muted, #888) 80%, transparent);
 }
 
 .view-title {
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 300;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: 250;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
   margin: 0;
 }
+
+.view-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.view-meta span {
+  border: 1px solid color-mix(in oklch, var(--border, #2a2a2a) 82%, var(--text, #fff));
+  color: color-mix(in oklch, var(--text, #fff) 64%, transparent);
+  background: color-mix(in oklch, var(--surface, #111) 72%, transparent);
+  padding: 0.38rem 0.55rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .view-sub {
-  margin: 0.4rem 0 0;
-  font-size: 0.8125rem;
-  color: var(--text-muted, #888);
+  margin: 0.25rem 0 0;
+  max-width: 34rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: color-mix(in oklch, var(--text-muted, #888) 88%, var(--text, #fff));
 }
 .view-error {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   color: #e8a0a0;
   font-size: 0.875rem;
 }
 
 .view-grid {
-  margin-top: 1.75rem;
+  margin-top: clamp(2rem, 5vw, 3rem);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 16rem));
+  gap: 1rem;
+  align-items: start;
 }
 
 .view-tile {
@@ -1425,17 +1466,19 @@ html, body {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background: transparent;
-  transition: border-color 0.15s ease;
+  background: color-mix(in oklch, var(--surface, #111) 76%, transparent);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
   overflow: hidden;
 }
 .view-tile:hover {
-  border-color: color-mix(in oklch, var(--text, #fff) 30%, var(--border, #333));
+  border-color: color-mix(in oklch, var(--text, #fff) 34%, var(--border, #333));
+  background: color-mix(in oklch, var(--surface, #111) 92%, var(--text, #fff));
+  transform: translateY(-1px);
 }
 
 .view-tile-media {
   aspect-ratio: 1;
-  background: #111;
+  background: #0f0f0f;
   position: relative;
   display: flex;
   align-items: center;
@@ -1455,30 +1498,67 @@ html, body {
 }
 .view-tile-badge {
   position: absolute;
-  left: 0.4rem;
-  bottom: 0.4rem;
+  left: 0.5rem;
+  bottom: 0.5rem;
   font-size: 0.5625rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0,0,0,0.72);
   color: #fff;
-  padding: 0.2rem 0.35rem;
+  padding: 0.24rem 0.42rem;
 }
 .view-tile-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.55rem 0.6rem;
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
   border-top: 1px solid var(--border, #2a2a2a);
+}
+.view-tile-copy {
+  min-width: 0;
 }
 .view-tile-name {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  color: color-mix(in oklch, var(--text, #fff) 88%, transparent);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+}
+.view-tile-kind {
+  margin: 0.22rem 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--text-muted, #888) 76%, transparent);
+}
+.view-dl {
+  width: 100%;
+  min-height: 2.45rem;
+  appearance: none;
+  border: 1px solid color-mix(in oklch, var(--border, #2a2a2a) 78%, var(--text, #fff));
+  background: transparent;
+  color: var(--text, #fff);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.view-dl:hover {
+  background: var(--text, #fff);
+  color: var(--bg, #0a0a0a);
+  border-color: var(--text, #fff);
+}
+
+@media (max-width: 620px) {
+  .view-page .view-main {
+    padding-top: 2.4rem;
+  }
+  .view-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lightbox {
