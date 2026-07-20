@@ -404,6 +404,22 @@ describe('Tailwind migration guardrails', () => {
     expect(files).toContain('max-[560px]:grid-cols-1');
   });
 
+  it('keeps folder card actions inside the card with subtle landing palette color', () => {
+    const folders = read('src/components/feature/drive/DriveFolderGrid.tsx');
+    const actionMenu = read('src/components/feature/drive/DriveActionMenu.tsx');
+
+    expect(actionMenu).toContain('iconOnly');
+    expect(actionMenu).toContain('⋯');
+    expect(actionMenu).toContain('aria-label={label}');
+    expect(folders).toContain('absolute right-3 top-3 z-20');
+    expect(folders).toContain('label="Folder actions"');
+    expect(folders).toContain('iconOnly');
+    expect(folders).not.toContain('label="More"');
+    expect(folders).toContain('oklch(0.34_0.05_190');
+    expect(folders).toContain('oklch(0.32_0.035_250');
+    expect(folders).toContain('text-[oklch(0.86_0.045_190)]');
+  });
+
   it('keeps Drive hierarchy obvious with breadcrumb, sections, and visible search', () => {
     const page = read('src/pages/DrivePage.tsx');
     const header = read('src/components/feature/drive/DriveHeader.tsx');

@@ -10,6 +10,8 @@ export type DriveAction = {
 export type DriveActionMenuProps = {
   label?: string;
   actions: DriveAction[];
+  /** Use for compact card menus where text labels crowd the surface. */
+  iconOnly?: boolean;
   /** Use for list rows near the bottom so the menu opens upward. */
   align?: 'down' | 'up';
 };
@@ -17,6 +19,7 @@ export type DriveActionMenuProps = {
 export default function DriveActionMenu({
   label = 'More',
   actions,
+  iconOnly = false,
   align = 'down',
 }: DriveActionMenuProps) {
   const [open, setOpen] = useState(false);
@@ -44,12 +47,17 @@ export default function DriveActionMenu({
     <div className="relative shrink-0" ref={ref}>
       <button
         type="button"
-        className="min-w-11 border-0 bg-transparent px-1 py-1 text-[0.72rem] uppercase tracking-[0.08em] text-white/50 transition hover:text-white"
+        className={
+          iconOnly
+            ? 'grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-black/25 text-[1.15rem] leading-none text-white/58 shadow-[0_8px_24px_rgba(0,0,0,0.2)] backdrop-blur-md transition-[border-color,background,color] duration-150 hover:border-white/24 hover:bg-white/[0.07] hover:text-white motion-reduce:transition-none'
+            : 'min-w-11 border-0 bg-transparent px-1 py-1 text-[0.72rem] uppercase tracking-[0.08em] text-white/50 transition hover:text-white'
+        }
+        aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
-        {label}
+        {iconOnly ? <span aria-hidden="true">⋯</span> : label}
       </button>
       {open ? (
         <div
