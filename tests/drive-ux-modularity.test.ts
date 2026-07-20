@@ -154,6 +154,29 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('uses Tailwind as the filter menu styling path instead of keeping filter vanilla CSS blocks', () => {
+    const style = read('src/style.css');
+    const filter = read('src/components/shared/FilterMenu.tsx');
+
+    expect(filter).toMatch(/\brelative\b|\brounded-\b|\bborder-\[/);
+    for (const selector of [
+      '.filter-menu',
+      '.filter-menu-trigger',
+      '.filter-menu-dot',
+      '.filter-menu-chevron',
+      '.filter-menu-panel',
+      '.filter-menu-label',
+      '.filter-menu-search',
+      '.filter-menu-chips',
+      '.filter-chip',
+      '.filter-menu-foot',
+      '.filter-menu-count',
+      '.filter-menu-clear',
+    ]) {
+      expect(style).not.toContain(selector);
+    }
+  });
+
   it('uses Tailwind as the upload/share overlay styling path instead of keeping upload/share vanilla CSS blocks', () => {
     const style = read('src/style.css');
     const overlayFiles = [
