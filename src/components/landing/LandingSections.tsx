@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ChapterSection from './ChapterSection';
+import SectionSeparator from './SectionSeparator';
 
 const proofCells = [
   ['Before network', 'AES-256-GCM'],
@@ -90,6 +91,8 @@ export default function LandingSections() {
         </div>
       </ChapterSection>
 
+      <SectionSeparator label="Cipher ledger" meta="Client / Vault / Share" />
+
       <ChapterSection
         index="02"
         label="Principles"
@@ -130,6 +133,8 @@ export default function LandingSections() {
         </div>
       </ChapterSection>
 
+      <SectionSeparator label="Storage path" meta="Drop / Store / Share" />
+
       <ChapterSection index="03" label="Flow" id="flow" title="Drop, store, share. Each step is visible.">
         <div className="landing-process-board">
           {flowSteps.map((step) => (
@@ -141,6 +146,8 @@ export default function LandingSections() {
           ))}
         </div>
       </ChapterSection>
+
+      <SectionSeparator label="Plain terms" meta="FAQ / Revoke / Recover" />
 
       <section className="landing-chapter" id="details">
         <div className="landing-faq-wrap">

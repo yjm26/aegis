@@ -206,6 +206,60 @@ body {
   border-top-color: color-mix(in oklch, var(--text) 18%, var(--border));
 }
 
+.landing-section-separator {
+  width: 100%;
+  height: clamp(5.25rem, 9vw, 8.5rem);
+  margin: clamp(1rem, 2.2vw, 1.35rem) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, transparent calc(var(--gutter) - 1px), color-mix(in oklch, var(--text) 13%, transparent) var(--gutter), transparent calc(var(--gutter) + 1px)),
+    linear-gradient(90deg, transparent calc(100% - var(--gutter) - 1px), color-mix(in oklch, var(--text) 13%, transparent) calc(100% - var(--gutter)), transparent calc(100% - var(--gutter) + 1px)),
+    repeating-linear-gradient(90deg, transparent 0 4.75rem, color-mix(in oklch, var(--text) 7%, transparent) 4.75rem calc(4.75rem + 1px)),
+    repeating-linear-gradient(0deg, transparent 0 1.7rem, color-mix(in oklch, var(--text) 5%, transparent) 1.7rem calc(1.7rem + 1px)),
+    radial-gradient(circle at 18% 50%, oklch(0.18 0.026 250 / 0.35), transparent 22rem),
+    radial-gradient(circle at 82% 50%, oklch(0.15 0.034 190 / 0.24), transparent 20rem),
+    var(--bg);
+}
+
+.landing-section-separator::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.landing-separator-inner {
+  width: min(calc(100% - (var(--gutter) * 1.2)), 92rem);
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-3);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-separator-inner strong {
+  color: color-mix(in oklch, var(--text-2) 74%, transparent);
+  font-weight: 400;
+}
+
+.landing-section-separator + .landing-chapter {
+  margin-top: 0;
+}
+
 .landing-chapter-head {
   display: grid;
   grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr);
@@ -657,7 +711,8 @@ html, body { overflow-x: hidden; }
   }
   .landing-chapter,
   .landing-close-panel,
-  .landing-footer {
+  .landing-footer,
+  .landing-separator-inner {
     width: calc(100% - 1rem);
   }
   .landing-chapter-label {
@@ -666,6 +721,21 @@ html, body { overflow-x: hidden; }
     padding: 0.9rem 1.25rem;
   }
   .landing-chapter-title { padding: 1.25rem; }
+  .landing-section-separator {
+    height: 3rem;
+    margin: 0.65rem 0;
+    background:
+      linear-gradient(90deg, transparent 0, transparent calc(var(--gutter) - 1px), color-mix(in oklch, var(--text) 10%, transparent) var(--gutter), transparent calc(var(--gutter) + 1px)),
+      repeating-linear-gradient(90deg, transparent 0 4.5rem, color-mix(in oklch, var(--text) 5%, transparent) 4.5rem calc(4.5rem + 1px)),
+      repeating-linear-gradient(0deg, transparent 0 1.5rem, color-mix(in oklch, var(--text) 4%, transparent) 1.5rem calc(1.5rem + 1px)),
+      var(--bg);
+  }
+  .landing-section-separator::before { opacity: 0.12; }
+  .landing-separator-inner {
+    font-size: 0.58rem;
+    letter-spacing: 0.11em;
+  }
+  .landing-separator-inner strong { display: none; }
   .landing-chapter-title h2 { font-size: clamp(1.85rem, 8vw, 2.5rem); }
   .landing-chapter-title p,
   .landing-cell p,
