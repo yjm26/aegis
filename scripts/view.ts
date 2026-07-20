@@ -6,7 +6,7 @@ import {
   isVideoMime,
 } from './preview';
 import type { ShareFileItem, SharePayload } from './types';
-import '../src/style.css';
+import '../src/tailwind.css';
 
 const objectUrls: string[] = [];
 

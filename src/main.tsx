@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './tailwind.css';
-import './style.css';
 
 /**
  * After a deploy, hashed lazy chunks change. Cached old entry JS may request

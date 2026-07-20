@@ -1,7 +1,7 @@
 import { parseShareFragment } from './share';
 import { downloadShareItem, previewObjectUrl, isImageMime, isVideoMime } from './preview';
 import type { FileSharePayload, ShareFileItem } from './types';
-import '../src/style.css';
+import '../src/tailwind.css';
 
 function toItem(p: FileSharePayload): ShareFileItem {
   return {

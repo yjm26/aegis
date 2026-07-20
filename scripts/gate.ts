@@ -1,5 +1,5 @@
 import { connectWallet, getConnectedWallet, hasAppSession } from './aptos-client';
-import '../src/style.css';
+import '../src/tailwind.css';
 
 const DASHBOARD = '/pages/drive.html';
 

@@ -27,7 +27,7 @@ import {
   isVideoMime,
 } from './preview';
 import type { FileMetadata } from './types';
-import '../src/style.css';
+import '../src/tailwind.css';
 
 const GATE = '/pages/gate.html';
 

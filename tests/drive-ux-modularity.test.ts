@@ -7,7 +7,7 @@ const read = (path: string) => readFileSync(join(root, path), 'utf8');
 
 describe('Tailwind migration guardrails', () => {
   it('uses Tailwind as the landing styling path instead of keeping landing vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const landingFiles = [
       'src/Landing.tsx',
       'src/components/landing/LandingSections.tsx',
@@ -38,7 +38,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the Gate styling path instead of keeping gate vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const gate = read('src/pages/GatePage.tsx');
 
     expect(gate).toMatch(/\bmin-h-\[|\bgrid\b|\bborder-\[/);
@@ -62,7 +62,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the shared loader styling path instead of keeping brand-loader vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const loaderFiles = [
       'src/components/shared/BrandLoader.tsx',
       'src/components/feature/drive/DriveBootError.tsx',
@@ -92,7 +92,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the media lightbox styling path instead of keeping lightbox vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const lightbox = read('src/components/feature/media/MediaLightbox.tsx');
 
     expect(lightbox).toMatch(/\bfixed\b|\bgrid\b|\bborder-\[/);
@@ -127,7 +127,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the shared view gallery styling path instead of keeping view vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const view = read('src/pages/ViewPage.tsx');
 
     expect(view).toMatch(/\bgrid\b|\bborder-\[/);
@@ -155,7 +155,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the filter menu styling path instead of keeping filter vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const filter = read('src/components/shared/FilterMenu.tsx');
 
     expect(filter).toMatch(/\brelative\b|\brounded-\b|\bborder-\[/);
@@ -177,8 +177,8 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
-  it('keeps style.css limited to global base styles after the Tailwind migration', () => {
-    const style = read('src/style.css');
+  it('keeps tailwind.css limited to Tailwind imports and global base styles after the migration', () => {
+    const style = read('src/tailwind.css');
     const appFiles = [
       'src/pages/DrivePage.tsx',
       'src/components/feature/drive/DriveBulkBar.tsx',
@@ -218,7 +218,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the upload/share overlay styling path instead of keeping upload/share vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const overlayFiles = [
       'src/components/feature/upload/UploadQueuePanel.tsx',
       'src/components/feature/share/ShareSheet.tsx',
@@ -252,7 +252,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the trust panel styling path instead of keeping trust/vault vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const trust = read('src/components/shared/TrustPanel.tsx');
 
     expect(trust).toContain('rounded-');
@@ -276,7 +276,7 @@ describe('Tailwind migration guardrails', () => {
   });
 
   it('uses Tailwind as the app shell styling path instead of keeping core app chrome vanilla CSS blocks', () => {
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const shellFiles = [
       'src/pages/DrivePage.tsx',
       'src/pages/ViewPage.tsx',
@@ -315,7 +315,7 @@ describe('Tailwind migration guardrails', () => {
 
   it('uses Tailwind as the Drive styling path instead of adding vanilla CSS blocks', () => {
     const main = read('src/main.tsx');
-    const style = read('src/style.css');
+    const style = read('src/tailwind.css');
     const vite = read('vite.config.ts');
     const pkg = read('package.json');
     const modules = [
@@ -328,6 +328,7 @@ describe('Tailwind migration guardrails', () => {
     ].map(read).join('\n');
 
     expect(main).toContain("import './tailwind.css'");
+    expect(existsSync(join(root, 'src/style.css'))).toBe(false);
     expect(vite).toContain('@tailwindcss/vite');
     expect(pkg).toContain('@tailwindcss/vite');
     expect(modules).toContain('className="');
