@@ -81,6 +81,18 @@ body {
   background: var(--bg);
 }
 
+.landing-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(7rem, 18vh, 12rem);
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--bg) 88%);
+}
+
 .hero-shader {
   position: absolute;
   inset: 0;
@@ -166,15 +178,32 @@ body {
 }
 
 .landing-after-hero {
-  width: min(100%, 74rem);
+  width: 100%;
   margin: 0 auto;
-  padding: clamp(1rem, 2.5vw, 1.5rem) var(--gutter) clamp(5rem, 10vw, 7rem);
+  padding: 0 0 clamp(5rem, 10vw, 7rem);
+  position: relative;
+  background:
+    linear-gradient(90deg, transparent calc(var(--gutter) - 1px), var(--border) var(--gutter), transparent calc(var(--gutter) + 1px)),
+    linear-gradient(90deg, transparent calc(100% - var(--gutter) - 1px), var(--border) calc(100% - var(--gutter)), transparent calc(100% - var(--gutter) + 1px)),
+    linear-gradient(180deg, var(--border), transparent 1px);
+}
+
+.landing-chapter,
+.landing-close-panel {
+  width: min(calc(100% - (var(--gutter) * 1.2)), 92rem);
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .landing-chapter {
   border: 1px solid var(--border);
   margin-top: clamp(1rem, 2vw, 1.25rem);
   background: color-mix(in oklch, var(--bg-elevated) 86%, transparent);
+}
+
+.landing-chapter:first-child {
+  margin-top: 0;
+  border-top-color: color-mix(in oklch, var(--text) 18%, var(--border));
 }
 
 .landing-chapter-head {
@@ -445,7 +474,7 @@ body {
 .landing-footer {
   padding: 2rem var(--gutter) 2.5rem;
   border-top: 1px solid var(--border);
-  width: min(100%, 74rem);
+  width: min(calc(100% - (var(--gutter) * 1.2)), 92rem);
   margin: 0 auto;
   font-size: 0.6875rem;
   font-weight: 400;
@@ -504,9 +533,9 @@ html, body { overflow-x: hidden; }
     letter-spacing: 0.14em;
   }
   .landing-hero {
-    min-height: 100svh;
-    min-height: 100dvh;
-    padding: 5.5rem var(--gutter) 3.5rem;
+    min-height: 88svh;
+    min-height: 88dvh;
+    padding: 5.25rem var(--gutter) 2.5rem;
     align-items: flex-end;
   }
   .hero-content {
@@ -541,7 +570,22 @@ html, body { overflow-x: hidden; }
     padding: 0.5rem 0;
     opacity: 0.8;
   }
-  .landing-after-hero { padding-bottom: 4rem; }
+  .landing-after-hero {
+    padding-bottom: 4rem;
+    background:
+      linear-gradient(90deg, transparent 0, transparent calc(var(--gutter) - 1px), var(--border) var(--gutter), transparent calc(var(--gutter) + 1px)),
+      linear-gradient(180deg, var(--border), transparent 1px);
+  }
+  .landing-chapter,
+  .landing-close-panel,
+  .landing-footer {
+    width: calc(100% - 1rem);
+  }
+  .landing-chapter-label {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.9rem 1.25rem;
+  }
   .landing-chapter-title { padding: 1.25rem; }
   .landing-chapter-title h2 { font-size: clamp(1.85rem, 8vw, 2.5rem); }
   .landing-chapter-title p,
