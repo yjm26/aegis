@@ -83,8 +83,7 @@ export default function GatePage() {
       </Link>
 
       <main className="gate-center">
-        <AegisLogo variant="horizontal" className="gate-logo" />
-        <AegisLogo variant="icon" className="gate-login-icon" alt="" />
+        <AegisLogo variant="icon" className="gate-login-icon" />
         <p className="gate-sub">{checking ? 'Checking session…' : sub}</p>
         <button
           type="button"
