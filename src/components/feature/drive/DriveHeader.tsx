@@ -51,16 +51,16 @@ export default function DriveHeader({
       } · encrypted before upload`;
 
   return (
-    <div className="app-stage-head drive-stage-head">
-      <div className="drive-stage-copy">
+    <div className="flex items-start justify-between gap-4 pb-1 max-[720px]:flex-col">
+      <div className="min-w-0">
         {inFolder ? (
-          <button type="button" className="app-back" onClick={onBackToLibrary}>
+          <button type="button" className="mb-2 border-0 bg-transparent p-0 text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text)] motion-reduce:transition-none" onClick={onBackToLibrary}>
             ← Library
           </button>
         ) : null}
-        <p className="drive-stage-kicker">Encrypted storage</p>
-        <h1 className="app-stage-title">{folderName || 'Library'}</h1>
-        <p className="app-stage-sub">{subtitle}</p>
+        <p className="m-0 mb-1 text-[0.64rem] uppercase tracking-[0.16em] text-white/30">Encrypted storage</p>
+        <h1 className="m-0 text-[clamp(1.75rem,3vw,2.25rem)] font-light leading-[1.1] tracking-[-0.03em] text-[var(--text)]">{folderName || 'Library'}</h1>
+        <p className="m-0 mt-1 text-[0.8125rem] text-[var(--text-3)]">{subtitle}</p>
       </div>
 
       <DriveToolbar

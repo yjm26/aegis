@@ -91,6 +91,44 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('uses Tailwind as the app shell styling path instead of keeping core app chrome vanilla CSS blocks', () => {
+    const style = read('src/style.css');
+    const shellFiles = [
+      'src/pages/DrivePage.tsx',
+      'src/pages/ViewPage.tsx',
+      'src/pages/DownloadPage.tsx',
+      'src/components/layout/DriveTopBar.tsx',
+      'src/components/layout/DriveLayout.tsx',
+      'src/components/feature/drive/DriveHeader.tsx',
+    ].map(read).join('\n');
+
+    expect(shellFiles).toMatch(/\bmin-h-\[|\bgrid\b|\bborder-\[/);
+    for (const selector of [
+      '.app-page',
+      '.app-top',
+      '.app-brand',
+      '.app-top-right',
+      '.wallet-chip',
+      '.app-link',
+      '.app-shell',
+      '.app-rail',
+      '.app-upload-cta',
+      '.app-rail-nav',
+      '.app-rail-label',
+      '.app-rail-item',
+      '.app-rail-foot',
+      '.app-stage',
+      '.app-stage-head',
+      '.app-stage-title',
+      '.app-stage-sub',
+      '.app-back',
+      '.app-folder-nav',
+      '.app-rail-count',
+    ]) {
+      expect(style).not.toContain(selector);
+    }
+  });
+
   it('uses Tailwind as the Drive styling path instead of adding vanilla CSS blocks', () => {
     const main = read('src/main.tsx');
     const style = read('src/style.css');

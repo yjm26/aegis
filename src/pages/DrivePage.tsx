@@ -820,7 +820,7 @@ export default function DrivePage() {
     .join(' ');
 
   return (
-    <div className="app-page app-page--drive">
+    <div className="flex min-h-[100svh] min-h-[100dvh] flex-col bg-[var(--bg)] text-[var(--text)]">
       <DriveTopBar
         address={wallet.address}
         vaultOk={vaultOk}
@@ -894,10 +894,10 @@ export default function DrivePage() {
         ) : null}
 
         {files.length > 0 ? (
-          <div className="drive-select-row">
+          <div className="mt-1 mb-3 flex items-center gap-3">
             <button
               type="button"
-              className="app-btn-text"
+              className="border-0 bg-transparent px-0 py-1 text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--text-2)] transition-colors duration-150 hover:text-[var(--text)] motion-reduce:transition-none"
               onClick={() => selection.selectAll()}
             >
               Select all
@@ -905,7 +905,7 @@ export default function DrivePage() {
             {selection.count > 0 ? (
               <button
                 type="button"
-                className="app-btn-text"
+                className="border-0 bg-transparent px-0 py-1 text-[0.6875rem] uppercase tracking-[0.1em] text-[var(--text-2)] transition-colors duration-150 hover:text-[var(--text)] motion-reduce:transition-none"
                 onClick={() => selection.clear()}
               >
                 Clear selection
@@ -954,7 +954,7 @@ export default function DrivePage() {
         ) : null}
 
         {status ? (
-          <div className="app-status" data-kind={status.kind} role="status">
+          <div className={`border-t border-[var(--border)] py-3 text-[0.8125rem] ${status.kind === 'ok' ? 'text-[#b8d4b8]' : status.kind === 'err' ? 'text-[#e8a0a0]' : 'text-[var(--text-2)]'}`} role="status">
             {status.msg}
           </div>
         ) : null}

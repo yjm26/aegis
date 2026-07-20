@@ -157,7 +157,7 @@ export default function TrustPanel({
         </li>
       </ul>
       {!vaultOk && onUnlock ? (
-        <button type="button" className="app-btn-ghost" onClick={onUnlock}>
+        <button type="button" className="mt-3 border border-[var(--border)] bg-transparent px-4 py-3 text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text)] transition-colors duration-150 hover:border-white/30 hover:bg-white/[0.04] motion-reduce:transition-none" onClick={onUnlock}>
           Sign to unlock keys
         </button>
       ) : null}

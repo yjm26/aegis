@@ -145,20 +145,20 @@ export default function ViewPage() {
   }, [loc.hash]);
 
   return (
-    <div className="app-page view-page">
-      <header className="app-top app-reveal app-reveal-1">
-        <Link to="/" className="app-brand" aria-label="Aegis home">
-          <AegisLogo variant="horizontal" />
+    <div className="flex min-h-[100svh] min-h-[100dvh] flex-col bg-[var(--bg)] text-[var(--text)]">
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-[var(--border)] bg-[color-mix(in_oklch,var(--bg)_96%,transparent)] px-4 py-3.5 text-[var(--text)] sm:px-6 lg:px-8">
+        <Link to="/" className="inline-flex shrink-0 items-center leading-none text-[var(--text)] no-underline" aria-label="Aegis home">
+          <AegisLogo variant="horizontal" className="!w-[clamp(5.35rem,7vw,6.8rem)]" />
         </Link>
-        <div className="app-top-right">
-          <Link to="/" className="app-link">
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <Link to="/" className="text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text)] no-underline transition-opacity duration-150 hover:opacity-55 motion-reduce:transition-none">
             Home
           </Link>
         </div>
       </header>
 
 
-      <main className="view-main app-reveal app-reveal-2">
+      <main className="view-main">
         <header className="view-head">
           <p className="view-kicker">{shareLabel}</p>
           <h1 className="view-title">{title}</h1>

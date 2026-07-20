@@ -60,15 +60,15 @@ export default function DownloadPage() {
   }, [loc.hash, nav]);
 
   return (
-    <div className="app-page" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
-      <div style={{ textAlign: 'center', maxWidth: 420, padding: 24 }}>
-        <Link to="/" className="app-brand" style={{ display: 'inline-flex', marginBottom: 24 }} aria-label="Aegis home">
-          <AegisLogo variant="horizontal" />
+    <div className="grid min-h-screen place-items-center bg-[var(--bg)] px-6 text-[var(--text)]">
+      <div className="max-w-[26rem] text-center">
+        <Link to="/" className="mb-6 inline-flex items-center leading-none text-[var(--text)] no-underline" aria-label="Aegis home">
+          <AegisLogo variant="horizontal" className="!w-[clamp(5.35rem,7vw,6.8rem)]" />
         </Link>
-        <h1 className="app-stage-title">{msg}</h1>
-        {err ? <p className="gate-error" style={{ display: 'block' }}>{err}</p> : null}
-        <p className="app-stage-sub" style={{ marginTop: 16 }}>
-          <Link to={`/view${loc.hash}`} className="app-link">
+        <h1 className="m-0 text-[clamp(1.75rem,3vw,2.25rem)] font-light leading-[1.1] tracking-[-0.03em] text-[var(--text)]">{msg}</h1>
+        {err ? <p className="m-0 mt-4 text-[0.875rem] leading-[1.5] text-[#e8a0a0]">{err}</p> : null}
+        <p className="m-0 mt-4 text-[0.8125rem] text-[var(--text-3)]">
+          <Link to={`/view${loc.hash}`} className="text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--text)] no-underline transition-opacity duration-150 hover:opacity-55 motion-reduce:transition-none">
             Open preview instead
           </Link>
         </p>
