@@ -118,6 +118,10 @@ export default function GatePage() {
             'Petra or any Aptos wallet · shelbynet'
           )}
         </p>
+        <p className="m-0 mt-1 max-w-[22rem] text-[0.72rem] leading-[1.5] text-white/38">
+          <strong className="font-normal uppercase tracking-[0.12em] text-white/58">Beta Mode</strong>{' '}
+          · Uploads are sponsored during beta. Files encrypt locally before relay.
+        </p>
         {error ? (
           <div className="mt-3 w-full max-w-[22rem] border border-[rgba(238,132,132,0.18)] bg-[linear-gradient(180deg,rgba(90,36,36,0.16),rgba(20,10,10,0.08)),rgba(255,255,255,0.018)] px-[0.9rem] py-3 text-left" role="alert">
             <span className="mb-1 block text-[0.64rem] font-normal uppercase tracking-[0.13em] text-[rgba(255,190,190,0.72)]">Wallet connection failed</span>

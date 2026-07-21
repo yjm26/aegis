@@ -111,10 +111,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (/E_INSUFFICIENT_FUNDS|insufficient funds/i.test(message)) {
       return res.status(402).json({
-        error: 'Service wallet needs ShelbyUSD (storage) + APT (gas) on shelbynet',
+        error: 'Beta relay needs funding',
         code: 'INSUFFICIENT_FUNDS',
         hint:
-          '1) Set APTOS_NETWORK=shelbynet on Vercel. 2) Fund ShelbyUSD + APT: https://docs.shelby.xyz/tools/wallets/petra-setup — paste service wallet address. 3) Redeploy.',
+          'The service wallet needs APT + ShelbyUSD on Shelbynet. 1) Set APTOS_NETWORK=shelbynet on Vercel. 2) Fund ShelbyUSD + APT: https://docs.shelby.xyz/tools/wallets/petra-setup — paste service wallet address. 3) Redeploy.',
         detail: message.slice(0, 400),
       });
     }

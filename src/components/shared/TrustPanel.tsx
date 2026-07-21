@@ -61,8 +61,7 @@ export default function TrustPanel({
           </li>
           <li>
             <strong>Upload</strong> needs your wallet signature (owner auth) so
-            strangers cannot burn the service wallet. Gas is still sponsored on
-            shelbynet for now.
+            strangers cannot burn the beta relay. Aegis sponsors Shelby uploads during beta.
           </li>
           <li>
             <strong>Vault key</strong> stays in RAM only - refresh = sign again.
@@ -103,7 +102,7 @@ export default function TrustPanel({
             password reset, no recovery email.
           </li>
           <li>
-            Not a formal audit. Service wallet relays paid uploads on shelbynet.
+            <strong>Beta Mode:</strong> Sponsored Shelby uploads. Browser-side encryption.
           </li>
         </ul>
       </div>
@@ -143,6 +142,7 @@ export default function TrustPanel({
           {vaultOk ? 'Private vault unlocked' : 'Private vault locked'}
           {protectedKeyCopy}
           {` · Library synced: ${syncTarget}`}
+          {' · Beta Mode · Sponsored Shelby uploads'}
         </span>
         {!vaultOk && onUnlock ? (
           <button
@@ -171,6 +171,9 @@ export default function TrustPanel({
         <li>
           <strong>Share default:</strong> lose the link → lose access. No server
           “Shared with you” inbox.
+        </li>
+        <li>
+          <strong>Beta Mode:</strong> Aegis sponsors Shelby uploads during beta. Files encrypt locally before the relay sees them.
         </li>
         <li>
           Status: {vaultOk ? 'private vault open' : 'private vault locked'} · library synced: {syncTarget}

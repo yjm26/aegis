@@ -628,6 +628,32 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('labels the sponsored relay honestly as Beta Mode without demo or no-fee claims', () => {
+    const gate = read('src/pages/GatePage.tsx');
+    const trust = read('src/components/shared/TrustPanel.tsx');
+    const uploadApi = read('api/upload.ts');
+    const betaCopy = [gate, trust, uploadApi].join('\n');
+
+    expect(gate).toContain('Beta Mode');
+    expect(gate).toContain('Uploads are sponsored during beta.');
+    expect(trust).toContain('Sponsored Shelby uploads');
+    expect(trust).toContain('Browser-side encryption');
+    expect(trust).toContain('Aegis sponsors Shelby uploads during beta.');
+    expect(trust).toContain('Files encrypt locally before the relay sees them.');
+    expect(uploadApi).toContain('Beta relay needs funding');
+    expect(uploadApi).toContain('service wallet needs APT + ShelbyUSD on Shelbynet');
+
+    for (const misleadingCopy of [
+      'Showcase mode',
+      'Demo mode',
+      'Free forever',
+      'Gasless',
+      'No fees',
+    ]) {
+      expect(betaCopy).not.toContain(misleadingCopy);
+    }
+  });
+
   it('keeps Drive command controls mobile-friendly', () => {
     const topbar = read('src/components/layout/DriveTopBar.tsx');
     const toolbar = read('src/components/feature/drive/DriveToolbar.tsx');
