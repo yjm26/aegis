@@ -2,7 +2,8 @@
  * Durable metadata store — Neon Postgres when DATABASE_URL is set.
  * Falls back to in-memory so local/dev still works without Neon.
  *
- * Prefer @neondatabase/serverless on Vercel (HTTP, no sticky TCP).
+ * Prefer @neondatabase/serverless for portable serverless-style metadata access
+ * on Render/Vercel (HTTP, no sticky TCP).
  */
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 

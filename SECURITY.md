@@ -42,7 +42,7 @@ Out of scope for this beta policy:
 - Social engineering.
 - Denial-of-service without a practical security impact.
 - Issues caused by leaked user wallet secrets outside Aegis.
-- Problems in third-party wallets, Shelby Protocol, Aptos, Vercel, Neon, or browser vendors unless Aegis usage makes them exploitable.
+- Problems in third-party wallets, Shelby Protocol, Aptos, Render, Neon, or browser vendors unless Aegis usage makes them exploitable.
 
 ## Current beta limitations
 

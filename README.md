@@ -41,7 +41,7 @@ Browser
   ├─ asks wallet to sign owner auth / vault unlock messages
   └─ sends ciphertext + metadata intent to API
 
-Vercel API
+Node/Express API (Render)
   ├─ verifies owner auth
   ├─ rate-limits sponsored uploads
   ├─ uploads ciphertext to Shelby with service wallet
@@ -59,7 +59,7 @@ Shelby Protocol
 - Tailwind CSS v4 via `@tailwindcss/vite`
 - Aptos Wallet Standard
 - Shelby Protocol TypeScript SDK
-- Vercel Functions
+- Express API server on Render (`server.ts`) with Vercel-compatible handler types
 - Neon Postgres metadata store
 - Vitest + Playwright
 
@@ -79,6 +79,8 @@ Copy `.env.example` and configure the values needed for your deployment.
 | `VITE_APTOS_NETWORK` | Optional | Browser download network override; should match server network. |
 
 The service wallet must be funded on Shelbynet with both APT for gas and ShelbyUSD for storage.
+
+Current production deployment target is **Render**. The `api/*` files keep `@vercel/node` request/response types because the handlers are portable and mounted by `server.ts` for Render.
 
 Health check:
 

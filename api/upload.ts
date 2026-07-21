@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(503).json({
         error: 'Shelby upload not configured',
         code: 'MISSING_APTOS_PRIVATE_KEY',
-        hint: 'Set APTOS_PRIVATE_KEY (service wallet) + APTOS_NETWORK=shelbynet on Vercel, then redeploy.',
+        hint: 'Set APTOS_PRIVATE_KEY (service wallet) + APTOS_NETWORK=shelbynet on Render, then redeploy.',
       });
     }
 
@@ -114,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         error: 'Beta relay needs funding',
         code: 'INSUFFICIENT_FUNDS',
         hint:
-          'The service wallet needs APT + ShelbyUSD on Shelbynet. 1) Set APTOS_NETWORK=shelbynet on Vercel. 2) Fund ShelbyUSD + APT: https://docs.shelby.xyz/tools/wallets/petra-setup — paste service wallet address. 3) Redeploy.',
+          'The service wallet needs APT + ShelbyUSD on Shelbynet. 1) Set APTOS_NETWORK=shelbynet on Render. 2) Fund ShelbyUSD + APT: https://docs.shelby.xyz/tools/wallets/petra-setup — paste service wallet address. 3) Redeploy.',
         detail: message.slice(0, 400),
       });
     }
