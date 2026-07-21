@@ -196,6 +196,21 @@ describe('Tailwind migration guardrails', () => {
     expect(view).toContain('Download failed');
   });
 
+  it('makes the legacy download route feel like a secure product page', () => {
+    const download = read('src/pages/DownloadPage.tsx');
+
+    expect(download).toContain('Secure download');
+    expect(download).toContain('Browser decrypted');
+    expect(download).toContain('Encrypted blob download');
+    expect(download).toContain('The file key stays in the URL fragment');
+    expect(download).toContain('Preparing download…');
+    expect(download).toContain('Downloading encrypted blob…');
+    expect(download).toContain('Download ready');
+    expect(download).toContain('Open secure preview');
+    expect(download).toContain('oklch(0.34_0.05_190');
+    expect(download).toContain('max-w-[34rem]');
+  });
+
   it('uses Tailwind as the filter menu styling path instead of keeping filter vanilla CSS blocks', () => {
     const style = read('src/tailwind.css');
     const filter = read('src/components/shared/FilterMenu.tsx');
