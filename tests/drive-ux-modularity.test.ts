@@ -662,6 +662,23 @@ describe('Tailwind migration guardrails', () => {
     expect(gate).toContain('-left-[8%] -top-[12%]');
   });
 
+  it('keeps stale legacy public assets and standalone entries out of GitHub', () => {
+    const staleFiles = [
+      'public/style.css',
+      'public/style-v2.css',
+      'public/scripts/landing.js',
+      'scripts/dashboard.ts',
+      'scripts/download.ts',
+      'scripts/gate.ts',
+      'scripts/hero-shader.ts',
+      'scripts/landing.js',
+      'scripts/main.ts',
+      'scripts/view.ts',
+    ];
+
+    for (const file of staleFiles) expect(existsSync(join(root, file))).toBe(false);
+  });
+
   it('keeps Drive command controls mobile-friendly', () => {
     const topbar = read('src/components/layout/DriveTopBar.tsx');
     const toolbar = read('src/components/feature/drive/DriveToolbar.tsx');
