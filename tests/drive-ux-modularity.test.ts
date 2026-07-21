@@ -211,6 +211,18 @@ describe('Tailwind migration guardrails', () => {
     expect(download).toContain('max-w-[34rem]');
   });
 
+  it('keeps invalid or empty share views from showing dead file controls', () => {
+    const view = read('src/pages/ViewPage.tsx');
+
+    expect(view).toContain('canShowFileControls');
+    expect(view).toContain('showEmptyShareState');
+    expect(view).toContain('{canShowFileControls ? (');
+    expect(view).toContain('No usable files in this share');
+    expect(view).toContain('Check the link or ask the owner to share again.');
+    expect(view).toContain('Back to Aegis');
+    expect(view).toContain('No files match this filter.');
+  });
+
   it('uses Tailwind as the filter menu styling path instead of keeping filter vanilla CSS blocks', () => {
     const style = read('src/tailwind.css');
     const filter = read('src/components/shared/FilterMenu.tsx');

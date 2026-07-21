@@ -237,6 +237,9 @@ export default function ViewPage() {
       return a.item.name.localeCompare(b.item.name, undefined, { sensitivity: 'base' });
     });
   }, [tiles, query, kindFilter, sortBy]);
+  const sharePending = sub.includes('Decrypting') || sub.includes('Loading current folder');
+  const canShowFileControls = tiles.length > 0;
+  const showEmptyShareState = !tiles.length && !sharePending;
 
   async function handleDownload(item: ShareFileItem) {
     setDownloadStatus({ msg: 'Preparing download…', kind: 'info' });
@@ -343,45 +346,47 @@ export default function ViewPage() {
         {error ? <div className="mt-6 rounded-2xl border border-red-300/15 bg-red-950/20 p-4 text-sm text-[#e8a0a0]">{error}</div> : null}
 
         <section className="mt-[clamp(1.5rem,4vw,2.4rem)]" aria-labelledby="share-files-title">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 id="share-files-title" className="m-0 text-[0.8rem] uppercase tracking-[0.16em] text-white/72">Files</h2>
-              <p className="m-0 mt-1 text-sm text-white/45">Showing {visibleTiles.length} of {tiles.length}</p>
-            </div>
-            <div className="grid flex-1 grid-cols-[minmax(12rem,1fr)_auto_auto_auto] items-center gap-2 max-[860px]:grid-cols-2 max-[560px]:grid-cols-1 sm:max-w-[46rem]">
-              <label className="min-w-0">
-                <span className="sr-only">Search files</span>
-                <input
-                  className={`${VIEW_TOOL_INPUT_CLASS} w-full`}
-                  type="search"
-                  value={query}
-                  placeholder="Search files"
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-              </label>
-              <label>
-                <span className="sr-only">Type filter</span>
-                <select className={VIEW_TOOL_INPUT_CLASS} value={kindFilter} onChange={(event) => setKindFilter(event.target.value as KindFilter)}>
-                  <option value="all">All types</option>
-                  <option value="image">Images</option>
-                  <option value="video">Videos</option>
-                  <option value="file">Files</option>
-                </select>
-              </label>
-              <label>
-                <span className="sr-only">Sort files</span>
-                <select className={VIEW_TOOL_INPUT_CLASS} value={sortBy} onChange={(event) => setSortBy(event.target.value as ShareSort)}>
-                  <option value="name">Sort: Name</option>
-                  <option value="size">Sort: Size</option>
-                  <option value="type">Sort: Type</option>
-                </select>
-              </label>
-              <div className="flex min-h-11 overflow-hidden rounded-full border border-white/10 bg-white/[0.035] p-1" aria-label="View mode">
-                <button type="button" className={`rounded-full px-3 text-[0.68rem] uppercase tracking-[0.1em] transition-colors duration-150 ${viewMode === 'grid' ? 'bg-white text-black' : 'text-white/58 hover:text-white'}`} onClick={() => setViewMode('grid')}>Grid</button>
-                <button type="button" className={`rounded-full px-3 text-[0.68rem] uppercase tracking-[0.1em] transition-colors duration-150 ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58 hover:text-white'}`} onClick={() => setViewMode('list')}>List</button>
+          {canShowFileControls ? (
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 id="share-files-title" className="m-0 text-[0.8rem] uppercase tracking-[0.16em] text-white/72">Files</h2>
+                <p className="m-0 mt-1 text-sm text-white/45">Showing {visibleTiles.length} of {tiles.length}</p>
+              </div>
+              <div className="grid flex-1 grid-cols-[minmax(12rem,1fr)_auto_auto_auto] items-center gap-2 max-[860px]:grid-cols-2 max-[560px]:grid-cols-1 sm:max-w-[46rem]">
+                <label className="min-w-0">
+                  <span className="sr-only">Search files</span>
+                  <input
+                    className={`${VIEW_TOOL_INPUT_CLASS} w-full`}
+                    type="search"
+                    value={query}
+                    placeholder="Search files"
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                </label>
+                <label>
+                  <span className="sr-only">Type filter</span>
+                  <select className={VIEW_TOOL_INPUT_CLASS} value={kindFilter} onChange={(event) => setKindFilter(event.target.value as KindFilter)}>
+                    <option value="all">All types</option>
+                    <option value="image">Images</option>
+                    <option value="video">Videos</option>
+                    <option value="file">Files</option>
+                  </select>
+                </label>
+                <label>
+                  <span className="sr-only">Sort files</span>
+                  <select className={VIEW_TOOL_INPUT_CLASS} value={sortBy} onChange={(event) => setSortBy(event.target.value as ShareSort)}>
+                    <option value="name">Sort: Name</option>
+                    <option value="size">Sort: Size</option>
+                    <option value="type">Sort: Type</option>
+                  </select>
+                </label>
+                <div className="flex min-h-11 overflow-hidden rounded-full border border-white/10 bg-white/[0.035] p-1" aria-label="View mode">
+                  <button type="button" className={`rounded-full px-3 text-[0.68rem] uppercase tracking-[0.1em] transition-colors duration-150 ${viewMode === 'grid' ? 'bg-white text-black' : 'text-white/58 hover:text-white'}`} onClick={() => setViewMode('grid')}>Grid</button>
+                  <button type="button" className={`rounded-full px-3 text-[0.68rem] uppercase tracking-[0.1em] transition-colors duration-150 ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58 hover:text-white'}`} onClick={() => setViewMode('list')}>List</button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : null}
 
           {downloadStatus ? (
             <div
@@ -398,23 +403,51 @@ export default function ViewPage() {
             </div>
           ) : null}
 
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[repeat(auto-fill,minmax(min(100%,15rem),1fr))]">
-              {visibleTiles.map((tile, index) => (
-                <article
-                  key={`${tile.item.n}-${index}`}
-                  className={VIEW_TILE_CLASS}
-                  onClick={() => openPreview(tile)}
-                >
-                  {renderPreview(tile)}
-                  <div className="grid gap-3 border-t border-[var(--border,#2a2a2a)] p-4">
+          {canShowFileControls ? (
+            viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[repeat(auto-fill,minmax(min(100%,15rem),1fr))]">
+                {visibleTiles.map((tile, index) => (
+                  <article
+                    key={`${tile.item.n}-${index}`}
+                    className={VIEW_TILE_CLASS}
+                    onClick={() => openPreview(tile)}
+                  >
+                    {renderPreview(tile)}
+                    <div className="grid gap-3 border-t border-[var(--border,#2a2a2a)] p-4">
+                      <div className="min-w-0">
+                        <p className="m-0 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] text-[color-mix(in_oklch,var(--text,#fff)_90%,transparent)]" title={tile.item.name}>{shortName(tile.item.name)}</p>
+                        {renderMeta(tile.item)}
+                      </div>
+                      <button
+                        type="button"
+                        className={VIEW_DOWNLOAD_BUTTON_CLASS}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void handleDownload(tile.item);
+                        }}
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {visibleTiles.map((tile, index) => (
+                  <article
+                    key={`${tile.item.n}-${index}`}
+                    className={VIEW_LIST_TILE_CLASS}
+                    onClick={() => openPreview(tile)}
+                  >
+                    {renderPreview(tile, true)}
                     <div className="min-w-0">
-                      <p className="m-0 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] text-[color-mix(in_oklch,var(--text,#fff)_90%,transparent)]" title={tile.item.name}>{shortName(tile.item.name)}</p>
+                      <p className="m-0 break-words text-[0.95rem] text-white/90" title={tile.item.name}>{tile.item.name}</p>
                       {renderMeta(tile.item)}
                     </div>
                     <button
                       type="button"
-                      className={VIEW_DOWNLOAD_BUTTON_CLASS}
+                      className={`${VIEW_DOWNLOAD_BUTTON_CLASS} min-w-36 max-[720px]:w-full`}
                       onClick={(e) => {
                         e.stopPropagation();
                         void handleDownload(tile.item);
@@ -422,41 +455,32 @@ export default function ViewPage() {
                     >
                       Download
                     </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-3">
-              {visibleTiles.map((tile, index) => (
-                <article
-                  key={`${tile.item.n}-${index}`}
-                  className={VIEW_LIST_TILE_CLASS}
-                  onClick={() => openPreview(tile)}
-                >
-                  {renderPreview(tile, true)}
-                  <div className="min-w-0">
-                    <p className="m-0 break-words text-[0.95rem] text-white/90" title={tile.item.name}>{tile.item.name}</p>
-                    {renderMeta(tile.item)}
-                  </div>
-                  <button
-                    type="button"
-                    className={`${VIEW_DOWNLOAD_BUTTON_CLASS} min-w-36 max-[720px]:w-full`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      void handleDownload(tile.item);
-                    }}
-                  >
-                    Download
-                  </button>
-                </article>
-              ))}
-            </div>
-          )}
+                  </article>
+                ))}
+              </div>
+            )
+          ) : null}
 
-          {!visibleTiles.length ? (
+          {canShowFileControls && !visibleTiles.length ? (
             <div className="rounded-2xl border border-white/8 bg-white/[0.018] p-8 text-center text-sm text-white/48">
               No files match this filter.
+            </div>
+          ) : null}
+
+          {showEmptyShareState ? (
+            <div className="rounded-2xl border border-white/8 bg-white/[0.018] p-8 text-center shadow-[0_18px_48px_rgba(0,0,0,0.18)]">
+              <h2 id="share-files-title" className="m-0 text-[1.25rem] font-light tracking-[-0.03em] text-white/86">
+                No usable files in this share
+              </h2>
+              <p className="mx-auto mt-3 max-w-[26rem] text-sm leading-[1.65] text-white/48">
+                Check the link or ask the owner to share again.
+              </p>
+              <Link
+                to="/"
+                className="mt-6 inline-flex min-h-11 items-center rounded-full border border-white/10 px-5 text-[0.72rem] uppercase tracking-[0.12em] text-[var(--text)] no-underline transition-[border-color,background,opacity] duration-150 hover:border-white/24 hover:bg-white/[0.04] motion-reduce:transition-none"
+              >
+                Back to Aegis
+              </Link>
             </div>
           ) : null}
         </section>
