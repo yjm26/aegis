@@ -154,6 +154,30 @@ describe('Tailwind migration guardrails', () => {
     }
   });
 
+  it('makes the live share view feel like a proper product page', () => {
+    const view = read('src/pages/ViewPage.tsx');
+
+    expect(view).toContain('!w-[clamp(7.25rem,9vw,9rem)]');
+    expect(view).toContain('Secure share');
+    expect(view).toContain('Browser decrypted');
+    expect(view).toContain('totalSize');
+    expect(view).toContain('fileTypeSummary');
+    expect(view).toContain('Files decrypt in your browser');
+    expect(view).toContain('URL fragment');
+    expect(view).toContain('Search files');
+    expect(view).toContain('Type filter');
+    expect(view).toContain('Sort files');
+    expect(view).toContain("viewMode === 'grid'");
+    expect(view).toContain("setViewMode('list')");
+    expect(view).toContain('Showing');
+    expect(view).toContain('formatShareSize');
+    expect(view).toContain('Preview unavailable');
+    expect(view).toContain('Download still works');
+    expect(view).toContain('Loading preview…');
+    expect(view).toContain('oklch(0.34_0.05_190');
+    expect(view).toContain('max-w-[76rem]');
+  });
+
   it('uses Tailwind as the filter menu styling path instead of keeping filter vanilla CSS blocks', () => {
     const style = read('src/tailwind.css');
     const filter = read('src/components/shared/FilterMenu.tsx');
